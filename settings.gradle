@@ -1,0 +1,2 @@
+rootProject.name = "GeoFitApp"
+include ':app'
