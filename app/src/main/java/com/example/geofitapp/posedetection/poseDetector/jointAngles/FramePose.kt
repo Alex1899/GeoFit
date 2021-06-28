@@ -1,11 +1,11 @@
-package com.example.geofitapp.posedetection.posedetector.repanalysis
+package com.example.geofitapp.posedetection.poseDetector.jointAngles
 
 
-import com.example.geofitapp.posedetection.posedetector.repanalysis.Utils.average
-import com.example.geofitapp.posedetection.posedetector.repanalysis.Utils.l2Norm2D
-import com.example.geofitapp.posedetection.posedetector.repanalysis.Utils.multiplyAll
-import com.example.geofitapp.posedetection.posedetector.repanalysis.Utils.subtract
-import com.example.geofitapp.posedetection.posedetector.repanalysis.Utils.subtractAll
+import com.example.geofitapp.posedetection.poseDetector.jointAngles.Utils.average
+import com.example.geofitapp.posedetection.poseDetector.jointAngles.Utils.l2Norm2D
+import com.example.geofitapp.posedetection.poseDetector.jointAngles.Utils.multiplyAll
+import com.example.geofitapp.posedetection.poseDetector.jointAngles.Utils.subtract
+import com.example.geofitapp.posedetection.poseDetector.jointAngles.Utils.subtractAll
 import com.google.mlkit.vision.common.PointF3D
 import com.google.mlkit.vision.pose.PoseLandmark
 import java.util.*
@@ -14,11 +14,11 @@ class FramePose(private val exercise: String) {
     // Multiplier to apply to the torso to get minimal body size. Picked this by experimentation.
     private val TORSO_MULTIPLIER = 2.5f
 
-    fun getFramePose(lm: MutableList<PointF3D>): MutableList<Pair<PointF3D, Double>> {
+    fun getFramePose(lm: MutableList<PointF3D>): MutableMap<Int, Double> {
         val normalizedLandmarks: MutableList<PointF3D> = normalize(lm)
         // get function from exercise name
         val getPose = ExerciseUtils.exerciseAnglesMap[exercise]!!
-        return getPose(normalizedLandmarks, lm)
+        return getPose(normalizedLandmarks)
     }
 
     private fun normalize(landmarks: MutableList<PointF3D>): MutableList<PointF3D> {

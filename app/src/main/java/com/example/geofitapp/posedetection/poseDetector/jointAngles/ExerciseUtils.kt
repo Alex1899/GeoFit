@@ -1,18 +1,26 @@
-package com.example.geofitapp.posedetection.posedetector.repanalysis
+package com.example.geofitapp.posedetection.poseDetector.jointAngles
 
-import android.graphics.Point
+import android.media.AudioManager
+import android.media.ToneGenerator
 import android.util.Log
+import com.example.geofitapp.posedetection.poseDetector.repAnalysis.BicepCurlAnalysis
+import com.example.geofitapp.posedetection.poseDetector.repCounter.BicepCurlRepCounter
+import com.example.geofitapp.posedetection.poseDetector.repCounter.ExerciseRepCounter
 import com.google.mlkit.vision.common.PointF3D
 import com.google.mlkit.vision.pose.Pose
 import com.google.mlkit.vision.pose.PoseLandmark
-import java.util.ArrayList
+import java.util.*
 import kotlin.math.abs
 
 object ExerciseUtils {
     val exerciseAnglesMap =
         mutableMapOf(
-            "bicep_curl" to { normalizedLm: MutableList<PointF3D>, lm: MutableList<PointF3D>-> getBicepCurlPose(normalizedLm, lm) }
+            "bicep_curl" to { normalizedLm: MutableList<PointF3D> -> BicepCurlAnalysis().getExercisePose(normalizedLm) }
         )
+    val exerciseRepCounterAnalyzerMap = mutableMapOf(
+        "bicep_curl" to Pair(BicepCurlRepCounter(), BicepCurlAnalysis())
+    )
+
 
    fun convertToPoint3D(lm: List<PoseLandmark>): MutableList<PointF3D> {
        val point3d = mutableListOf<PointF3D>()
@@ -75,26 +83,23 @@ object ExerciseUtils {
         return if (rightSum > leftSum) "right" else "left"
     }
 
-    private fun getBicepCurlPose(normalizedLm: MutableList<PointF3D>, lm: MutableList<PointF3D>): MutableList<Pair<PointF3D, Double>> {
-        // calculate joint angles
-        val jointAngles = mutableListOf<Pair<PointF3D, Double>>()
-        val rightElbowAngle = getAngle(
-            normalizedLm[PoseLandmark.RIGHT_SHOULDER],
-            normalizedLm[PoseLandmark.RIGHT_ELBOW],
-            normalizedLm[PoseLandmark.RIGHT_WRIST]
-        )
-        val leftElbowAngle = getAngle(
-            normalizedLm[PoseLandmark.LEFT_SHOULDER],
-            normalizedLm[PoseLandmark.LEFT_ELBOW],
-            normalizedLm[PoseLandmark.LEFT_WRIST]
-        )
-        jointAngles.add(Pair(lm[PoseLandmark.RIGHT_ELBOW], rightElbowAngle))
-        jointAngles.add(Pair(lm[PoseLandmark.LEFT_ELBOW], leftElbowAngle))
 
-        Log.i("ExercisUtil", "joint angles ${jointAngles}")
 
-        return jointAngles
+    fun countReps(repCounter: ExerciseRepCounter, poseAnglesMap: MutableMap<Int, Double> ): Int? {
+        val repsBefore: Int = repCounter.getTotalReps()
+        val repsAfter: Int = repCounter.addNewFramePoseAngles(poseAnglesMap)
+        var lastRepResult : Int? = null
+        if (repsAfter > repsBefore) {
+            // Play a fun beep when rep counter updates.
+            val tg = ToneGenerator(AudioManager.STREAM_NOTIFICATION, 100)
+            tg.startTone(ToneGenerator.TONE_PROP_BEEP)
+            lastRepResult = repsAfter
+        }
+        if(lastRepResult !== null){
+            Log.i("PoseDetectorProcessor", "Rep: $lastRepResult")
 
+        }
+        return lastRepResult
     }
 
 }

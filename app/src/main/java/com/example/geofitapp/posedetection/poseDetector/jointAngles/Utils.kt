@@ -1,12 +1,7 @@
-package com.example.geofitapp.posedetection.posedetector.repanalysis
+package com.example.geofitapp.posedetection.poseDetector.jointAngles
 
-import android.graphics.Canvas
 import com.google.common.primitives.Floats
 import com.google.mlkit.vision.common.PointF3D
-import com.google.mlkit.vision.pose.Pose
-import com.google.mlkit.vision.pose.PoseLandmark
-import java.util.*
-import kotlin.math.abs
 
 
 /**

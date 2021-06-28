@@ -16,9 +16,9 @@ import androidx.core.app.ActivityCompat.OnRequestPermissionsResultCallback
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModelProvider
 import com.example.geofitapp.R
-import com.example.geofitapp.posedetection.helperclasses.GraphicOverlay
-import com.example.geofitapp.posedetection.helperclasses.VisionImageProcessor
-import com.example.geofitapp.posedetection.posedetector.PoseDetectorProcessor
+import com.example.geofitapp.posedetection.helperClasses.GraphicOverlay
+import com.example.geofitapp.posedetection.helperClasses.VisionImageProcessor
+import com.example.geofitapp.posedetection.poseDetector.PoseDetectorProcessor
 import com.example.geofitapp.posedetection.preference.PreferenceUtils
 import com.google.android.gms.common.annotation.KeepName
 import com.google.mlkit.common.MlKitException

@@ -11,7 +11,7 @@ import androidx.annotation.GuardedBy
 import androidx.annotation.RequiresApi
 import androidx.camera.core.ExperimentalGetImage
 import androidx.camera.core.ImageProxy
-import com.example.geofitapp.posedetection.helperclasses.*
+import com.example.geofitapp.posedetection.helperClasses.*
 import com.example.geofitapp.posedetection.preference.PreferenceUtils
 import com.google.android.gms.tasks.Task
 import com.google.android.gms.tasks.TaskExecutors
@@ -274,7 +274,7 @@ abstract class VisionProcessorBase<T> protected constructor(context: Context) :
         minDetectorMs = Long.MAX_VALUE
     }
 
-    protected abstract fun detectInImage(image: InputImage?): Task<T>
+    protected abstract fun detectInImage(image: InputImage): Task<T>
     protected abstract fun onSuccess(results: T, graphicOverlay: GraphicOverlay)
     protected abstract fun onFailure(e: Exception)
 

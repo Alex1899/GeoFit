@@ -1,4 +1,4 @@
-package com.example.geofitapp.posedetection.helperclasses;
+package com.example.geofitapp.posedetection.helperClasses;
 
 /** Describing a frame info. */
 public class FrameMetadata {

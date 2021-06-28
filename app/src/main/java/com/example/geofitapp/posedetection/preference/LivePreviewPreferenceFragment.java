@@ -11,7 +11,7 @@ import android.widget.Toast;
 import androidx.annotation.StringRes;
 
 import com.example.geofitapp.R;
-import com.example.geofitapp.posedetection.helperclasses.CameraSource;
+import com.example.geofitapp.posedetection.helperClasses.CameraSource;
 
 import java.util.HashMap;
 import java.util.List;

@@ -1,17 +1,15 @@
-package com.example.geofitapp.posedetection.posedetector
+package com.example.geofitapp.posedetection.poseDetector
 
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
-import android.util.Log
-import com.example.geofitapp.posedetection.helperclasses.GraphicOverlay
-import com.example.geofitapp.posedetection.posedetector.repanalysis.ExerciseUtils
-import com.example.geofitapp.posedetection.posedetector.repanalysis.FramePose
+import com.example.geofitapp.posedetection.helperClasses.GraphicOverlay
 import com.google.common.primitives.Ints
 import com.google.mlkit.vision.common.PointF3D
 import com.google.mlkit.vision.pose.Pose
 import com.google.mlkit.vision.pose.PoseLandmark
 import java.util.*
+import kotlin.math.roundToInt
 
 
 /** Draw the detected pose in preview.  */
@@ -21,13 +19,23 @@ class PoseGraphic internal constructor(
     private val showInFrameLikelihood: Boolean,
     private val visualizeZ: Boolean,
     private val rescaleZForVisualization: Boolean,
-    private val exercise: String
-): GraphicOverlay.Graphic(overlay) {
+    private val exercise: String,
+    private val repCounterResult: String,
+    private val jointAnglesMap: MutableMap<Int, Double>,
+    private val feedback: String
+) : GraphicOverlay.Graphic(overlay) {
     private var zMin = java.lang.Float.MAX_VALUE
     private var zMax = java.lang.Float.MIN_VALUE
     private val leftPaint: Paint
     private val rightPaint: Paint
     private val whitePaint: Paint = Paint()
+    private val repResultPaint: Paint
+
+    private val DOT_RADIUS = 8.0f
+    private val IN_FRAME_LIKELIHOOD_TEXT_SIZE = 30.0f
+    private val STROKE_WIDTH = 10.0f
+    private val POSE_CLASSIFICATION_TEXT_SIZE = 60.0f
+
 
     init {
         whitePaint.strokeWidth = STROKE_WIDTH
@@ -39,6 +47,12 @@ class PoseGraphic internal constructor(
         rightPaint = Paint()
         rightPaint.strokeWidth = STROKE_WIDTH
         rightPaint.color = Color.YELLOW
+
+        repResultPaint = Paint()
+        repResultPaint.color = Color.WHITE
+        repResultPaint.textSize = POSE_CLASSIFICATION_TEXT_SIZE
+        repResultPaint.setShadowLayer(5.0f, 0f, 0f, Color.BLACK)
+
     }
 
     override fun draw(canvas: Canvas) {
@@ -49,6 +63,29 @@ class PoseGraphic internal constructor(
         if (landmarks.isEmpty()) {
             return
         }
+
+
+        val repResultX = POSE_CLASSIFICATION_TEXT_SIZE * 0.5f
+        val repResultY = canvas.height - POSE_CLASSIFICATION_TEXT_SIZE * 3.5f
+        canvas.drawText(
+            "Exercise: $exercise",
+            repResultX,
+            repResultY,
+            repResultPaint
+        )
+        canvas.drawText(
+            "Total Reps: $repCounterResult",
+            repResultX,
+            repResultY + POSE_CLASSIFICATION_TEXT_SIZE ,
+            repResultPaint
+        )
+        canvas.drawText(
+            "Exercise Form: $feedback",
+            repResultX,
+            repResultY + POSE_CLASSIFICATION_TEXT_SIZE * 2,
+            repResultPaint
+        )
+
 
         // get exercise pose landmarks
         // Draw all the points from shoulders to ankles
@@ -61,7 +98,6 @@ class PoseGraphic internal constructor(
                 zMax = zMax.coerceAtLeast(landmarks[i].position3D.z)
             }
         }
-        val jointAngles = FramePose(exercise).getFramePose(ExerciseUtils.convertToPoint3D(landmarks))
 
         val leftShoulder = pose.getPoseLandmark(PoseLandmark.LEFT_SHOULDER)
         val rightShoulder = pose.getPoseLandmark(PoseLandmark.RIGHT_SHOULDER)
@@ -93,23 +129,18 @@ class PoseGraphic internal constructor(
         drawLine(canvas, rightHip, rightKnee, rightPaint)
         drawLine(canvas, rightKnee, rightAnkle, rightPaint)
 
-//        val test = listOf(Pair(rightElbow!!.position3D, ExerciseUtils.getAngle(rightShoulder!!.position3D, rightElbow.position3D, rightWrist!!.position3D)),
-//            Pair(leftElbow!!.position3D, ExerciseUtils.getAngle(leftShoulder!!.position3D, leftElbow.position3D, leftWrist!!.position3D)))
-
         // Draw inFrameLikelihood for all points
         if (showInFrameLikelihood) {
-            Log.i("PoseGraphic", "drawing angle values")
-
-            for (pair in jointAngles) {
+            for ((lmId, angle) in jointAnglesMap) {
+                val lm = pose.getPoseLandmark(lmId)!!
                 canvas.drawText(
-                    String.format(Locale.US, "%.2f", pair.second),
-                    translateX(pair.first.x),
-                    translateY(pair.first.y),
+                    angle.roundToInt().toString(),
+                    translateX(lm.position.x),
+                    translateY(lm.position.y),
                     whitePaint
                 )
             }
         }
-
     }
 
     private fun drawPoint(canvas: Canvas, landmark: PointF3D, paint: Paint) {
@@ -182,6 +213,7 @@ class PoseGraphic internal constructor(
             )
         }
     }
+
     companion object {
         private val DOT_RADIUS = 8.0f
         private val IN_FRAME_LIKELIHOOD_TEXT_SIZE = 30.0f
