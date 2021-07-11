@@ -1,0 +1,184 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <!-- Data to make available to the XML via data binding. In this case,
+         the whole ViewModel, so that we can access the LiveData,
+         click handlers, and state variables. -->
+    <data>
+
+
+    </data>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        style="@style/page_background"
+        >
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <!--        Bicep Curl-->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/bicep_curl_cardview"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:layout_marginTop="20dp"
+                android:layout_marginRight="10dp"
+                app:cardCornerRadius="10dp"
+                app:cardElevation="8dp"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/bicep_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <ImageView
+                        android:id="@+id/bicep_curl_img"
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/card_layout_height"
+                        android:contentDescription="@string/bicep_curl_img"
+                        android:scaleType="centerCrop"
+                        android:src="@drawable/bicep_curl_img2"
+                        app:layout_constraintTop_toTopOf="@id/bicep_layout" />
+
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/image_hover_margin_start"
+                        android:layout_marginTop="@dimen/image_hover_margin_top"
+                        android:text="@string/bicep_curl_text_hover"
+                        android:textColor="@color/white"
+                        android:textSize="@dimen/image_hover_text_size"
+                        app:layout_constraintStart_toStartOf="@id/bicep_curl_img"
+                        app:layout_constraintTop_toTopOf="@id/bicep_curl_img" />
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+            </com.google.android.material.card.MaterialCardView>
+
+            <!--        Triceps-->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/triceps_pushdown_cardview"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:layout_marginTop="20dp"
+                android:layout_marginRight="10dp"
+                app:cardCornerRadius="10dp"
+                app:cardElevation="8dp"
+                app:layout_constraintTop_toBottomOf="@id/bicep_curl_cardview">
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/triceps_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <ImageView
+                        android:id="@+id/triceps_pushdown_img"
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/card_layout_height"
+                        android:contentDescription="@string/bicep_curl_img"
+                        android:scaleType="centerCrop"
+                        android:src="@drawable/triceps_pushdown_img"
+                        app:layout_constraintTop_toTopOf="@id/triceps_layout" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/image_hover_margin_start"
+                        android:layout_marginTop="@dimen/image_hover_margin_top"
+                        android:text="@string/triceps_pushdown_text_hover"
+                        android:textColor="@color/white"
+                        android:textSize="@dimen/image_hover_text_size"
+                        app:layout_constraintStart_toStartOf="@id/triceps_pushdown_img"
+                        app:layout_constraintTop_toTopOf="@id/triceps_pushdown_img" />
+                </androidx.constraintlayout.widget.ConstraintLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!--            Front Raise-->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/front_raise_cardview"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:layout_marginTop="20dp"
+                android:layout_marginRight="10dp"
+                app:cardCornerRadius="10dp"
+                app:cardElevation="8dp"
+                app:layout_constraintTop_toBottomOf="@id/triceps_pushdown_cardview">
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/front_raise_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <ImageView
+                        android:id="@+id/front_raise_img"
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/card_layout_height"
+                        android:contentDescription="@string/bicep_curl_img"
+                        android:scaleType="centerCrop"
+                        android:src="@drawable/front_raise_img"
+                        app:layout_constraintTop_toTopOf="@id/front_raise_layout" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/image_hover_margin_start"
+                        android:layout_marginTop="@dimen/image_hover_margin_top"
+                        android:text="@string/front_raise_text_hover"
+                        android:textColor="@color/white"
+                        android:textSize="@dimen/image_hover_text_size"
+                        app:layout_constraintStart_toStartOf="@id/front_raise_img"
+                        app:layout_constraintTop_toTopOf="@id/front_raise_img" />
+                </androidx.constraintlayout.widget.ConstraintLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!--        Shoulder Press-->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/shoulder_press_cardview"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:layout_marginTop="20dp"
+                android:layout_marginRight="10dp"
+                app:cardCornerRadius="10dp"
+                app:cardElevation="8dp"
+                app:layout_constraintTop_toBottomOf="@id/front_raise_cardview">
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/shoulder_press_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <ImageView
+                        android:id="@+id/shoulder_press_img"
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/card_layout_height"
+                        android:contentDescription="@string/bicep_curl_img"
+                        android:scaleType="centerCrop"
+                        android:src="@drawable/shoulder_press_img"
+                        app:layout_constraintTop_toTopOf="@id/shoulder_press_layout" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/image_hover_margin_start"
+                        android:layout_marginTop="@dimen/image_hover_margin_top"
+                        android:text="@string/shoulder_press_text_hover"
+                        android:textColor="@color/white"
+                        android:textSize="@dimen/image_hover_text_size"
+                        app:layout_constraintStart_toStartOf="@id/shoulder_press_img"
+                        app:layout_constraintTop_toTopOf="@id/shoulder_press_img" />
+                </androidx.constraintlayout.widget.ConstraintLayout>
+            </com.google.android.material.card.MaterialCardView>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </ScrollView>
+
+</layout>

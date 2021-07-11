@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name" translatable="false">MLKit-Vision</string>
+    <string name="app_name" translatable="false">GeoFit</string>
     <string name="java_entry_title" translatable="false">Run the ML Kit quickstart written in Java</string>
     <string name="kotlin_entry_title" translatable="false">Run the ML Kit quickstart written in Kotlin</string>
     <string name="ok" translatable="false">OK</string>
@@ -139,5 +139,16 @@
     <string name="pref_key_segmentation_raw_size_mask" translatable="false">srsm</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+
+
+    <!-- UI strings   -->
+    <string name="bicep_curl_img">Bicep Curl Image</string>
+    <string name="bicep_curl_text_hover">Dumbbell Bicep Curl</string>
+    <string name="triceps_pushdown_text_hover">Triceps Pushdown</string>
+    <string name="front_raise_text_hover">Front Raise</string>
+    <string name="shoulder_press_text_hover">Shoulder Press</string>
+
+
+
 
 </resources>
