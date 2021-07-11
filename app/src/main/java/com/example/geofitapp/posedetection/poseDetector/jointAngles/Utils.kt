@@ -2,6 +2,7 @@ package com.example.geofitapp.posedetection.poseDetector.jointAngles
 
 import com.google.common.primitives.Floats
 import com.google.mlkit.vision.common.PointF3D
+import kotlin.math.hypot
 
 
 /**
@@ -33,7 +34,7 @@ object Utils {
     }
 
     fun l2Norm2D(point: PointF3D): Float {
-        return Math.hypot(point.x.toDouble(), point.y.toDouble()).toFloat()
+        return hypot(point.x.toDouble(), point.y.toDouble()).toFloat()
     }
 
     fun maxAbs(point: PointF3D): Float {

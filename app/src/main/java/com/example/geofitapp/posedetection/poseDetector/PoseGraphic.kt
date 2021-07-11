@@ -19,7 +19,7 @@ class PoseGraphic internal constructor(
     private val showInFrameLikelihood: Boolean,
     private val visualizeZ: Boolean,
     private val rescaleZForVisualization: Boolean,
-    private val exercise: String,
+    private val exercise: MutableList<String>,
     private val repCounterResult: String,
     private val jointAnglesMap: MutableMap<Int, Double>,
     private val feedback: String
@@ -31,7 +31,7 @@ class PoseGraphic internal constructor(
     private val whitePaint: Paint = Paint()
     private val repResultPaint: Paint
 
-    private val DOT_RADIUS = 8.0f
+    private val DOT_RADIUS = 10.0f
     private val IN_FRAME_LIKELIHOOD_TEXT_SIZE = 30.0f
     private val STROKE_WIDTH = 10.0f
     private val POSE_CLASSIFICATION_TEXT_SIZE = 60.0f
@@ -68,66 +68,54 @@ class PoseGraphic internal constructor(
         val repResultX = POSE_CLASSIFICATION_TEXT_SIZE * 0.5f
         val repResultY = canvas.height - POSE_CLASSIFICATION_TEXT_SIZE * 3.5f
         canvas.drawText(
-            "Exercise: $exercise",
+            "Exercise: ${exercise[0]}",
             repResultX,
             repResultY,
             repResultPaint
         )
+        if (exercise.size > 1) {
+            canvas.drawText(
+                "Detected Side: ${exercise[1]}",
+                repResultX,
+                repResultY + POSE_CLASSIFICATION_TEXT_SIZE,
+                repResultPaint
+            )
+        }
         canvas.drawText(
             "Total Reps: $repCounterResult",
             repResultX,
-            repResultY + POSE_CLASSIFICATION_TEXT_SIZE ,
+            repResultY + POSE_CLASSIFICATION_TEXT_SIZE * 2,
             repResultPaint
         )
         canvas.drawText(
             "Exercise Form: $feedback",
             repResultX,
-            repResultY + POSE_CLASSIFICATION_TEXT_SIZE * 2,
+            repResultY + POSE_CLASSIFICATION_TEXT_SIZE * 3,
             repResultPaint
         )
 
+        if (exercise[1] == "front") {
+            val rightElbow = pose.getPoseLandmark(PoseLandmark.RIGHT_ELBOW)!!
+            val leftElbow = pose.getPoseLandmark(PoseLandmark.LEFT_ELBOW)!!
 
-        // get exercise pose landmarks
-        // Draw all the points from shoulders to ankles
-        for (i in 11..28) {
-            if (i in 17..22) continue //skip finger drawing
+            val rightShoulder = pose.getPoseLandmark(PoseLandmark.RIGHT_SHOULDER)!!
+            val leftShoulder = pose.getPoseLandmark(PoseLandmark.LEFT_SHOULDER)!!
 
-            drawPoint(canvas, landmarks[i].position3D, whitePaint)
-            if (visualizeZ && rescaleZForVisualization) {
-                zMin = zMin.coerceAtMost(landmarks[i].position3D.z)
-                zMax = zMax.coerceAtLeast(landmarks[i].position3D.z)
+            drawPoint(canvas, rightElbow.position3D, whitePaint)
+            drawPoint(canvas, leftElbow.position3D, whitePaint)
+
+            drawPoint(canvas, rightShoulder.position3D, whitePaint)
+            drawPoint(canvas, leftShoulder.position3D, whitePaint)
+
+        } else {
+            val elbow: PoseLandmark = if (exercise[1] == "right") {
+                pose.getPoseLandmark(PoseLandmark.RIGHT_ELBOW)!!
+            } else {
+                pose.getPoseLandmark(PoseLandmark.LEFT_ELBOW)!!
             }
+            drawPoint(canvas, elbow.position3D, whitePaint)
         }
 
-        val leftShoulder = pose.getPoseLandmark(PoseLandmark.LEFT_SHOULDER)
-        val rightShoulder = pose.getPoseLandmark(PoseLandmark.RIGHT_SHOULDER)
-        val leftElbow = pose.getPoseLandmark(PoseLandmark.LEFT_ELBOW)
-        val rightElbow = pose.getPoseLandmark(PoseLandmark.RIGHT_ELBOW)
-        val leftWrist = pose.getPoseLandmark(PoseLandmark.LEFT_WRIST)
-        val rightWrist = pose.getPoseLandmark(PoseLandmark.RIGHT_WRIST)
-        val leftHip = pose.getPoseLandmark(PoseLandmark.LEFT_HIP)
-        val rightHip = pose.getPoseLandmark(PoseLandmark.RIGHT_HIP)
-        val leftKnee = pose.getPoseLandmark(PoseLandmark.LEFT_KNEE)
-        val rightKnee = pose.getPoseLandmark(PoseLandmark.RIGHT_KNEE)
-        val leftAnkle = pose.getPoseLandmark(PoseLandmark.LEFT_ANKLE)
-        val rightAnkle = pose.getPoseLandmark(PoseLandmark.RIGHT_ANKLE)
-
-
-        drawLine(canvas, leftShoulder, rightShoulder, whitePaint)
-        drawLine(canvas, leftHip, rightHip, whitePaint)
-        // Left body
-        drawLine(canvas, leftShoulder, leftElbow, leftPaint)
-        drawLine(canvas, leftElbow, leftWrist, leftPaint)
-        drawLine(canvas, leftShoulder, leftHip, leftPaint)
-        drawLine(canvas, leftHip, leftKnee, leftPaint)
-        drawLine(canvas, leftKnee, leftAnkle, leftPaint)
-
-        // Right body
-        drawLine(canvas, rightShoulder, rightElbow, rightPaint)
-        drawLine(canvas, rightElbow, rightWrist, rightPaint)
-        drawLine(canvas, rightShoulder, rightHip, rightPaint)
-        drawLine(canvas, rightHip, rightKnee, rightPaint)
-        drawLine(canvas, rightKnee, rightAnkle, rightPaint)
 
         // Draw inFrameLikelihood for all points
         if (showInFrameLikelihood) {
@@ -214,9 +202,4 @@ class PoseGraphic internal constructor(
         }
     }
 
-    companion object {
-        private val DOT_RADIUS = 8.0f
-        private val IN_FRAME_LIKELIHOOD_TEXT_SIZE = 30.0f
-        private val STROKE_WIDTH = 10.0f
-    }
 }

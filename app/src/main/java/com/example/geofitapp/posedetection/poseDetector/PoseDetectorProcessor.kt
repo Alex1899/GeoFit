@@ -7,15 +7,10 @@ import com.example.geofitapp.posedetection.helperClasses.GraphicOverlay
 import com.example.geofitapp.posedetection.poseDetector.jointAngles.ExerciseUtils
 import com.example.geofitapp.posedetection.poseDetector.jointAngles.FramePose
 import com.example.geofitapp.posedetection.poseDetector.repAnalysis.ExerciseAnalysis
-import com.example.geofitapp.posedetection.poseDetector.repCounter.BicepCurlRepCounter
 import com.example.geofitapp.posedetection.poseDetector.repCounter.ExerciseRepCounter
 import com.google.android.gms.tasks.Task
 import com.google.mlkit.vision.common.InputImage
-import com.google.mlkit.vision.pose.Pose
-import com.google.mlkit.vision.pose.PoseDetection
-import com.google.mlkit.vision.pose.PoseDetector
-import com.google.mlkit.vision.pose.PoseDetectorOptionsBase
-import java.util.ArrayList
+import com.google.mlkit.vision.pose.*
 import java.util.concurrent.Executor
 import java.util.concurrent.Executors
 
@@ -29,7 +24,7 @@ class PoseDetectorProcessor(
     private val rescaleZForVisualization: Boolean,
     private val runClassification: Boolean,
     private val isStreamMode: Boolean,
-    private val exercise: String
+    private val exercise: MutableList<String>
 ) : VisionProcessorBase<PoseDetectorProcessor.PoseWithRepCounting>(context) {
 
     private val detector: PoseDetector = PoseDetection.getClient(options)
@@ -37,8 +32,19 @@ class PoseDetectorProcessor(
     private var repCounter: ExerciseRepCounter? = null
     private var repAnalyzer: ExerciseAnalysis? = null
     private var exerciseJointAngles = mutableListOf<Double>()
+    private var leftJointAngles = mutableListOf<Double>()
+    private var rightJointAngles = mutableListOf<Double>()
+
     private var lastRepResult = 0
     private var feedback = ""
+    private var torso: Float? = null
+    private var exerciseStarted: Boolean? = null
+
+
+    companion object {
+        private val TAG = "PoseDetectorProcessor"
+        var torsoLengths = mutableListOf<Float>()
+    }
 
 //    private var poseClassifierProcessor: PoseClassifierProcessor? = null
 
@@ -47,8 +53,7 @@ class PoseDetectorProcessor(
      */
     class PoseWithRepCounting(
         val pose: Pose,
-
-        )
+    )
 
     init {
         classificationExecutor = Executors.newSingleThreadExecutor()
@@ -68,12 +73,12 @@ class PoseDetectorProcessor(
                 { task ->
                     val pose = task.result
                     // need a way to skip empty pose landmarks...
-
-
                     if (repCounter == null && repAnalyzer == null) {
                         Log.i("PoseDetectorProcessor", "Rep counter initialized")
-                        repCounter = ExerciseUtils.exerciseRepCounterAnalyzerMap[exercise]!!.first
-                        repAnalyzer = ExerciseUtils.exerciseRepCounterAnalyzerMap[exercise]!!.second
+                        repCounter =
+                            ExerciseUtils.exerciseRepCounterAnalyzerMap[exercise[0]]!!.first
+                        repAnalyzer =
+                            ExerciseUtils.exerciseRepCounterAnalyzerMap[exercise[0]]!!.second
                     }
 
 
@@ -81,25 +86,81 @@ class PoseDetectorProcessor(
                 }
             )
     }
+    private fun resetInfo() {
+        repCounter!!.resetTotalReps()
+        exerciseJointAngles.clear()
+        leftJointAngles.clear()
+        rightJointAngles.clear()
+        exerciseJointAngles.clear()
+        lastRepResult = 0
+        feedback = ""
+        torsoLengths.clear()
+        torso = null
+        exerciseStarted = false
+    }
 
     override fun onSuccess(
         results: PoseWithRepCounting,
         graphicOverlay: GraphicOverlay
     ) {
         if (results.pose.allPoseLandmarks.isEmpty()) {
+            Log.i("RepCount", "\n=================NOT STARTED=================")
+            resetInfo()
             return
         }
+        if(exerciseStarted == null || exerciseStarted == false){
+            exerciseStarted = true
+        }
+
+        val side = ExerciseUtils.detectSide(results.pose)
+        if (exercise.size > 1) {
+            exercise.removeAt(1)
+        }
+        exercise.add(side)
+
+        Log.i("Side", "side detected $side")
+        feedback = ""
+
+        if (torso == null) {
+            if (torsoLengths.size == 20) {
+                torso = (torsoLengths.sum()) / 20
+                Log.i("Torso", "getting average = $torso")
+            }
+        }
+
         val jointAngles =
-            FramePose(exercise).getFramePose(ExerciseUtils.convertToPoint3D(results.pose.allPoseLandmarks))
+            FramePose(exercise[0], side, torso).getFramePose(
+                ExerciseUtils.convertToPoint3D(results.pose.allPoseLandmarks),
+            )
 
-        exerciseJointAngles.addAll(jointAngles.values)
+        // this part needs to be different for each exercise
+        var repCounterResult: Int?
+        if (side == "front") {
+            return
+//            rightJointAngles.add(jointAngles[PoseLandmark.RIGHT_ELBOW]!!)
+//            leftJointAngles.add(jointAngles[PoseLandmark.LEFT_ELBOW]!!)
+//            repCounterResult = ExerciseUtils.countReps(repCounter!!, jointAngles, side)
+        } else {
+            // add angles in single frame
+            exerciseJointAngles.addAll(jointAngles.values)
+            repCounterResult = ExerciseUtils.countReps(repCounter!!, jointAngles, side)
 
-        val repCounterResult = ExerciseUtils.countReps(repCounter!!, jointAngles)
-        if(repCounterResult !== null){
-            if (repCounterResult > lastRepResult){
+        }
+
+        // maybe pass a list of angles to countReps instead of map of one angle to landmark
+        if (repCounterResult !== null) {
+            if (repCounterResult > lastRepResult) {
                 lastRepResult = repCounterResult
-                //analyze rep
-                feedback = repAnalyzer!!.analyseRep(exerciseJointAngles)
+                // analyze rep
+                if (side == "front") {
+                    feedback = repAnalyzer!!.analyseRepFront(leftJointAngles, rightJointAngles)
+
+                    leftJointAngles.clear()
+                    rightJointAngles.clear()
+                } else {
+                    feedback = repAnalyzer!!.analyseRep(exerciseJointAngles)
+                    exerciseJointAngles.clear()
+                }
             }
         }
 
@@ -120,9 +181,5 @@ class PoseDetectorProcessor(
 
     override fun onFailure(e: Exception) {
         Log.e(TAG, "Pose detection failed!", e)
-    }
-
-    companion object {
-        private val TAG = "PoseDetectorProcessor"
     }
 }

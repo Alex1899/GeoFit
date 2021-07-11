@@ -8,38 +8,118 @@ import java.util.Collections.max
 import java.util.Collections.min
 import kotlin.math.roundToInt
 
-class BicepCurlAnalysis: ExerciseAnalysis() {
+class BicepCurlAnalysis : ExerciseAnalysis() {
 
-    override fun getExercisePose(normalizedLm: MutableList<PointF3D>): MutableMap<Int, Double> {
+    override fun getExercisePose(
+        normalizedLm: MutableList<PointF3D>,
+        side: String
+    ): MutableMap<Int, Double> {
         // calculate joint angles
         val jointAngles = mutableMapOf<Int, Double>()
-        val rightElbowAngle = ExerciseUtils.getAngle(
-            normalizedLm[PoseLandmark.RIGHT_SHOULDER],
-            normalizedLm[PoseLandmark.RIGHT_ELBOW],
-            normalizedLm[PoseLandmark.RIGHT_WRIST]
-        )
-        val leftElbowAngle = ExerciseUtils.getAngle(
-            normalizedLm[PoseLandmark.LEFT_SHOULDER],
-            normalizedLm[PoseLandmark.LEFT_ELBOW],
-            normalizedLm[PoseLandmark.LEFT_WRIST]
-        )
-        jointAngles[PoseLandmark.RIGHT_ELBOW] = rightElbowAngle
-        jointAngles[PoseLandmark.LEFT_ELBOW] = leftElbowAngle
+
+        when (side) {
+            "right" -> {
+                val rightElbowAngle = ExerciseUtils.getAngle(
+                    normalizedLm[PoseLandmark.RIGHT_SHOULDER],
+                    normalizedLm[PoseLandmark.RIGHT_ELBOW],
+                    normalizedLm[PoseLandmark.RIGHT_WRIST]
+                )
+                jointAngles[PoseLandmark.RIGHT_ELBOW] = rightElbowAngle
+
+            }
+            "left" -> {
+                val leftElbowAngle = ExerciseUtils.getAngle(
+                    normalizedLm[PoseLandmark.LEFT_SHOULDER],
+                    normalizedLm[PoseLandmark.LEFT_ELBOW],
+                    normalizedLm[PoseLandmark.LEFT_WRIST]
+                )
+                jointAngles[PoseLandmark.LEFT_ELBOW] = leftElbowAngle
+
+            }
+            else -> {
+                val rightElbowAngle = ExerciseUtils.getAngle(
+                    normalizedLm[PoseLandmark.RIGHT_SHOULDER],
+                    normalizedLm[PoseLandmark.RIGHT_ELBOW],
+                    normalizedLm[PoseLandmark.RIGHT_WRIST]
+                )
+                jointAngles[PoseLandmark.RIGHT_ELBOW] = rightElbowAngle
+
+                val leftElbowAngle = ExerciseUtils.getAngle(
+                    normalizedLm[PoseLandmark.LEFT_SHOULDER],
+                    normalizedLm[PoseLandmark.LEFT_ELBOW],
+                    normalizedLm[PoseLandmark.LEFT_WRIST]
+                )
+                jointAngles[PoseLandmark.LEFT_ELBOW] = leftElbowAngle
+
+                // upper arm trunk angle
+                val rightUpperArmTrunk = ExerciseUtils.getAngle(
+                    normalizedLm[PoseLandmark.RIGHT_ELBOW],
+                    normalizedLm[PoseLandmark.RIGHT_SHOULDER],
+                    normalizedLm[PoseLandmark.RIGHT_HIP]
+                )
+
+                val leftUpperArmTrunk = ExerciseUtils.getAngle(
+                    normalizedLm[PoseLandmark.LEFT_ELBOW],
+                    normalizedLm[PoseLandmark.LEFT_SHOULDER],
+                    normalizedLm[PoseLandmark.LEFT_HIP]
+                )
+                jointAngles[PoseLandmark.RIGHT_SHOULDER] = rightUpperArmTrunk
+                jointAngles[PoseLandmark.LEFT_SHOULDER] = leftUpperArmTrunk
+
+            }
+        }
 
         return jointAngles
     }
 
+
     override fun analyseRep(jointAngles: MutableList<Double>): String {
+
+        // TODO get starting position...
         // find min angle, max angle, and compare to thresholds
-        val minElbowAngle = min(jointAngles).roundToInt()
-        val maxElbowAngle = max(jointAngles).roundToInt()
+        val minValue = min(jointAngles)
+        val indexOfmin = jointAngles.indexOf(minValue)
+        val bottomRepPortion = jointAngles.slice(indexOfmin+1 until jointAngles.size)
+        if(bottomRepPortion.isEmpty()){
+            return "Waiting..."
+        }
+        val minElbowAngle = minValue.roundToInt()
+        val maxElbowAngle = max(bottomRepPortion).roundToInt()
         var feedback = ""
 
-        feedback = if(minElbowAngle < 68 && maxElbowAngle >= 138){
+        feedback = if (minElbowAngle < 60 && maxElbowAngle >= 138) {
             "Correct"
-        }else{
+        } else {
             "Wrong"
         }
+        Log.i("Feedback", "elbowAngles=$jointAngles")
+
+        Log.i("Feedback", "minAngle=$minElbowAngle maxAngle=$maxElbowAngle result=$feedback")
+        return feedback
+    }
+
+    override fun analyseRepFront(
+        leftJointAngles: MutableList<Double>,
+        rightJointAngles: MutableList<Double>
+    ): String {
+        val rightMinElbowAngle = min(rightJointAngles).roundToInt()
+        val leftMinElbowAngle = min(leftJointAngles).roundToInt()
+
+        val rightMaxElbowAngle = max(rightJointAngles).roundToInt()
+        val leftMaxElbowAngle = max(leftJointAngles).roundToInt()
+
+        val feedback = if (rightMinElbowAngle < 60 && leftMinElbowAngle < 60
+            && rightMaxElbowAngle >= 138 && leftMaxElbowAngle >= 138
+        ) {
+            "Correct"
+        } else {
+            "Wrong"
+        }
+        Log.i("Feedback", "leftAngles=$leftJointAngles")
+        Log.i("Feedback", "rightAngles=$rightJointAngles")
+        Log.i("Feedback", "leftMinAngle=$leftMinElbowAngle leftMaxAngle=$leftMaxElbowAngle " +
+                "rightMinAngle=$rightMinElbowAngle rightMax=$rightMaxElbowAngle result=$feedback")
+
         return feedback
     }
 

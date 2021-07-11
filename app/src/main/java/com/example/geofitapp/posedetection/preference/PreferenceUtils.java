@@ -80,20 +80,23 @@ public class PreferenceUtils {
 
 
     public static PoseDetectorOptionsBase getPoseDetectorOptionsForLivePreview(Context context) {
-        int performanceMode =
-                getModeTypePreferenceValue(
-                        context,
-                        R.string.pref_key_live_preview_pose_detection_performance_mode,
-                        POSE_DETECTOR_PERFORMANCE_MODE_FAST);
-        if (performanceMode == POSE_DETECTOR_PERFORMANCE_MODE_FAST) {
-            return new PoseDetectorOptions.Builder()
-                    .setDetectorMode(PoseDetectorOptions.STREAM_MODE)
-                    .build();
-        } else {
-            return new AccuratePoseDetectorOptions.Builder()
-                    .setDetectorMode(AccuratePoseDetectorOptions.STREAM_MODE)
-                    .build();
-        }
+//        int performanceMode =
+//                getModeTypePreferenceValue(
+//                        context,
+//                        R.string.pref_key_live_preview_pose_detection_performance_mode,
+//                        POSE_DETECTOR_PERFORMANCE_MODE_FAST);
+//        if (performanceMode == POSE_DETECTOR_PERFORMANCE_MODE_FAST) {
+//            return new PoseDetectorOptions.Builder()
+//                    .setDetectorMode(PoseDetectorOptions.STREAM_MODE)
+//                    .build();
+//        } else {
+//            return new AccuratePoseDetectorOptions.Builder()
+//                    .setDetectorMode(AccuratePoseDetectorOptions.STREAM_MODE)
+//                    .build();
+//        }
+        return new AccuratePoseDetectorOptions.Builder()
+                .setDetectorMode(AccuratePoseDetectorOptions.STREAM_MODE)
+                .build();
     }
 
     public static PoseDetectorOptionsBase getPoseDetectorOptionsForStillImage(Context context) {
