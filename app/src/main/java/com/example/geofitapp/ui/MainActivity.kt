@@ -1,7 +1,8 @@
-package com.example.geofitapp
+package com.example.geofitapp.ui
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import com.example.geofitapp.R
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {

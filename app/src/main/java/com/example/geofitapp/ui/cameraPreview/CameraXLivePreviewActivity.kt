@@ -1,4 +1,4 @@
-package com.example.geofitapp.posedetection
+package com.example.geofitapp.ui.cameraPreview
 
 import android.annotation.SuppressLint
 import android.content.Context
