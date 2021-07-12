@@ -41,7 +41,7 @@ class CameraXLivePreviewActivity : AppCompatActivity(),
     private var lensFacing = CameraSelector.LENS_FACING_BACK
     private var cameraSelector: CameraSelector? = null
 
-    private var exercise: MutableList<String> = mutableListOf("bicep_curl")
+    private var exercise: MutableList<String> = mutableListOf()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -75,6 +75,11 @@ class CameraXLivePreviewActivity : AppCompatActivity(),
         if (!allPermissionsGranted()) {
             runtimePermissions
         }
+
+        // get exercise name
+        val exerciseName = intent.getStringExtra("exerciseName")!!
+        exercise.add(exerciseName)
+
     }
 
     override fun onSaveInstanceState(bundle: Bundle) {

@@ -15,7 +15,7 @@ import kotlin.math.abs
 object ExerciseUtils {
     val exerciseAnglesMap =
         mutableMapOf(
-            "bicep_curl" to { normalizedLm: MutableList<PointF3D>, side: String ->
+            "Dumbbell Bicep Curl" to { normalizedLm: MutableList<PointF3D>, side: String ->
                 BicepCurlAnalysis().getExercisePose(
                     normalizedLm,
                     side
@@ -23,7 +23,7 @@ object ExerciseUtils {
             }
         )
     val exerciseRepCounterAnalyzerMap = mutableMapOf(
-        "bicep_curl" to Pair(BicepCurlRepCounter(), BicepCurlAnalysis())
+        "Dumbbell Bicep Curl" to Pair(BicepCurlRepCounter(), BicepCurlAnalysis())
     )
 
 
