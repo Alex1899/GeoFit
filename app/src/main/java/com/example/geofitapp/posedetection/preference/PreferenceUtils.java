@@ -72,10 +72,11 @@ public class PreferenceUtils {
     }
 
     public static boolean shouldHideDetectionInfo(Context context) {
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-        String prefKey =
-                context.getString(R.string.pref_key_info_hide);
-        return sharedPreferences.getBoolean(prefKey, false);
+//        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+//        String prefKey =
+//                context.getString(R.string.pref_key_info_hide);
+//        return sharedPreferences.getBoolean(prefKey, true);
+        return true;
     }
 
 

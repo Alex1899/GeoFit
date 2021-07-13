@@ -3,10 +3,16 @@ package com.example.geofitapp.ui.cameraPreview
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.pm.PackageManager
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.ScaleGestureDetector
+import android.view.Window
+import android.view.WindowManager
 import android.widget.CompoundButton
+import android.widget.TextView
 import android.widget.Toast
 import android.widget.ToggleButton
 import androidx.appcompat.app.AppCompatActivity
@@ -16,12 +22,14 @@ import androidx.camera.view.PreviewView
 import androidx.core.app.ActivityCompat
 import androidx.core.app.ActivityCompat.OnRequestPermissionsResultCallback
 import androidx.core.content.ContextCompat
+import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
 import com.example.geofitapp.R
 import com.example.geofitapp.posedetection.helperClasses.GraphicOverlay
 import com.example.geofitapp.posedetection.helperClasses.VisionImageProcessor
 import com.example.geofitapp.posedetection.poseDetector.PoseDetectorProcessor
 import com.example.geofitapp.posedetection.preference.PreferenceUtils
+import com.example.geofitapp.ui.cameraPreview.detailsOverlay.DetailsOverlay
 import com.google.android.gms.common.annotation.KeepName
 import com.google.mlkit.common.MlKitException
 import java.util.*
@@ -32,6 +40,7 @@ class CameraXLivePreviewActivity : AppCompatActivity(),
     OnRequestPermissionsResultCallback, CompoundButton.OnCheckedChangeListener {
     private var previewView: PreviewView? = null
     private var graphicOverlay: GraphicOverlay? = null
+    private var detailsOverlay: DetailsOverlay? = null
     private var cameraProvider: ProcessCameraProvider? = null
     private var previewUseCase: Preview? = null
     private var analysisUseCase: ImageAnalysis? = null
@@ -40,8 +49,8 @@ class CameraXLivePreviewActivity : AppCompatActivity(),
     private var selectedModel = POSE_DETECTION
     private var lensFacing = CameraSelector.LENS_FACING_BACK
     private var cameraSelector: CameraSelector? = null
-
     private var exercise: MutableList<String> = mutableListOf()
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -50,8 +59,11 @@ class CameraXLivePreviewActivity : AppCompatActivity(),
             selectedModel = savedInstanceState.getString(STATE_SELECTED_MODEL, POSE_DETECTION)
         }
         cameraSelector = CameraSelector.Builder().requireLensFacing(lensFacing).build()
+
         setContentView(R.layout.activity_camera_xlive_preview)
+//        supportActionBar?.hide()
         previewView = findViewById(R.id.preview_view)
+
         if (previewView == null) {
             Log.d(TAG, "previewView is null")
         }
@@ -59,8 +71,13 @@ class CameraXLivePreviewActivity : AppCompatActivity(),
         if (graphicOverlay == null) {
             Log.d(TAG, "graphicOverlay is null")
         }
-        val facingSwitch = findViewById<ToggleButton>(R.id.facing_switch)
-        facingSwitch.setOnCheckedChangeListener(this)
+
+        detailsOverlay = findViewById(R.id.detailsOverlay)
+        if (detailsOverlay == null) {
+            Log.d(TAG, "detailsOverlay is null")
+        }
+//        val facingSwitch = findViewById<ToggleButton>(R.id.facing_switch)
+//        facingSwitch.setOnCheckedChangeListener(this)
         ViewModelProvider(this, ViewModelProvider.AndroidViewModelFactory.getInstance(application))
             .get(CameraXViewModel::class.java)
             .processCameraProvider
@@ -76,9 +93,22 @@ class CameraXLivePreviewActivity : AppCompatActivity(),
             runtimePermissions
         }
 
+
         // get exercise name
         val exerciseName = intent.getStringExtra("exerciseName")!!
         exercise.add(exerciseName)
+        // get binding
+
+        supportActionBar?.title = exerciseName
+        val colorDrawable = ColorDrawable(Color.parseColor("#342c3a"))
+        supportActionBar?.setBackgroundDrawable(colorDrawable)
+
+            if (Build.VERSION.SDK_INT >= 21) {
+            val window: Window = this.window
+            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
+            window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS)
+            window.statusBarColor = this.resources.getColor(R.color.background)
+        }
 
     }
 
@@ -264,7 +294,7 @@ class CameraXLivePreviewActivity : AppCompatActivity(),
                     needUpdateGraphicOverlayImageSourceInfo = false
                 }
                 try {
-                    imageProcessor!!.processImageProxy(imageProxy, graphicOverlay!!)
+                    imageProcessor!!.processImageProxy(imageProxy, graphicOverlay!!, detailsOverlay!!)
                 } catch (e: MlKitException) {
                     Log.e(
                         TAG,

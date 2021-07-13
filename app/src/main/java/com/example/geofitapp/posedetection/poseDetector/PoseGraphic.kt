@@ -4,6 +4,7 @@ import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
 import com.example.geofitapp.posedetection.helperClasses.GraphicOverlay
+import com.example.geofitapp.ui.cameraPreview.detailsOverlay.DetailsOverlay
 import com.google.common.primitives.Ints
 import com.google.mlkit.vision.common.PointF3D
 import com.google.mlkit.vision.pose.Pose
@@ -22,7 +23,8 @@ class PoseGraphic internal constructor(
     private val exercise: MutableList<String>,
     private val repCounterResult: String,
     private val jointAnglesMap: MutableMap<Int, Double>,
-    private val feedback: String
+    private val feedback: String,
+    private val detailsOverlay: DetailsOverlay
 ) : GraphicOverlay.Graphic(overlay) {
     private var zMin = java.lang.Float.MAX_VALUE
     private var zMax = java.lang.Float.MIN_VALUE
@@ -67,32 +69,36 @@ class PoseGraphic internal constructor(
 
         val repResultX = POSE_CLASSIFICATION_TEXT_SIZE * 0.5f
         val repResultY = canvas.height - POSE_CLASSIFICATION_TEXT_SIZE * 3.5f
-        canvas.drawText(
-            "Exercise: ${exercise[0]}",
-            repResultX,
-            repResultY,
-            repResultPaint
-        )
+//        canvas.drawText(
+//            "Exercise: ${exercise[0]}",
+//            repResultX,
+//            repResultY,
+//            repResultPaint
+//        )
         if (exercise.size > 1) {
-            canvas.drawText(
-                "Detected Side: ${exercise[1]}",
-                repResultX,
-                repResultY + POSE_CLASSIFICATION_TEXT_SIZE,
-                repResultPaint
-            )
+//            canvas.drawText(
+//                "Detected Side: ${exercise[1]}",
+//                repResultX,
+//                repResultY + POSE_CLASSIFICATION_TEXT_SIZE,
+//                repResultPaint
+//            )
+            detailsOverlay.addDetails(repCounterResult, exercise[1])
+        }else{
+            detailsOverlay.addDetails(repCounterResult)
+
         }
-        canvas.drawText(
-            "Total Reps: $repCounterResult",
-            repResultX,
-            repResultY + POSE_CLASSIFICATION_TEXT_SIZE * 2,
-            repResultPaint
-        )
-        canvas.drawText(
-            "Exercise Form: $feedback",
-            repResultX,
-            repResultY + POSE_CLASSIFICATION_TEXT_SIZE * 3,
-            repResultPaint
-        )
+//        canvas.drawText(
+//            "Total Reps: $repCounterResult",
+//            repResultX,
+//            repResultY + POSE_CLASSIFICATION_TEXT_SIZE * 2,
+//            repResultPaint
+//        )
+//        canvas.drawText(
+//            "Exercise Form: $feedback",
+//            repResultX,
+//            repResultY + POSE_CLASSIFICATION_TEXT_SIZE * 3,
+//            repResultPaint
+//        )
 
         if (exercise[1] == "front") {
             val rightElbow = pose.getPoseLandmark(PoseLandmark.RIGHT_ELBOW)!!

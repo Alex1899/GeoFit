@@ -1,16 +1,20 @@
 package com.example.geofitapp.posedetection.poseDetector
 
 import android.content.Context
+import android.graphics.Bitmap
 import android.util.Log
 import com.example.geofitapp.posedetection.VisionProcessorBase
+import com.example.geofitapp.posedetection.helperClasses.FrameMetadata
 import com.example.geofitapp.posedetection.helperClasses.GraphicOverlay
 import com.example.geofitapp.posedetection.poseDetector.jointAngles.ExerciseUtils
 import com.example.geofitapp.posedetection.poseDetector.jointAngles.FramePose
 import com.example.geofitapp.posedetection.poseDetector.repAnalysis.ExerciseAnalysis
 import com.example.geofitapp.posedetection.poseDetector.repCounter.ExerciseRepCounter
+import com.example.geofitapp.ui.cameraPreview.detailsOverlay.DetailsOverlay
 import com.google.android.gms.tasks.Task
 import com.google.mlkit.vision.common.InputImage
 import com.google.mlkit.vision.pose.*
+import java.nio.ByteBuffer
 import java.util.concurrent.Executor
 import java.util.concurrent.Executors
 
@@ -101,7 +105,8 @@ class PoseDetectorProcessor(
 
     override fun onSuccess(
         results: PoseWithRepCounting,
-        graphicOverlay: GraphicOverlay
+        graphicOverlay: GraphicOverlay,
+        detailsOverlay: DetailsOverlay
     ) {
         if (results.pose.allPoseLandmarks.isEmpty()) {
             Log.i("RepCount", "\n=================NOT STARTED=================")
@@ -174,12 +179,25 @@ class PoseDetectorProcessor(
                 exercise,
                 lastRepResult.toString(),
                 jointAngles,
-                feedback
+                feedback,
+                detailsOverlay
             )
         )
     }
 
     override fun onFailure(e: Exception) {
         Log.e(TAG, "Pose detection failed!", e)
+    }
+
+    override fun processBitmap(bitmap: Bitmap?, graphicOverlay: GraphicOverlay?) {
+        TODO("Not yet implemented")
+    }
+
+    override fun processByteBuffer(
+        data: ByteBuffer?,
+        frameMetadata: FrameMetadata?,
+        graphicOverlay: GraphicOverlay?
+    ) {
+        TODO("Not yet implemented")
     }
 }

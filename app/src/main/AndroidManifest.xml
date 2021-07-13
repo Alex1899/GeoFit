@@ -38,7 +38,9 @@
             android:value="@integer/google_play_services_version" />
 
         <activity android:name=".posedetection.preference.SettingsActivity" />
-        <activity android:name=".ui.cameraPreview.CameraXLivePreviewActivity"/>
+        <activity android:name=".ui.cameraPreview.CameraXLivePreviewActivity"
+
+           />
 
 
     </application>

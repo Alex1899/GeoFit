@@ -13,6 +13,7 @@ import androidx.camera.core.ExperimentalGetImage
 import androidx.camera.core.ImageProxy
 import com.example.geofitapp.posedetection.helperClasses.*
 import com.example.geofitapp.posedetection.preference.PreferenceUtils
+import com.example.geofitapp.ui.cameraPreview.detailsOverlay.DetailsOverlay
 import com.google.android.gms.tasks.Task
 import com.google.android.gms.tasks.TaskExecutors
 import com.google.mlkit.vision.common.InputImage
@@ -63,84 +64,86 @@ abstract class VisionProcessorBase<T> protected constructor(context: Context) :
     private var processingMetaData: FrameMetadata? = null
 
     // -----------------Code for processing single still image----------------------------------------
-    override fun processBitmap(bitmap: Bitmap?, graphicOverlay: GraphicOverlay) {
-        val frameStartMs = SystemClock.elapsedRealtime()
-        requestDetectInImage(
-            InputImage.fromBitmap(bitmap, 0),
-            graphicOverlay,  /* originalCameraImage= */
-            null,  /* shouldShowFps= */
-            false,
-            frameStartMs
-        )
-    }
+//    override fun processBitmap(bitmap: Bitmap?, graphicOverlay: GraphicOverlay, detailsOverlay: DetailsOverlay) {
+//        val frameStartMs = SystemClock.elapsedRealtime()
+//        requestDetectInImage(
+//            InputImage.fromBitmap(bitmap, 0),
+//            graphicOverlay,  /* originalCameraImage= */
+//            detailsOverlay,
+//            null,  /* shouldShowFps= */
+//            false,
+//            frameStartMs
+//        )
+//    }
 
     // -----------------Code for processing live preview frame from Camera1 API-----------------------
-    @Synchronized
-    override fun processByteBuffer(
-        data: ByteBuffer?, frameMetadata: FrameMetadata?, graphicOverlay: GraphicOverlay
-    ) {
-        latestImage = data
-        latestImageMetaData = frameMetadata
-        if (processingImage == null && processingMetaData == null) {
-            processLatestImage(graphicOverlay)
-        }
-    }
-
-    @Synchronized
-    private fun processLatestImage(graphicOverlay: GraphicOverlay) {
-        processingImage = latestImage
-        processingMetaData = latestImageMetaData
-        latestImage = null
-        latestImageMetaData = null
-        if (processingImage != null && processingMetaData != null && !isShutdown) {
-            processImage(processingImage!!, processingMetaData!!, graphicOverlay)
-        }
-    }
-
-    private fun processImage(
-        data: ByteBuffer, frameMetadata: FrameMetadata, graphicOverlay: GraphicOverlay
-    ) {
-        val frameStartMs = SystemClock.elapsedRealtime()
-
-        // If live viewport is on (that is the underneath surface view takes care of the camera preview
-        // drawing), skip the unnecessary bitmap creation that used for the manual preview drawing.
-        val bitmap: Bitmap? =
-            if (PreferenceUtils.isCameraLiveViewportEnabled(graphicOverlay.context)) null else BitmapUtils.getBitmap(
-                data,
-                frameMetadata
-            )
-        requestDetectInImage(
-            InputImage.fromByteBuffer(
-                data,
-                frameMetadata.getWidth(),
-                frameMetadata.getHeight(),
-                frameMetadata.getRotation(),
-                InputImage.IMAGE_FORMAT_NV21
-            ),
-            graphicOverlay,
-            bitmap,  /* shouldShowFps= */
-            true,
-            frameStartMs
-        )
-            .addOnSuccessListener(executor) { processLatestImage(graphicOverlay) }
-    }
+//    @Synchronized
+//    override fun processByteBuffer(
+//        data: ByteBuffer?, frameMetadata: FrameMetadata?, graphicOverlay: GraphicOverlay
+//    ) {
+//        latestImage = data
+//        latestImageMetaData = frameMetadata
+//        if (processingImage == null && processingMetaData == null) {
+//            processLatestImage(graphicOverlay)
+//        }
+//    }
+//
+//    @Synchronized
+//    private fun processLatestImage(graphicOverlay: GraphicOverlay) {
+//        processingImage = latestImage
+//        processingMetaData = latestImageMetaData
+//        latestImage = null
+//        latestImageMetaData = null
+//        if (processingImage != null && processingMetaData != null && !isShutdown) {
+//            processImage(processingImage!!, processingMetaData!!, graphicOverlay)
+//        }
+//    }
+//
+//    private fun processImage(
+//        data: ByteBuffer, frameMetadata: FrameMetadata, graphicOverlay: GraphicOverlay
+//    ) {
+//        val frameStartMs = SystemClock.elapsedRealtime()
+//
+//        // If live viewport is on (that is the underneath surface view takes care of the camera preview
+//        // drawing), skip the unnecessary bitmap creation that used for the manual preview drawing.
+//        val bitmap: Bitmap? =
+//            if (PreferenceUtils.isCameraLiveViewportEnabled(graphicOverlay.context)) null else BitmapUtils.getBitmap(
+//                data,
+//                frameMetadata
+//            )
+//        requestDetectInImage(
+//            InputImage.fromByteBuffer(
+//                data,
+//                frameMetadata.getWidth(),
+//                frameMetadata.getHeight(),
+//                frameMetadata.getRotation(),
+//                InputImage.IMAGE_FORMAT_NV21
+//            ),
+//            graphicOverlay,
+//            bitmap,  /* shouldShowFps= */
+//            true,
+//            frameStartMs
+//        )
+//            .addOnSuccessListener(executor) { processLatestImage(graphicOverlay) }
+//    }
 
     // -----------------Code for processing live preview frame from CameraX API-----------------------
     @RequiresApi(VERSION_CODES.KITKAT)
     @ExperimentalGetImage
-    override fun processImageProxy(image: ImageProxy, graphicOverlay: GraphicOverlay) {
+    override fun processImageProxy(image: ImageProxy, graphicOverlay: GraphicOverlay, detailsOverlay: DetailsOverlay) {
         val frameStartMs = SystemClock.elapsedRealtime()
         if (isShutdown) {
             image.close()
             return
         }
         var bitmap: Bitmap? = null
-        if (!PreferenceUtils.isCameraLiveViewportEnabled(graphicOverlay.getContext())) {
+        if (!PreferenceUtils.isCameraLiveViewportEnabled(graphicOverlay.context)) {
             bitmap = BitmapUtils.getBitmap(image)
         }
         requestDetectInImage(
             InputImage.fromMediaImage(image.image, image.imageInfo.rotationDegrees),
             graphicOverlay,  /* originalCameraImage= */
+            detailsOverlay,
             bitmap,  /* shouldShowFps= */
             true,
             frameStartMs
@@ -154,18 +157,20 @@ abstract class VisionProcessorBase<T> protected constructor(context: Context) :
     private fun requestDetectInImage(
         image: InputImage,
         graphicOverlay: GraphicOverlay,
+        detailsOverlay: DetailsOverlay,
         originalCameraImage: Bitmap?,
         shouldShowFps: Boolean,
         frameStartMs: Long
     ): Task<T> {
         return setUpListener(
-            detectInImage(image), graphicOverlay, originalCameraImage, shouldShowFps, frameStartMs
+            detectInImage(image), graphicOverlay, detailsOverlay, originalCameraImage, shouldShowFps, frameStartMs
         )
     }
 
     private fun setUpListener(
         task: Task<T>,
         graphicOverlay: GraphicOverlay,
+        detailsOverlay: DetailsOverlay,
         originalCameraImage: Bitmap?,
         shouldShowFps: Boolean,
         frameStartMs: Long
@@ -223,7 +228,7 @@ abstract class VisionProcessorBase<T> protected constructor(context: Context) :
             if (originalCameraImage != null) {
                 graphicOverlay.add(CameraImageGraphic(graphicOverlay, originalCameraImage))
             }
-            this@VisionProcessorBase.onSuccess(results, graphicOverlay)
+            this@VisionProcessorBase.onSuccess(results, graphicOverlay, detailsOverlay)
             if (!PreferenceUtils.shouldHideDetectionInfo(graphicOverlay.context)) {
                 graphicOverlay.add(
                     InferenceInfoGraphic(
@@ -275,7 +280,7 @@ abstract class VisionProcessorBase<T> protected constructor(context: Context) :
     }
 
     protected abstract fun detectInImage(image: InputImage): Task<T>
-    protected abstract fun onSuccess(results: T, graphicOverlay: GraphicOverlay)
+    protected abstract fun onSuccess(results: T, graphicOverlay: GraphicOverlay, detailsOverlay: DetailsOverlay)
     protected abstract fun onFailure(e: Exception)
 
     companion object {
