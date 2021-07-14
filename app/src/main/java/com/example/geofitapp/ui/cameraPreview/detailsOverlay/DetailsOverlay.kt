@@ -11,6 +11,7 @@ class DetailsOverlay constructor(context: Context?, attributeSet: AttributeSet?)
     View(context, attributeSet) {
     private var rep: String? = null
     private var side: String? = null
+    private var pace: String? = null
     val path = Path()
 //    private val rect = RectF(0f, 0f, width.toFloat(), 300f);
 
@@ -19,6 +20,7 @@ class DetailsOverlay constructor(context: Context?, attributeSet: AttributeSet?)
     private val textPaintSmall: Paint = Paint()
     private val repsText = "REPS"
     private val sideText = "SIDE"
+    private val averagePaceText = "PACE"
 
     private val corners = floatArrayOf(
         80f, 80f,
@@ -42,35 +44,46 @@ class DetailsOverlay constructor(context: Context?, attributeSet: AttributeSet?)
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
         // Pass it a list of RectF (rectBounds)
+
+        if (rep == null) {
+            return
+        }
+
         val rect =
-            RectF(0f, canvas.height.toFloat() - 300f, width.toFloat(), canvas.height.toFloat())
+            RectF(0f, height.toFloat() - 300f, width.toFloat(), height.toFloat())
 
 
         val startX = 80f
-        val rectHalfY = (canvas.height.toFloat() - rect.centerY()) / 2
-        val rectHalfX = (canvas.width.toFloat() - rect.centerX()) / 2
+        val rectHalfY = (height.toFloat() - rect.centerY()) / 2
+        val rectHalfX = (width.toFloat() - rect.centerX()) / 2
         val y = rect.centerY() - rectHalfY
         path.addRoundRect(rect, corners, Path.Direction.CW)
 
         canvas.drawPath(path, paint)
 
+        canvas.drawText(repsText, startX, y, textPaintSmall)
+        canvas.drawText(rep!!, startX, y + rectHalfY * 2f, textPaint)
 
-        if(rep != null) {
-            canvas.drawText(repsText, startX, y, textPaintSmall)
-            canvas.drawText(rep!!, startX, y + rectHalfY * 2f, textPaint)
-        }
+        canvas.drawText(sideText, rect.centerX() - rectHalfX *0.5f, y, textPaintSmall)
+        canvas.drawText(side!!, rect.centerX() -rectHalfX *0.5f,y + rectHalfY * 2f, textPaint)
 
-        if (side != null) {
-            canvas.drawText(sideText, startX + rectHalfX, y, textPaintSmall)
-            canvas.drawText(side!!, startX + rectHalfX, y + rectHalfY * 2f, textPaint)
-        }
+        canvas.drawText(averagePaceText,  rect.centerX() + rectHalfX, y, textPaintSmall)
+        canvas.drawText(pace!!, rect.centerX() + rectHalfX, y + rectHalfY * 2f, textPaint)
 
 
     }
 
-    fun addDetails(rep: String, side: String? = null) {
+    fun addDetails(rep: String, pace: String, side: String? = null) {
         this.rep = rep
         this.side = side
+        this.pace = pace
+        invalidate()
+    }
+
+    fun resetDetails() {
+        this.rep = null
+        this.side = null
+        this.pace = null
         invalidate()
     }
 }

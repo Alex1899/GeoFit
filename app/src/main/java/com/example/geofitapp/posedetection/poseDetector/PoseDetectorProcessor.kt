@@ -40,6 +40,7 @@ class PoseDetectorProcessor(
     private var rightJointAngles = mutableListOf<Double>()
 
     private var lastRepResult = 0
+    private var pace: Float = 0f
     private var feedback = ""
     private var torso: Float? = null
     private var exerciseStarted: Boolean? = null
@@ -100,6 +101,7 @@ class PoseDetectorProcessor(
         feedback = ""
         torsoLengths.clear()
         torso = null
+        pace = 0f
         exerciseStarted = false
     }
 
@@ -111,6 +113,7 @@ class PoseDetectorProcessor(
         if (results.pose.allPoseLandmarks.isEmpty()) {
             Log.i("RepCount", "\n=================NOT STARTED=================")
             resetInfo()
+            detailsOverlay.resetDetails()
             return
         }
         if(exerciseStarted == null || exerciseStarted == false){
@@ -139,7 +142,7 @@ class PoseDetectorProcessor(
             )
 
         // this part needs to be different for each exercise
-        var repCounterResult: Int?
+        val repCounterResult: Int?
         if (side == "front") {
             return
 //            rightJointAngles.add(jointAngles[PoseLandmark.RIGHT_ELBOW]!!)
@@ -148,11 +151,12 @@ class PoseDetectorProcessor(
         } else {
             // add angles in single frame
             exerciseJointAngles.addAll(jointAngles.values)
-            repCounterResult = ExerciseUtils.countReps(repCounter!!, jointAngles, side)
+            val pair = ExerciseUtils.countReps(repCounter!!, jointAngles, side)
+            repCounterResult = pair.first
+            pace = pair.second
 
         }
 
-        // maybe pass a list of angles to countReps instead of map of one angle to landmark
         if (repCounterResult !== null) {
             if (repCounterResult > lastRepResult) {
                 lastRepResult = repCounterResult
@@ -180,7 +184,8 @@ class PoseDetectorProcessor(
                 lastRepResult.toString(),
                 jointAngles,
                 feedback,
-                detailsOverlay
+                detailsOverlay,
+                pace
             )
         )
     }

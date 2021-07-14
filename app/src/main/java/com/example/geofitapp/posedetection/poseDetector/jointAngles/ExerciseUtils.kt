@@ -132,9 +132,12 @@ object ExerciseUtils {
         repCounter: ExerciseRepCounter,
         jointAnglesMap: MutableMap<Int, Double>,
         side: String
-    ): Int? {
+    ): Pair<Int?, Float> {
         val repsBefore: Int = repCounter.getTotalReps()
-        val repsAfter: Int = repCounter.addNewFramePoseAngles(jointAnglesMap, side)
+        val pair = repCounter.addNewFramePoseAngles(jointAnglesMap, side)
+        val repsAfter = pair.first
+        val pace = pair.second
+
         var lastRepResult: Int? = null
         if (repsAfter > repsBefore) {
             // Play a fun beep when rep counter updates.
@@ -146,7 +149,7 @@ object ExerciseUtils {
             Log.i("PoseDetectorProcessor", "Rep: $lastRepResult")
 
         }
-        return lastRepResult
+        return Pair(lastRepResult, pace)
     }
 
 }

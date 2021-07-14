@@ -7,14 +7,15 @@ import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Build
 import android.os.Bundle
+import android.os.CountDownTimer
 import android.util.Log
 import android.view.ScaleGestureDetector
+import android.view.View
 import android.view.Window
 import android.view.WindowManager
 import android.widget.CompoundButton
 import android.widget.TextView
 import android.widget.Toast
-import android.widget.ToggleButton
 import androidx.appcompat.app.AppCompatActivity
 import androidx.camera.core.*
 import androidx.camera.lifecycle.ProcessCameraProvider
@@ -22,7 +23,6 @@ import androidx.camera.view.PreviewView
 import androidx.core.app.ActivityCompat
 import androidx.core.app.ActivityCompat.OnRequestPermissionsResultCallback
 import androidx.core.content.ContextCompat
-import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
 import com.example.geofitapp.R
 import com.example.geofitapp.posedetection.helperClasses.GraphicOverlay
@@ -33,6 +33,7 @@ import com.example.geofitapp.ui.cameraPreview.detailsOverlay.DetailsOverlay
 import com.google.android.gms.common.annotation.KeepName
 import com.google.mlkit.common.MlKitException
 import java.util.*
+
 
 /** Live preview demo app for ML Kit APIs using CameraX.  */
 @KeepName
@@ -64,20 +65,23 @@ class CameraXLivePreviewActivity : AppCompatActivity(),
 //        supportActionBar?.hide()
         previewView = findViewById(R.id.preview_view)
 
-        if (previewView == null) {
-            Log.d(TAG, "previewView is null")
-        }
-        graphicOverlay = findViewById(R.id.graphic_overlay)
-        if (graphicOverlay == null) {
-            Log.d(TAG, "graphicOverlay is null")
+        val colorDrawable = ColorDrawable(Color.parseColor("#342c3a"))
+        supportActionBar?.setBackgroundDrawable(colorDrawable)
+
+        // get exercise name
+        val exerciseName = intent.getStringExtra("exerciseName")!!
+        exercise.add(exerciseName)
+        supportActionBar?.title = exerciseName
+
+        if (Build.VERSION.SDK_INT >= 21) {
+            val window: Window = this.window
+            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
+            window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS)
+            window.statusBarColor = this.resources.getColor(R.color.background)
         }
 
-        detailsOverlay = findViewById(R.id.detailsOverlay)
-        if (detailsOverlay == null) {
-            Log.d(TAG, "detailsOverlay is null")
-        }
-//        val facingSwitch = findViewById<ToggleButton>(R.id.facing_switch)
-//        facingSwitch.setOnCheckedChangeListener(this)
+        setupOnCreate()
+
         ViewModelProvider(this, ViewModelProvider.AndroidViewModelFactory.getInstance(application))
             .get(CameraXViewModel::class.java)
             .processCameraProvider
@@ -93,22 +97,45 @@ class CameraXLivePreviewActivity : AppCompatActivity(),
             runtimePermissions
         }
 
+    }
 
-        // get exercise name
-        val exerciseName = intent.getStringExtra("exerciseName")!!
-        exercise.add(exerciseName)
-        // get binding
+    private fun startTimer(){
+        // start timer
+        val timerView = findViewById<TextView>(R.id.timer)
+        object : CountDownTimer(6 * 1000, 1000) {
+            override fun onTick(millisUntilFinished: Long) {
+                val calendar = Calendar.getInstance()
+                calendar.time = Date(millisUntilFinished)
+                val secs = calendar.get(Calendar.SECOND).toString()
+                if(secs == "0"){
+                    bindAnalysisUseCase()
+                }else {
+                    timerView.text = if (secs == "0") {
+                        ""
+                    } else {
+                        secs
+                    }
+                }
+            }
 
-        supportActionBar?.title = exerciseName
-        val colorDrawable = ColorDrawable(Color.parseColor("#342c3a"))
-        supportActionBar?.setBackgroundDrawable(colorDrawable)
+            override fun onFinish() {
+                timerView.visibility = View.GONE
+                findViewById<TextView>(R.id.timerText).visibility = View.GONE
+            }
+        }.start()
+    }
 
-            if (Build.VERSION.SDK_INT >= 21) {
-            val window: Window = this.window
-            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
-            window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS)
-            window.statusBarColor = this.resources.getColor(R.color.background)
+    private fun setupOnCreate(){
+        if (previewView == null) {
+            Log.d(TAG, "previewView is null")
         }
+        graphicOverlay = findViewById(R.id.graphic_overlay)
+        if (graphicOverlay == null) {
+            Log.d(TAG, "graphicOverlay is null")
+        }
+
+//        val facingSwitch = findViewById<ToggleButton>(R.id.facing_switch)
+//        facingSwitch.setOnCheckedChangeListener(this)
 
     }
 
@@ -170,7 +197,7 @@ class CameraXLivePreviewActivity : AppCompatActivity(),
             // As required by CameraX API, unbinds all use cases before trying to re-bind any of them.
             cameraProvider!!.unbindAll()
             bindPreviewUseCase()
-            bindAnalysisUseCase()
+//            bindAnalysisUseCase()
         }
     }
 
@@ -195,6 +222,7 @@ class CameraXLivePreviewActivity : AppCompatActivity(),
             cameraSelector!!, previewUseCase
         )
         attachZoomListener(camera)
+        startTimer()
 
     }
 
@@ -230,6 +258,11 @@ class CameraXLivePreviewActivity : AppCompatActivity(),
     }
 
     private fun bindAnalysisUseCase() {
+        detailsOverlay = findViewById(R.id.detailsOverlay)
+        if (detailsOverlay == null) {
+            Log.d(TAG, "detailsOverlay is null")
+        }
+
         if (cameraProvider == null) {
             return
         }
@@ -294,7 +327,11 @@ class CameraXLivePreviewActivity : AppCompatActivity(),
                     needUpdateGraphicOverlayImageSourceInfo = false
                 }
                 try {
-                    imageProcessor!!.processImageProxy(imageProxy, graphicOverlay!!, detailsOverlay!!)
+                    imageProcessor!!.processImageProxy(
+                        imageProxy,
+                        graphicOverlay!!,
+                        detailsOverlay!!
+                    )
                 } catch (e: MlKitException) {
                     Log.e(
                         TAG,

@@ -24,7 +24,8 @@ class PoseGraphic internal constructor(
     private val repCounterResult: String,
     private val jointAnglesMap: MutableMap<Int, Double>,
     private val feedback: String,
-    private val detailsOverlay: DetailsOverlay
+    private val detailsOverlay: DetailsOverlay,
+    private val pace: Float
 ) : GraphicOverlay.Graphic(overlay) {
     private var zMin = java.lang.Float.MAX_VALUE
     private var zMax = java.lang.Float.MIN_VALUE
@@ -82,9 +83,9 @@ class PoseGraphic internal constructor(
 //                repResultY + POSE_CLASSIFICATION_TEXT_SIZE,
 //                repResultPaint
 //            )
-            detailsOverlay.addDetails(repCounterResult, exercise[1])
-        }else{
-            detailsOverlay.addDetails(repCounterResult)
+            detailsOverlay.addDetails(repCounterResult, String.format("%.1f", pace), exercise[1])
+        } else {
+            detailsOverlay.addDetails(repCounterResult, String.format("%.1f", pace))
 
         }
 //        canvas.drawText(

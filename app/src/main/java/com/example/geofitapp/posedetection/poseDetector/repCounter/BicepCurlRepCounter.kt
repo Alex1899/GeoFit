@@ -1,9 +1,12 @@
 package com.example.geofitapp.posedetection.poseDetector.repCounter
 
 import android.util.Log
+import com.google.common.base.Stopwatch
 import com.google.mlkit.vision.pose.PoseLandmark
+import java.time.Instant
 import java.util.Collections.max
 import java.util.Collections.min
+import java.util.concurrent.TimeUnit
 
 class BicepCurlRepCounter() : ExerciseRepCounter() {
     private var totalReps = 0
@@ -15,6 +18,9 @@ class BicepCurlRepCounter() : ExerciseRepCounter() {
     private var minElbowAngle: Double? = null
     private var maxAngleReinitialized = false
     private var anglesList = mutableListOf<Double>()
+    private var startTime: Long? = null
+    private var finishTime: Float = 0f
+    private var paceAvgList = mutableListOf<Float>()
 
 
     companion object {
@@ -22,7 +28,7 @@ class BicepCurlRepCounter() : ExerciseRepCounter() {
         private const val DEFAULT_EXIT_THRESHOLD = 138
     }
 
-    override fun addNewFramePoseAngles(angleMap: MutableMap<Int, Double>, side: String): Int {
+    override fun addNewFramePoseAngles(angleMap: MutableMap<Int, Double>, side: String): Pair<Int, Float> {
         val id = if (side == "right") {
             PoseLandmark.RIGHT_ELBOW
         } else {
@@ -31,26 +37,46 @@ class BicepCurlRepCounter() : ExerciseRepCounter() {
         anglesList.add(angleMap[id]!!)
         Log.i("RepCount", "fresh anglesList=$anglesList")
 
-
-        // angleList [160, 163, ... min peak, ... max peak ]
-        // [160, 163, 160, 164, 165, 163, 160, 150, 140, ...
         val maxInArray = max(anglesList)
         if (maxElbowAngle == null) {
             maxElbowAngle = maxInArray
-            return totalReps
+
+            return Pair(totalReps, finishTime)
+
         } else if (maxInArray > maxElbowAngle!!) {
             maxElbowAngle = maxInArray
             Log.i("RepCount", "maxAngle updated=${maxInArray}")
-            return totalReps
+            return Pair(totalReps, finishTime)
         }else {
             val lastAngle = anglesList.last()
             if(maxInArray == maxElbowAngle!! && maxInArray - lastAngle < 5){
-                return totalReps
+                return Pair(totalReps, finishTime)
             }
+            if(startTime == null){
+                startTime = System.currentTimeMillis()
+                Log.i("Pace", "start time initialized")
+                Log.i("Pace", "startTime = $startTime")
+
+            }
+
             if (poseEntered) {
                 Log.i("RepCount", "last maxAngle=$maxElbowAngle")
                 poseEntered = false
                 totalReps++
+                Log.i("Pace", "startTime again = $startTime")
+                val now = System.currentTimeMillis()
+                Log.i("Pace", "now  = $now")
+                val diff = (now - startTime!!).toFloat()
+                Log.i("Pace", "diff = $diff")
+                Log.i("Pace", "diff/1000 = ${String.format("%.3f",diff/1000)}")
+
+                val endTime = ((diff/ 1000) % 60)
+                paceAvgList.add(endTime)
+                finishTime = paceAvgList.average().toFloat()
+                startTime = null
+
+                Log.i("Pace", "finishTime = ${String.format("%.1f", finishTime)}")
+
                 val index = anglesList.indexOf(maxElbowAngle)
                 anglesList = anglesList.subList(index+1, anglesList.size)
 
@@ -58,7 +84,7 @@ class BicepCurlRepCounter() : ExerciseRepCounter() {
                 minElbowAngle = null
                 Log.i("RepCount", "===================\n" +
                         "Rep $totalReps \n===================")
-                return totalReps
+                return Pair(totalReps, finishTime)
             }
         }
         Log.i("RepCount", "maxAngle=$maxElbowAngle")
@@ -68,11 +94,11 @@ class BicepCurlRepCounter() : ExerciseRepCounter() {
         val minInArray = min(anglesList)
         if (minElbowAngle == null) {
             minElbowAngle = minInArray
-            return totalReps
+            return Pair(totalReps, finishTime)
         } else if (minInArray < minElbowAngle!!) {
             minElbowAngle = minInArray
             Log.i("RepCount", "current min updated to=$minInArray")
-            return totalReps
+            return Pair(totalReps, finishTime)
         } else {
             if (anglesList.last() - minElbowAngle!! >= 30) {
                 // weight going down
@@ -85,7 +111,7 @@ class BicepCurlRepCounter() : ExerciseRepCounter() {
         }
         Log.i("RepCount", "minAngle=$minElbowAngle")
 
-        return totalReps
+        return Pair(totalReps, finishTime)
 
 
     }
@@ -151,6 +177,9 @@ class BicepCurlRepCounter() : ExerciseRepCounter() {
 
     override fun resetTotalReps() {
         totalReps = 0
+        paceAvgList.clear()
+        finishTime = 0f
+        startTime = null
     }
 
 
