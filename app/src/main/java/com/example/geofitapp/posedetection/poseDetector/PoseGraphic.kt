@@ -25,7 +25,8 @@ class PoseGraphic internal constructor(
     private val jointAnglesMap: MutableMap<Int, Double>,
     private val feedback: String,
     private val detailsOverlay: DetailsOverlay,
-    private val pace: Float
+    private val pace: Float,
+
 ) : GraphicOverlay.Graphic(overlay) {
     private var zMin = java.lang.Float.MAX_VALUE
     private var zMax = java.lang.Float.MIN_VALUE
@@ -67,40 +68,15 @@ class PoseGraphic internal constructor(
             return
         }
 
-
-        val repResultX = POSE_CLASSIFICATION_TEXT_SIZE * 0.5f
-        val repResultY = canvas.height - POSE_CLASSIFICATION_TEXT_SIZE * 3.5f
-//        canvas.drawText(
-//            "Exercise: ${exercise[0]}",
-//            repResultX,
-//            repResultY,
-//            repResultPaint
-//        )
         if (exercise.size > 1) {
-//            canvas.drawText(
-//                "Detected Side: ${exercise[1]}",
-//                repResultX,
-//                repResultY + POSE_CLASSIFICATION_TEXT_SIZE,
-//                repResultPaint
-//            )
+
             detailsOverlay.addDetails(repCounterResult, String.format("%.1f", pace), exercise[1])
         } else {
             detailsOverlay.addDetails(repCounterResult, String.format("%.1f", pace))
 
         }
-//        canvas.drawText(
-//            "Total Reps: $repCounterResult",
-//            repResultX,
-//            repResultY + POSE_CLASSIFICATION_TEXT_SIZE * 2,
-//            repResultPaint
-//        )
-//        canvas.drawText(
-//            "Exercise Form: $feedback",
-//            repResultX,
-//            repResultY + POSE_CLASSIFICATION_TEXT_SIZE * 3,
-//            repResultPaint
-//        )
 
+        var elbow: PoseLandmark? = null
         if (exercise[1] == "front") {
             val rightElbow = pose.getPoseLandmark(PoseLandmark.RIGHT_ELBOW)!!
             val leftElbow = pose.getPoseLandmark(PoseLandmark.LEFT_ELBOW)!!
@@ -115,7 +91,7 @@ class PoseGraphic internal constructor(
             drawPoint(canvas, leftShoulder.position3D, whitePaint)
 
         } else {
-            val elbow: PoseLandmark = if (exercise[1] == "right") {
+            elbow= if (exercise[1] == "right") {
                 pose.getPoseLandmark(PoseLandmark.RIGHT_ELBOW)!!
             } else {
                 pose.getPoseLandmark(PoseLandmark.LEFT_ELBOW)!!
@@ -124,18 +100,19 @@ class PoseGraphic internal constructor(
         }
 
 
-        // Draw inFrameLikelihood for all points
-        if (showInFrameLikelihood) {
-            for ((lmId, angle) in jointAnglesMap) {
-                val lm = pose.getPoseLandmark(lmId)!!
-                canvas.drawText(
-                    angle.roundToInt().toString(),
-                    translateX(lm.position.x),
-                    translateY(lm.position.y),
-                    whitePaint
-                )
-            }
-        }
+
+        // Draw degrees for all points
+//        if (showInFrameLikelihood) {
+//            for ((lmId, angle) in jointAnglesMap) {
+//                val lm = pose.getPoseLandmark(lmId)!!
+//                canvas.drawText(
+//                    angle.roundToInt().toString(),
+//                    translateX(lm.position.x),
+//                    translateY(lm.position.y),
+//                    whitePaint
+//                )
+//            }
+//        }
     }
 
     private fun drawPoint(canvas: Canvas, landmark: PointF3D, paint: Paint) {

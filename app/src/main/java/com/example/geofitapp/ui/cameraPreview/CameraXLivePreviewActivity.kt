@@ -51,6 +51,8 @@ class CameraXLivePreviewActivity : AppCompatActivity(),
     private var lensFacing = CameraSelector.LENS_FACING_BACK
     private var cameraSelector: CameraSelector? = null
     private var exercise: MutableList<String> = mutableListOf()
+    private lateinit var countTimer: CountDownTimer
+    private var timerCanceled: Boolean = false
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -102,7 +104,7 @@ class CameraXLivePreviewActivity : AppCompatActivity(),
     private fun startTimer(){
         // start timer
         val timerView = findViewById<TextView>(R.id.timer)
-        object : CountDownTimer(6 * 1000, 1000) {
+        countTimer = object: CountDownTimer(6 * 1000, 1000) {
             override fun onTick(millisUntilFinished: Long) {
                 val calendar = Calendar.getInstance()
                 calendar.time = Date(millisUntilFinished)
@@ -117,12 +119,13 @@ class CameraXLivePreviewActivity : AppCompatActivity(),
                     }
                 }
             }
-
             override fun onFinish() {
                 timerView.visibility = View.GONE
                 findViewById<TextView>(R.id.timerText).visibility = View.GONE
             }
-        }.start()
+        }
+
+        countTimer.start()
     }
 
     private fun setupOnCreate(){
@@ -176,6 +179,7 @@ class CameraXLivePreviewActivity : AppCompatActivity(),
     public override fun onResume() {
         super.onResume()
         bindAllCameraUseCases()
+        timerCanceled = false
     }
 
     override fun onPause() {
@@ -183,6 +187,8 @@ class CameraXLivePreviewActivity : AppCompatActivity(),
         if (imageProcessor != null) {
             imageProcessor!!.stop()
         }
+        countTimer.cancel()
+        timerCanceled = true
     }
 
     public override fun onDestroy() {
@@ -190,6 +196,8 @@ class CameraXLivePreviewActivity : AppCompatActivity(),
         if (imageProcessor != null) {
             imageProcessor!!.stop()
         }
+        countTimer.cancel()
+        timerCanceled = true
     }
 
     private fun bindAllCameraUseCases() {
@@ -222,7 +230,9 @@ class CameraXLivePreviewActivity : AppCompatActivity(),
             cameraSelector!!, previewUseCase
         )
         attachZoomListener(camera)
-        startTimer()
+        if(!timerCanceled){
+            startTimer()
+        }
 
     }
 

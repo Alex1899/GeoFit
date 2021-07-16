@@ -15,6 +15,8 @@ import com.google.android.gms.tasks.Task
 import com.google.mlkit.vision.common.InputImage
 import com.google.mlkit.vision.pose.*
 import java.nio.ByteBuffer
+import java.util.Collections.max
+import java.util.Collections.min
 import java.util.concurrent.Executor
 import java.util.concurrent.Executors
 
@@ -36,6 +38,7 @@ class PoseDetectorProcessor(
     private var repCounter: ExerciseRepCounter? = null
     private var repAnalyzer: ExerciseAnalysis? = null
     private var exerciseJointAngles = mutableListOf<Double>()
+    private var avgAngle : Float? = null
     private var leftJointAngles = mutableListOf<Double>()
     private var rightJointAngles = mutableListOf<Double>()
 
@@ -154,7 +157,6 @@ class PoseDetectorProcessor(
             val pair = ExerciseUtils.countReps(repCounter!!, jointAngles, side)
             repCounterResult = pair.first
             pace = pair.second
-
         }
 
         if (repCounterResult !== null) {
@@ -185,7 +187,7 @@ class PoseDetectorProcessor(
                 jointAngles,
                 feedback,
                 detailsOverlay,
-                pace
+                pace,
             )
         )
     }

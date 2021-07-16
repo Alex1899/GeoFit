@@ -35,6 +35,7 @@ class BicepCurlRepCounter() : ExerciseRepCounter() {
             PoseLandmark.LEFT_ELBOW
         }
         anglesList.add(angleMap[id]!!)
+
         Log.i("RepCount", "fresh anglesList=$anglesList")
 
         val maxInArray = max(anglesList)
