@@ -1,11 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/navigation"
     app:startDestination="@id/homePageFragment">
 
     <fragment
         android:id="@+id/homePageFragment"
         android:name="com.example.geofitapp.ui.home.HomePageFragment"
-        android:label="HomePageFragment" />
+        tools:layout="@layout/fragment_home_page">
+        <action
+            android:id="@+id/action_homePageFragment_to_exercisePreviewFragment"
+            app:destination="@id/exercisePreviewFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/exercisePreviewFragment"
+        android:name="com.example.geofitapp.ui.exercisePreview.ExercisePreviewFragment"
+        tools:layout="@layout/fragment_exercise_preview">
+        <argument
+            android:name="exerciseData"
+            app:argType="com.example.geofitapp.ui.exercisePreview.ExerciseData" />
+    </fragment>
 </navigation>

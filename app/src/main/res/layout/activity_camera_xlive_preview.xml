@@ -1,107 +1,317 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:keepScreenOn="true">
+<layout xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
 
-<!--    <LinearLayout-->
-<!--        android:id="@+id/exerciseDetails"-->
-<!--        android:layout_width="match_parent"-->
-<!--        android:layout_height="70dp"-->
-<!--        app:layout_constraintTop_toTopOf="@id/preview_view"-->
-<!--        android:orientation="horizontal"-->
-<!--        android:background="@drawable/layout_bg"-->
-<!--        >-->
-<!--        <TextView-->
-<!--            android:id="@+id/exerciseName"-->
-<!--            android:layout_width="wrap_content"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:textColor="@color/white"-->
-<!--            android:textSize="25sp"-->
-<!--            />-->
+    <data>
 
-<!--    </LinearLayout>-->
-<!--    -->
+    </data>
 
-    <androidx.camera.view.PreviewView
-        android:id="@+id/preview_view"
+    <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"/>
+        android:layout_height="match_parent"
+        android:keepScreenOn="true">
 
-    <TextView
-        android:id="@+id/timerText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/timer"
-        android:textColor="@color/white"
-        android:textSize="25sp"
-        android:text="@string/timer_text"
-        android:textAlignment="center"
-        />
+        <!--    <LinearLayout-->
+        <!--        android:id="@+id/exerciseDetails"-->
+        <!--        android:layout_width="match_parent"-->
+        <!--        android:layout_height="70dp"-->
+        <!--        app:layout_constraintTop_toTopOf="@id/preview_view"-->
+        <!--        android:orientation="horizontal"-->
+        <!--        android:background="@drawable/layout_bg"-->
+        <!--        >-->
+        <!--        <TextView-->
+        <!--            android:id="@+id/exerciseName"-->
+        <!--            android:layout_width="wrap_content"-->
+        <!--            android:layout_height="wrap_content"-->
+        <!--            android:textColor="@color/white"-->
+        <!--            android:textSize="25sp"-->
+        <!--            />-->
 
-    <TextView
-        android:id="@+id/timer"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        android:textColor="@color/white"
-        android:textSize="50sp"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+        <!--    </LinearLayout>-->
+        <!--    -->
 
-    <com.example.geofitapp.ui.cameraPreview.detailsOverlay.DetailsOverlay
-        android:id="@+id/detailsOverlay"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        app:layout_constraintLeft_toLeftOf="@id/preview_view"
-        app:layout_constraintRight_toRightOf="@id/preview_view"
-        app:layout_constraintTop_toTopOf="@id/preview_view"
-        app:layout_constraintBottom_toBottomOf="@id/preview_view"/>
+        <androidx.camera.view.PreviewView
+            android:id="@+id/preview_view"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/timerText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="80dp"
+            android:shadowColor="@color/black"
+            android:shadowDx="-2"
+            android:shadowDy="2"
+            android:shadowRadius="15"
+            android:text="@string/timer_text"
+            android:textAlignment="center"
+            android:textColor="@color/white"
+            android:textSize="25sp"
+            app:layout_constraintBottom_toTopOf="@id/timer"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/timer"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:shadowColor="@color/black"
+            android:shadowDx="0"
+            android:shadowDy="0"
+            android:shadowRadius="10"
+            android:textColor="@color/white"
+            android:textSize="50sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/timerText" />
 
 
-    <com.example.geofitapp.posedetection.helperClasses.GraphicOverlay
-        android:id="@+id/graphic_overlay"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        app:layout_constraintLeft_toLeftOf="@id/preview_view"
-        app:layout_constraintRight_toRightOf="@id/preview_view"
-        app:layout_constraintTop_toTopOf="@id/preview_view"
-        app:layout_constraintBottom_toBottomOf="@id/preview_view"/>
+        <LinearLayout
+            android:id="@+id/detailsOverlayView"
+            android:layout_width="match_parent"
+            android:layout_height="70dp"
+            android:background="@drawable/layout_bg"
+            android:gravity="center_horizontal"
+            android:orientation="horizontal"
+            android:paddingTop="4dp"
+            android:visibility="gone"
+            tools:visibility="visible"
+            app:layout_constraintBottom_toBottomOf="parent">
 
-<!--    <include-->
-<!--        android:id="@+id/settings_button"-->
-<!--        layout="@layout/settings_style"-->
-<!--        android:layout_width="wrap_content"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        app:layout_constraintRight_toRightOf="@id/preview_view"-->
-<!--        app:layout_constraintTop_toTopOf="@id/preview_view" />-->
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="20dp"
+                android:gravity="center_horizontal"
+                android:orientation="vertical">
 
-<!--    <LinearLayout-->
-<!--        android:id="@id/control"-->
-<!--        android:layout_width="match_parent"-->
-<!--        android:layout_height="60dp"-->
-<!--        app:layout_constraintBottom_toBottomOf="parent"-->
-<!--        android:background="#000"-->
-<!--        android:orientation="horizontal">-->
+                <TextView
+                    style="@style/OverlayTextView"
+                    android:text="Reps" />
 
-<!--        <ToggleButton-->
-<!--            android:id="@+id/facing_switch"-->
-<!--            android:layout_width="48dp"-->
-<!--            android:layout_height="48dp"-->
-<!--            android:layout_gravity="center_vertical"-->
-<!--            android:background="@layout/toggle_style"-->
-<!--            android:checked="false"-->
-<!--            android:textOff=""-->
-<!--            android:textOn=""/>-->
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
 
-<!--    </LinearLayout>-->
+                    <TextView
+                        android:id="@+id/reps_overlay_text"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/white"
+                        android:textSize="30sp"
+                        app:layout_constraintEnd_toStartOf="@id/testRep"
+                        app:layout_constraintTop_toTopOf="parent"
+                        tools:text="0" />
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+                    <TextView
+                        android:id="@+id/testRep"
+                        style="@style/DetailsTextView"
+                        app:layout_constraintStart_toEndOf="@id/reps_overlay_text"
+                        app:layout_constraintTop_toTopOf="parent"
+                        tools:text="/12" />
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="20dp"
+                android:gravity="center_horizontal"
+                android:orientation="vertical"
+
+                >
+
+                <TextView
+                    style="@style/OverlayTextView"
+                    android:text="Sets" />
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:id="@+id/sets_overlay_text"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/white"
+                        android:textSize="30sp"
+                        app:layout_constraintEnd_toStartOf="@id/testSet"
+                        app:layout_constraintTop_toTopOf="parent"
+                        tools:text="1"
+
+                        />
+
+                    <TextView
+                        android:id="@+id/testSet"
+                        style="@style/DetailsTextView"
+                        app:layout_constraintStart_toEndOf="@id/sets_overlay_text"
+                        app:layout_constraintTop_toTopOf="parent"
+                        tools:text="/3" />
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+            </LinearLayout>
+
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="20dp"
+                android:gravity="center_horizontal"
+                android:orientation="vertical"
+
+                >
+
+                <TextView
+                    style="@style/OverlayTextView"
+                    android:text="Side" />
+
+                <TextView
+                    android:id="@+id/side_overlay_text"
+                    style="@style/DetailsTextView"
+                    android:text="@string/side_overlay_text"
+                    android:textSize="25sp"
+                    tools:text="Front" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="20dp"
+                android:gravity="center_horizontal"
+                android:orientation="vertical"
+
+                >
+
+                <TextView
+                    style="@style/OverlayTextView"
+                    android:text="Pace" />
+
+                <TextView
+                    android:id="@+id/pace_overlay_text"
+                    style="@style/DetailsTextView"
+                    android:text="@string/pace_overlay_text"
+                    android:textSize="30sp"
+                    tools:text="2.0s" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center_horizontal"
+                android:orientation="vertical"
+
+                >
+
+                <TextView
+                    style="@style/OverlayTextView"
+                    android:text="Errors" />
+
+                <TextView
+                    android:id="@+id/errors_overlay_text"
+                    style="@style/DetailsTextView"
+                    android:text="@string/erros_overlay_text"
+                    android:textSize="30sp"
+                    tools:text="20" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <com.example.geofitapp.ui.cameraPreview.detailsOverlay.DetailsOverlay
+            android:id="@+id/detailsOverlay"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_constraintBottom_toBottomOf="@id/preview_view"
+            app:layout_constraintLeft_toLeftOf="@id/preview_view"
+            app:layout_constraintRight_toRightOf="@id/preview_view"
+            app:layout_constraintTop_toTopOf="@id/preview_view" />
+
+        <FrameLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:layout_marginEnd="15dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <com.example.geofitapp.ui.cameraPreview.detailsOverlay.CameraOptionsOverlay
+                android:layout_width="@dimen/camera_options_overlay_width"
+                android:layout_height="@dimen/camera_options_overlay_height" />
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:orientation="vertical">
+
+                <ImageView
+                    android:id="@+id/switch_camera"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:contentDescription="TODO"
+                    android:src="@drawable/ic_switch_camera" />
+
+                <ImageView
+                    android:id="@+id/flash_icon"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:contentDescription="TODO"
+                    android:src="@drawable/ic_flash" />
+            </LinearLayout>
+
+
+        </FrameLayout>
+
+
+        <com.example.geofitapp.posedetection.helperClasses.GraphicOverlay
+            android:id="@+id/graphic_overlay"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_constraintBottom_toBottomOf="@id/preview_view"
+            app:layout_constraintLeft_toLeftOf="@id/preview_view"
+            app:layout_constraintRight_toRightOf="@id/preview_view"
+            app:layout_constraintTop_toTopOf="@id/preview_view" />
+
+        <!--    <include-->
+        <!--        android:id="@+id/settings_button"-->
+        <!--        layout="@layout/settings_style"-->
+        <!--        android:layout_width="wrap_content"-->
+        <!--        android:layout_height="wrap_content"-->
+        <!--        app:layout_constraintRight_toRightOf="@id/preview_view"-->
+        <!--        app:layout_constraintTop_toTopOf="@id/preview_view" />-->
+
+        <!--    <LinearLayout-->
+        <!--        android:id="@id/control"-->
+        <!--        android:layout_width="match_parent"-->
+        <!--        android:layout_height="60dp"-->
+        <!--        app:layout_constraintBottom_toBottomOf="parent"-->
+        <!--        android:background="#000"-->
+        <!--        android:orientation="horizontal">-->
+
+        <!--        <ToggleButton-->
+        <!--            android:id="@+id/facing_switch"-->
+        <!--            android:layout_width="48dp"-->
+        <!--            android:layout_height="48dp"-->
+        <!--            android:layout_gravity="center_vertical"-->
+        <!--            android:background="@layout/toggle_style"-->
+        <!--            android:checked="false"-->
+        <!--            android:textOff=""-->
+        <!--            android:textOn=""/>-->
+
+        <!--    </LinearLayout>-->
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

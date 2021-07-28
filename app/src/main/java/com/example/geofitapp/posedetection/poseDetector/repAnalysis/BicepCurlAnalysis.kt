@@ -8,7 +8,7 @@ import java.util.Collections.max
 import java.util.Collections.min
 import kotlin.math.roundToInt
 
-class BicepCurlAnalysis : ExerciseAnalysis() {
+object BicepCurlAnalysis : ExerciseAnalysis() {
 
     override fun getExercisePose(
         normalizedLm: MutableList<PointF3D>,

@@ -16,6 +16,7 @@ import androidx.annotation.Nullable;
 import androidx.annotation.RequiresPermission;
 
 import com.example.geofitapp.posedetection.preference.PreferenceUtils;
+import com.example.geofitapp.ui.cameraPreview.detailsOverlay.DetailsOverlay;
 import com.google.android.gms.common.images.Size;
 
 import java.io.IOException;
@@ -75,6 +76,7 @@ public class CameraSource {
     private SurfaceTexture dummySurfaceTexture;
 
     private final GraphicOverlay graphicOverlay;
+    private final DetailsOverlay detailsOverlay;
 
     /**
      * Dedicated thread and associated runnable for calling into the detector with frames, as the
@@ -98,10 +100,11 @@ public class CameraSource {
      */
     private final IdentityHashMap<byte[], ByteBuffer> bytesToByteBuffer = new IdentityHashMap<>();
 
-    public CameraSource(Activity activity, GraphicOverlay overlay) {
+    public CameraSource(Activity activity, GraphicOverlay overlay, DetailsOverlay details) {
         this.activity = activity;
         graphicOverlay = overlay;
         graphicOverlay.clear();
+        detailsOverlay = details;
         processingRunnable = new FrameProcessingRunnable();
     }
 
@@ -675,7 +678,9 @@ public class CameraSource {
                                         .setHeight(previewSize.getHeight())
                                         .setRotation(rotationDegrees)
                                         .build(),
-                                graphicOverlay);
+                                graphicOverlay,
+                                detailsOverlay
+                                );
                     }
                 } catch (Exception t) {
                     Log.e(TAG, "Exception thrown from receiver.", t);

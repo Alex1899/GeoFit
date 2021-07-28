@@ -20,4 +20,8 @@ class HomePageViewModel : ViewModel() {
         _exerciseName.value = name
     }
 
+    fun doneNavigating(){
+        _exerciseName.value = ""
+    }
+
 }

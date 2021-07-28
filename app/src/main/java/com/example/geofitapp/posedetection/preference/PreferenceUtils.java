@@ -17,7 +17,9 @@ import com.google.mlkit.vision.pose.accurate.AccuratePoseDetectorOptions;
 import com.google.mlkit.vision.pose.defaults.PoseDetectorOptions;
 
 
-/** Utility class to retrieve shared preferences. */
+/**
+ * Utility class to retrieve shared preferences.
+ */
 public class PreferenceUtils {
 
     private static final int POSE_DETECTOR_PERFORMANCE_MODE_FAST = 1;
@@ -59,13 +61,14 @@ public class PreferenceUtils {
         Preconditions.checkArgument(
                 lensfacing == CameraSelector.LENS_FACING_BACK
                         || lensfacing == CameraSelector.LENS_FACING_FRONT);
-        String prefKey =
-                lensfacing == CameraSelector.LENS_FACING_BACK
-                        ? context.getString(R.string.pref_key_camerax_rear_camera_target_resolution)
-                        : context.getString(R.string.pref_key_camerax_front_camera_target_resolution);
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+//        String prefKey =
+//                lensfacing == CameraSelector.LENS_FACING_BACK
+//                        ? context.getString(R.string.pref_key_camerax_rear_camera_target_resolution)
+//                        : context.getString(R.string.pref_key_camerax_front_camera_target_resolution);
+//        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
         try {
-            return android.util.Size.parseSize(sharedPreferences.getString(prefKey, null));
+//            return android.util.Size.parseSize(sharedPreferences.getString(prefKey, null));
+            return android.util.Size.parseSize("400x400");
         } catch (Exception e) {
             return null;
         }
@@ -95,8 +98,11 @@ public class PreferenceUtils {
 //                    .setDetectorMode(AccuratePoseDetectorOptions.STREAM_MODE)
 //                    .build();
 //        }
-        return new AccuratePoseDetectorOptions.Builder()
-                .setDetectorMode(AccuratePoseDetectorOptions.STREAM_MODE)
+//        return new AccuratePoseDetectorOptions.Builder()
+//                .setDetectorMode(AccuratePoseDetectorOptions.STREAM_MODE)
+//                .build();
+        return new PoseDetectorOptions.Builder()
+                .setDetectorMode(PoseDetectorOptions.STREAM_MODE)
                 .build();
     }
 
@@ -175,5 +181,6 @@ public class PreferenceUtils {
         return true;
     }
 
-    private PreferenceUtils() {}
+    private PreferenceUtils() {
+    }
 }

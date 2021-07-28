@@ -8,7 +8,7 @@ import java.util.Collections.max
 import java.util.Collections.min
 import java.util.concurrent.TimeUnit
 
-class BicepCurlRepCounter() : ExerciseRepCounter() {
+object BicepCurlRepCounter : ExerciseRepCounter() {
     private var totalReps = 0
     private var startingAngle: Double? = null
     private var leftStartingAngle: Double? = null
@@ -16,62 +16,65 @@ class BicepCurlRepCounter() : ExerciseRepCounter() {
     private var poseEntered = false
     private var maxElbowAngle: Double? = null
     private var minElbowAngle: Double? = null
-    private var maxAngleReinitialized = false
     private var anglesList = mutableListOf<Double>()
+    private var analysisAngleList = mutableListOf<Double>()
     private var startTime: Long? = null
     private var finishTime: Float = 0f
     private var paceAvgList = mutableListOf<Float>()
 
+    private const val DEFAULT_ENTER_THRESHOLD = 90
+    private const val DEFAULT_EXIT_THRESHOLD = 130
 
-    companion object {
-        private const val DEFAULT_ENTER_THRESHOLD = 90
-        private const val DEFAULT_EXIT_THRESHOLD = 138
-    }
 
-    override fun addNewFramePoseAngles(angleMap: MutableMap<Int, Double>, side: String): Pair<Int, Float> {
+    override fun addNewFramePoseAngles(
+        angleMap: MutableMap<Int, Double>,
+        side: String
+    ): Triple<Int, Float, MutableList<Double>?> {
         val id = if (side == "right") {
             PoseLandmark.RIGHT_ELBOW
         } else {
             PoseLandmark.LEFT_ELBOW
         }
-        anglesList.add(angleMap[id]!!)
+        val freshAngle = angleMap[id]!!
+        anglesList.add(freshAngle)
 
-        Log.i("RepCount", "fresh anglesList=$anglesList")
+        Log.i("RepCount", "fresh angles=$anglesList")
+        Log.i("RepCount", "==================================================================")
+        Log.i("RepCount", "Initial maxAngle=$maxElbowAngle    minAngle=$minElbowAngle")
+        Log.i("RepCount", "==================================================================")
 
-        val maxInArray = max(anglesList)
+
+
         if (maxElbowAngle == null) {
-            maxElbowAngle = maxInArray
+            maxElbowAngle = freshAngle
+            return Triple(totalReps, finishTime, null)
 
-            return Pair(totalReps, finishTime)
+        } else if (freshAngle >= maxElbowAngle!!) {
+            maxElbowAngle = freshAngle
+            Log.i("RepCount", "maxAngle updated=${freshAngle}")
+            return Triple(totalReps, finishTime, null)
+        } else {
+            // TODO
+            // if rep count reached return
 
-        } else if (maxInArray > maxElbowAngle!!) {
-            maxElbowAngle = maxInArray
-            Log.i("RepCount", "maxAngle updated=${maxInArray}")
-            return Pair(totalReps, finishTime)
-        }else {
-            val lastAngle = anglesList.last()
-            if(maxInArray == maxElbowAngle!! && maxInArray - lastAngle < 5){
-                return Pair(totalReps, finishTime)
-            }
-            if(startTime == null){
+            if (startTime == null) {
                 startTime = System.currentTimeMillis()
                 Log.i("Pace", "start time initialized")
                 Log.i("Pace", "startTime = $startTime")
+            }
 
+            if ( maxElbowAngle!! - freshAngle <= 30) {
+                return Triple(totalReps, finishTime, null)
             }
 
             if (poseEntered) {
                 Log.i("RepCount", "last maxAngle=$maxElbowAngle")
                 poseEntered = false
-                totalReps++
-                Log.i("Pace", "startTime again = $startTime")
                 val now = System.currentTimeMillis()
-                Log.i("Pace", "now  = $now")
                 val diff = (now - startTime!!).toFloat()
-                Log.i("Pace", "diff = $diff")
-                Log.i("Pace", "diff/1000 = ${String.format("%.3f",diff/1000)}")
 
-                val endTime = ((diff/ 1000) % 60)
+
+                val endTime = ((diff / 1000) % 60)
                 paceAvgList.add(endTime)
                 finishTime = paceAvgList.average().toFloat()
                 startTime = null
@@ -79,40 +82,43 @@ class BicepCurlRepCounter() : ExerciseRepCounter() {
                 Log.i("Pace", "finishTime = ${String.format("%.1f", finishTime)}")
 
                 val index = anglesList.indexOf(maxElbowAngle)
-                anglesList = anglesList.subList(index+1, anglesList.size)
+                analysisAngleList = anglesList.subList(0, index + 1)
 
+                anglesList = anglesList.subList(index + 1, anglesList.size)
                 maxElbowAngle = null
                 minElbowAngle = null
-                Log.i("RepCount", "===================\n" +
-                        "Rep $totalReps \n===================")
-                return Pair(totalReps, finishTime)
+                Log.i(
+                    "RepCount", "===================\n" +
+                            "Rep $totalReps \n==================="
+                )
+                return Triple(totalReps, finishTime, analysisAngleList)
             }
         }
         Log.i("RepCount", "maxAngle=$maxElbowAngle")
 
 
         // min angle
-        val minInArray = min(anglesList)
         if (minElbowAngle == null) {
-            minElbowAngle = minInArray
-            return Pair(totalReps, finishTime)
-        } else if (minInArray < minElbowAngle!!) {
-            minElbowAngle = minInArray
-            Log.i("RepCount", "current min updated to=$minInArray")
-            return Pair(totalReps, finishTime)
+            minElbowAngle = freshAngle
+            Log.i("RepCount", "minAngle set = $minElbowAngle")
+        } else if (minElbowAngle!! > freshAngle) {
+            minElbowAngle = freshAngle
+            Log.i("RepCount", "current min updated to=$freshAngle")
         } else {
-            if (anglesList.last() - minElbowAngle!! >= 30) {
+            if (freshAngle - minElbowAngle!! >= 30) {
                 // weight going down
                 val lastIndex = anglesList.lastIndex
-                anglesList = anglesList.slice(lastIndex-1..lastIndex) as MutableList<Double>
+                anglesList = anglesList.slice(lastIndex - 1..lastIndex) as MutableList<Double>
                 Log.i("RepCount", "anglesList sliced=$anglesList")
                 maxElbowAngle = null
                 poseEntered = true
+                totalReps++
+
             }
         }
-        Log.i("RepCount", "minAngle=$minElbowAngle")
+        Log.i("RepCount", "\n\nminAngle=$minElbowAngle\n\n")
 
-        return Pair(totalReps, finishTime)
+        return Triple(totalReps, finishTime, null)
 
 
     }

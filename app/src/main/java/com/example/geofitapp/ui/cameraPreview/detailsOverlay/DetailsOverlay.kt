@@ -16,10 +16,10 @@ class DetailsOverlay constructor(context: Context?, attributeSet: AttributeSet?)
     private var rep: String? = null
     private var side: String? = null
     private var pace: String? = null
-    val path = Path()
-    val optionsPath = Path()
-//    private val rect = RectF(0f, 0f, width.toFloat(), 300f);
+    private val path = Path()
+    private val optionsPath = Path()
 
+    //    private val rect = RectF(0f, 0f, width.toFloat(), 300f);
     private val paint: Paint = Paint()
     private val textPaint: Paint = Paint()
     private val textPaintSmall: Paint = Paint()
@@ -28,7 +28,6 @@ class DetailsOverlay constructor(context: Context?, attributeSet: AttributeSet?)
     private val sideText = "SIDE"
     private val averagePaceText = "PACE"
 
-
     private val corners = floatArrayOf(
         80f, 80f,
         80f, 80f,
@@ -36,12 +35,7 @@ class DetailsOverlay constructor(context: Context?, attributeSet: AttributeSet?)
         0f, 0f,
     )
 
-    private val optionsCorners = floatArrayOf(
-        80f, 80f,
-        80f, 80f,
-        80f, 80f,
-        80f, 80f,
-    )
+
 
 
     init {
@@ -55,10 +49,6 @@ class DetailsOverlay constructor(context: Context?, attributeSet: AttributeSet?)
         textPaint.textAlign = Paint.Align.CENTER;
         textPaintSmall.textAlign = Paint.Align.CENTER;
         iconPaint.color = Color.WHITE
-
-
-
-
     }
 
     override fun onDraw(canvas: Canvas) {
@@ -69,45 +59,7 @@ class DetailsOverlay constructor(context: Context?, attributeSet: AttributeSet?)
             return
         }
 
-        val rect =
-            RectF(0f, height.toFloat() - 200f, width.toFloat(), height.toFloat())
-
-        val rectHalfY = (height.toFloat() - rect.centerY()) / 2
-        val rectHalfX = (width.toFloat() - rect.centerX()) / 2
-        Log.i("Overlay", "rect half =$rectHalfX")
-        Log.i("Overlay", "rect center =${rect.centerX()}")
-
-
-        val y = rect.centerY() - rectHalfY
-        path.addRoundRect(rect, corners, Path.Direction.CW)
-
-        canvas.drawPath(path, paint)
-
-        // draw camera options on top right
-        val optionsRect = RectF(width.toFloat() - 150f, 30f, width.toFloat() - 30f, height.toFloat() - height.toFloat() * 0.8f)
-        optionsPath.addRoundRect(optionsRect, optionsCorners, Path.Direction.CW)
-        canvas.drawPath(optionsPath, paint)
-
-        val optionsDivCenterX = optionsRect.centerX()
-        val optionsDivCentery = optionsRect.centerY()
-
-
-        val cameraIcon = AppCompatResources.getDrawable(context, R.drawable.ic_rotate_camera)!!.toBitmap()
-
-        canvas.drawBitmap(cameraIcon, optionsDivCenterX - (cameraIcon.width /2), optionsDivCentery * 0.25f, iconPaint )
-        // draw bottom part
-        canvas.drawText(repsText, rectHalfX * 0.5f, y, textPaintSmall)
-        canvas.drawText(rep!!, rectHalfX * 0.5f, y + rectHalfY * 2f, textPaint)
-
-        canvas.drawText(sideText, rectHalfX * 1.5f, y, textPaintSmall)
-        canvas.drawText(side!!, rectHalfX * 1.5f,y + rectHalfY * 2f, textPaint)
-
-        canvas.drawText(averagePaceText,  rectHalfX * 2.5f, y, textPaintSmall)
-        canvas.drawText("${pace!!}s", rectHalfX * 2.5f, y + rectHalfY * 2f, textPaint)
-
-        canvas.drawText("ERRORS",  rectHalfX * 3.5f, y, textPaintSmall)
-        canvas.drawText("0", rectHalfX * 3.5f, y + rectHalfY * 2f, textPaint)
-
+//        drawBottomPart(canvas)
     }
 
     fun addDetails(rep: String, pace: String, side: String? = null) {
@@ -122,5 +74,35 @@ class DetailsOverlay constructor(context: Context?, attributeSet: AttributeSet?)
         this.side = null
         this.pace = null
         invalidate()
+    }
+
+
+
+    private fun drawBottomPart(canvas: Canvas) {
+        val rect =
+            RectF(0f, height.toFloat() - 200f, width.toFloat(), height.toFloat())
+
+        val rectHalfY = (height.toFloat() - rect.centerY()) / 2
+        val rectHalfX = (width.toFloat() - rect.centerX()) / 2
+        Log.i("Overlay", "rect half =$rectHalfX")
+        Log.i("Overlay", "rect center =${rect.centerX()}")
+
+        val y = rect.centerY() - rectHalfY
+        path.addRoundRect(rect, corners, Path.Direction.CW)
+
+        canvas.drawPath(path, paint)
+
+        // draw bottom part
+        canvas.drawText(repsText, rectHalfX * 0.5f, y, textPaintSmall)
+        canvas.drawText(rep!!, rectHalfX * 0.5f, y + rectHalfY * 2f, textPaint)
+
+        canvas.drawText(sideText, rectHalfX * 1.5f, y, textPaintSmall)
+        canvas.drawText(side!!, rectHalfX * 1.5f, y + rectHalfY * 2f, textPaint)
+
+        canvas.drawText(averagePaceText, rectHalfX * 2.5f, y, textPaintSmall)
+        canvas.drawText("${pace!!}s", rectHalfX * 2.5f, y + rectHalfY * 2f, textPaint)
+
+        canvas.drawText("ERRORS", rectHalfX * 3.5f, y, textPaintSmall)
+        canvas.drawText("0", rectHalfX * 3.5f, y + rectHalfY * 2f, textPaint)
     }
 }

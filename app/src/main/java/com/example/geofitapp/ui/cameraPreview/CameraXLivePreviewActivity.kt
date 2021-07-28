@@ -1,5 +1,8 @@
 package com.example.geofitapp.ui.cameraPreview
 
+//import com.example.geofitapp.posedetection.poseDetector.Classifier
+
+import android.R.string
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.pm.PackageManager
@@ -8,6 +11,8 @@ import android.graphics.drawable.ColorDrawable
 import android.os.Build
 import android.os.Bundle
 import android.os.CountDownTimer
+import android.text.SpannableString
+import android.text.style.RelativeSizeSpan
 import android.util.Log
 import android.view.ScaleGestureDetector
 import android.view.View
@@ -23,8 +28,10 @@ import androidx.camera.view.PreviewView
 import androidx.core.app.ActivityCompat
 import androidx.core.app.ActivityCompat.OnRequestPermissionsResultCallback
 import androidx.core.content.ContextCompat
+import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
 import com.example.geofitapp.R
+import com.example.geofitapp.databinding.ActivityCameraXlivePreviewBinding
 import com.example.geofitapp.posedetection.helperClasses.GraphicOverlay
 import com.example.geofitapp.posedetection.helperClasses.VisionImageProcessor
 import com.example.geofitapp.posedetection.poseDetector.PoseDetectorProcessor
@@ -50,28 +57,43 @@ class CameraXLivePreviewActivity : AppCompatActivity(),
     private var selectedModel = POSE_DETECTION
     private var lensFacing = CameraSelector.LENS_FACING_BACK
     private var cameraSelector: CameraSelector? = null
+    private var camera: Camera? = null
     private var exercise: MutableList<String> = mutableListOf()
-    private lateinit var countTimer: CountDownTimer
-    private var timerCanceled: Boolean = false
+    private var countTimer: CountDownTimer? = null
+    private lateinit var binding: ActivityCameraXlivePreviewBinding
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         Log.d(TAG, "onCreate")
+
         if (savedInstanceState != null) {
             selectedModel = savedInstanceState.getString(STATE_SELECTED_MODEL, POSE_DETECTION)
         }
         cameraSelector = CameraSelector.Builder().requireLensFacing(lensFacing).build()
 
-        setContentView(R.layout.activity_camera_xlive_preview)
-//        supportActionBar?.hide()
-        previewView = findViewById(R.id.preview_view)
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_camera_xlive_preview)
+        previewView = binding.previewView
 
         val colorDrawable = ColorDrawable(Color.parseColor("#342c3a"))
         supportActionBar?.setBackgroundDrawable(colorDrawable)
 
         // get exercise name
-        val exerciseName = intent.getStringExtra("exerciseName")!!
+        val bundle = intent.getBundleExtra("exercise")!!
+        val exerciseName = bundle.getString("exerciseName")!!
+        val reps = bundle.getString("reps")!!
+        val sets = bundle.getString("sets")!!
+
+        binding.repsOverlayText.text = "0"
+        binding.testRep.text = getString(R.string.reps_overlay_text, reps)
+
+        binding.setsOverlayText.text = "1"
+        binding.testSet.text = getString(R.string.sets_overlay_text, sets)
+
+        binding.sideOverlayText.text = getString(R.string.side_overlay_text, "N/A")
+        binding.paceOverlayText.text = getString(R.string.pace_overlay_text, "0.0s")
+        binding.errorsOverlayText.text = getString(R.string.erros_overlay_text, "0")
+
         exercise.add(exerciseName)
         supportActionBar?.title = exerciseName
 
@@ -83,7 +105,6 @@ class CameraXLivePreviewActivity : AppCompatActivity(),
         }
 
         setupOnCreate()
-
         ViewModelProvider(this, ViewModelProvider.AndroidViewModelFactory.getInstance(application))
             .get(CameraXViewModel::class.java)
             .processCameraProvider
@@ -98,20 +119,23 @@ class CameraXLivePreviewActivity : AppCompatActivity(),
         if (!allPermissionsGranted()) {
             runtimePermissions
         }
+//        tflite.initialize()
+//            .addOnSuccessListener { Log.i("Tflite", "Tflite model initilized successfully") }
+//            .addOnFailureListener{ e -> Log.e("Tflite", "Error initializing classifier")}
 
     }
 
-    private fun startTimer(){
+    private fun startTimer() {
         // start timer
-        val timerView = findViewById<TextView>(R.id.timer)
-        countTimer = object: CountDownTimer(6 * 1000, 1000) {
+        val timerView = binding.timer
+        countTimer = object : CountDownTimer(6 * 1000, 1000) {
             override fun onTick(millisUntilFinished: Long) {
                 val calendar = Calendar.getInstance()
                 calendar.time = Date(millisUntilFinished)
                 val secs = calendar.get(Calendar.SECOND).toString()
-                if(secs == "0"){
+                if (secs == "0") {
                     bindAnalysisUseCase()
-                }else {
+                } else {
                     timerView.text = if (secs == "0") {
                         ""
                     } else {
@@ -119,20 +143,21 @@ class CameraXLivePreviewActivity : AppCompatActivity(),
                     }
                 }
             }
+
             override fun onFinish() {
                 timerView.visibility = View.GONE
-                findViewById<TextView>(R.id.timerText).visibility = View.GONE
+               binding.timerText.visibility = View.GONE
             }
         }
 
-        countTimer.start()
+        countTimer!!.start()
     }
 
-    private fun setupOnCreate(){
+    private fun setupOnCreate() {
         if (previewView == null) {
             Log.d(TAG, "previewView is null")
         }
-        graphicOverlay = findViewById(R.id.graphic_overlay)
+        graphicOverlay = binding.graphicOverlay
         if (graphicOverlay == null) {
             Log.d(TAG, "graphicOverlay is null")
         }
@@ -179,7 +204,6 @@ class CameraXLivePreviewActivity : AppCompatActivity(),
     public override fun onResume() {
         super.onResume()
         bindAllCameraUseCases()
-        timerCanceled = false
     }
 
     override fun onPause() {
@@ -187,8 +211,7 @@ class CameraXLivePreviewActivity : AppCompatActivity(),
         if (imageProcessor != null) {
             imageProcessor!!.stop()
         }
-        countTimer.cancel()
-        timerCanceled = true
+        countTimer?.cancel()
     }
 
     public override fun onDestroy() {
@@ -196,8 +219,7 @@ class CameraXLivePreviewActivity : AppCompatActivity(),
         if (imageProcessor != null) {
             imageProcessor!!.stop()
         }
-        countTimer.cancel()
-        timerCanceled = true
+        countTimer?.cancel()
     }
 
     private fun bindAllCameraUseCases() {
@@ -205,7 +227,6 @@ class CameraXLivePreviewActivity : AppCompatActivity(),
             // As required by CameraX API, unbinds all use cases before trying to re-bind any of them.
             cameraProvider!!.unbindAll()
             bindPreviewUseCase()
-//            bindAnalysisUseCase()
         }
     }
 
@@ -219,6 +240,10 @@ class CameraXLivePreviewActivity : AppCompatActivity(),
         if (previewUseCase != null) {
             cameraProvider!!.unbind(previewUseCase)
         }
+        if (countTimer == null) {
+            startTimer()
+        }
+
         val builder = Preview.Builder()
         val targetResolution = PreferenceUtils.getCameraXTargetResolution(this, lensFacing)
         if (targetResolution != null) {
@@ -226,21 +251,24 @@ class CameraXLivePreviewActivity : AppCompatActivity(),
         }
         previewUseCase = builder.build()
         previewUseCase!!.setSurfaceProvider(previewView!!.surfaceProvider)
-        val camera = cameraProvider!!.bindToLifecycle( /* lifecycleOwner= */this,
+        camera = cameraProvider!!.bindToLifecycle( /* lifecycleOwner= */this,
             cameraSelector!!, previewUseCase
         )
-        attachZoomListener(camera)
-        if(!timerCanceled){
-            startTimer()
-        }
+        attachZoomListener()
 
     }
 
+    fun addFlash(flash: Boolean) {
+        if (camera!!.cameraInfo.hasFlashUnit()) {
+            camera!!.cameraControl.enableTorch(flash)
+        }
+    }
+
     @SuppressLint("ClickableViewAccessibility")
-    private fun attachZoomListener(camera: Camera) {
+    private fun attachZoomListener() {
         // Listen to pinch gestures
-        val cameraInfo = camera.cameraInfo
-        val cameraControl = camera.cameraControl
+        val cameraInfo = camera!!.cameraInfo
+        val cameraControl = camera!!.cameraControl
 
         val listener = object : ScaleGestureDetector.SimpleOnScaleGestureListener() {
             override fun onScale(detector: ScaleGestureDetector): Boolean {
@@ -268,7 +296,7 @@ class CameraXLivePreviewActivity : AppCompatActivity(),
     }
 
     private fun bindAnalysisUseCase() {
-        detailsOverlay = findViewById(R.id.detailsOverlay)
+        detailsOverlay = binding.detailsOverlay
         if (detailsOverlay == null) {
             Log.d(TAG, "detailsOverlay is null")
         }
@@ -291,8 +319,7 @@ class CameraXLivePreviewActivity : AppCompatActivity(),
                 val rescaleZ = PreferenceUtils.shouldPoseDetectionRescaleZForVisualization(this)
                 val runClassification = PreferenceUtils.shouldPoseDetectionRunClassification(this)
                 PoseDetectorProcessor(
-                    this, poseDetectorOptions, shouldShowInFrameLikelihood, visualizeZ, rescaleZ,
-                    runClassification,  /* isStreamMode = */true, exercise
+                    this, poseDetectorOptions, visualizeZ, rescaleZ, exercise
                 )
             } else {
                 throw IllegalStateException("Invalid model name")
@@ -340,7 +367,8 @@ class CameraXLivePreviewActivity : AppCompatActivity(),
                     imageProcessor!!.processImageProxy(
                         imageProxy,
                         graphicOverlay!!,
-                        detailsOverlay!!
+                        binding,
+
                     )
                 } catch (e: MlKitException) {
                     Log.e(
@@ -365,7 +393,7 @@ class CameraXLivePreviewActivity : AppCompatActivity(),
             val info = this.packageManager
                 .getPackageInfo(this.packageName, PackageManager.GET_PERMISSIONS)
             val ps = info.requestedPermissions
-            if (ps != null && ps.size > 0) {
+            if (ps != null && ps.isNotEmpty()) {
                 ps
             } else {
                 arrayOfNulls(0)
