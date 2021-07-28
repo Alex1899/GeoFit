@@ -37,6 +37,11 @@ import java.util.*
 </T> */
 abstract class VisionProcessorBase<T> protected constructor(context: Context) :
     VisionImageProcessor {
+
+//    override fun resetInfo(binding: ActivityCameraXlivePreviewBinding?) {
+//        TODO("Not yet implemented")
+//    }
+
     private val activityManager: ActivityManager = context.getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
     private val fpsTimer = Timer()
     private val executor: ScopedExecutor = ScopedExecutor(TaskExecutors.MAIN_THREAD)

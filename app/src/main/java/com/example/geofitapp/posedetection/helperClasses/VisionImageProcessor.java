@@ -28,4 +28,6 @@ public interface VisionImageProcessor {
 
     /** Stops the underlying machine learning model and release resources. */
     void stop();
+
+    void resetInfo(ActivityCameraXlivePreviewBinding binding);
 }

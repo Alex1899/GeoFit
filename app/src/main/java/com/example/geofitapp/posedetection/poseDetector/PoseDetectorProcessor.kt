@@ -42,13 +42,6 @@ class PoseDetectorProcessor(
     private var repCounter: ExerciseRepCounter? = null
     private var repAnalyzer: ExerciseAnalysis? = null
     private lateinit var exerciseProcessor: ExerciseProcessor
-    private var exerciseJointAngles = mutableListOf<Double>()
-    private var avgAngle: Float? = null
-    private var leftJointAngles = mutableListOf<Double>()
-    private var rightJointAngles = mutableListOf<Double>()
-    private var repAnglesList: MutableList<Double>? = null
-
-
     private var exerciseStarted: Boolean? = null
 
 
@@ -56,8 +49,6 @@ class PoseDetectorProcessor(
         private val TAG = "PoseDetectorProcessor"
         var torsoLengths = mutableListOf<Float>()
     }
-
-//    private var poseClassifierProcessor: PoseClassifierProcessor? = null
 
     /**
      * Internal class to hold Pose and classification results.
@@ -110,16 +101,17 @@ class PoseDetectorProcessor(
 
 
     @SuppressLint("SetTextI18n")
-    private fun resetInfo(binding: ActivityCameraXlivePreviewBinding) {
-        repCounter?.resetTotalReps()
+    override fun resetInfo(binding: ActivityCameraXlivePreviewBinding) {
+        repCounter!!.resetTotalReps()
         exerciseProcessor.resetDetails()
         exerciseStarted = false
+
         binding.detailsOverlayView.visibility = View.GONE
-//        binding.repsOverlayText.text = "0"
-//        binding.errorsOverlayText.text = "0"
-//        binding.setsOverlayText.text = "1"
-//        binding.paceOverlayText.text = "0.0s"
-//        binding.sideOverlayText.text = "N/A"
+        binding.repsOverlayText.text = "0"
+        binding.errorsOverlayText.text = "0"
+        binding.setsOverlayText.text = "1"
+        binding.paceOverlayText.text = "0.0s"
+        binding.sideOverlayText.text = "N/A"
     }
 
     override fun onSuccess(

@@ -44,17 +44,19 @@ object BicepCurlRepCounter : ExerciseRepCounter() {
         Log.i("RepCount", "==================================================================")
 
 
-
+        val maxInAngleList = max(anglesList)
         if (maxElbowAngle == null) {
-            maxElbowAngle = freshAngle
+            maxElbowAngle = maxInAngleList
             return Triple(totalReps, finishTime, null)
 
         } else if (freshAngle >= maxElbowAngle!!) {
+            val index = anglesList.indexOf(freshAngle)
+            anglesList = anglesList.subList(index, anglesList.size)
             maxElbowAngle = freshAngle
             Log.i("RepCount", "maxAngle updated=${freshAngle}")
             return Triple(totalReps, finishTime, null)
         } else {
-            // TODO
+            // once i find max angle cut it from there
             // if rep count reached return
 
             if (startTime == null) {
@@ -185,6 +187,9 @@ object BicepCurlRepCounter : ExerciseRepCounter() {
     override fun resetTotalReps() {
         totalReps = 0
         paceAvgList.clear()
+        anglesList.clear()
+        maxElbowAngle = null
+        minElbowAngle = null
         finishTime = 0f
         startTime = null
     }

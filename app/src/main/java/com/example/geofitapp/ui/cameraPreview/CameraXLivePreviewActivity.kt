@@ -218,8 +218,17 @@ class CameraXLivePreviewActivity : AppCompatActivity(),
         super.onDestroy()
         if (imageProcessor != null) {
             imageProcessor!!.stop()
+            imageProcessor!!.resetInfo(binding)
         }
         countTimer?.cancel()
+    }
+
+    private fun clearDetailsOverlay(){
+        binding.repsOverlayText.text = "0"
+        binding.errorsOverlayText.text = "0"
+        binding.setsOverlayText.text = "1"
+        binding.paceOverlayText.text = "0.0s"
+        binding.sideOverlayText.text = "N/A"
     }
 
     private fun bindAllCameraUseCases() {
