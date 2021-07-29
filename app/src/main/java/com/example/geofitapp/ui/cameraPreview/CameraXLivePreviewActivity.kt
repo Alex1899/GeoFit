@@ -61,6 +61,7 @@ class CameraXLivePreviewActivity : AppCompatActivity(),
     private var exercise: MutableList<String> = mutableListOf()
     private var countTimer: CountDownTimer? = null
     private lateinit var binding: ActivityCameraXlivePreviewBinding
+    private var reps = ""
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -81,7 +82,7 @@ class CameraXLivePreviewActivity : AppCompatActivity(),
         // get exercise name
         val bundle = intent.getBundleExtra("exercise")!!
         val exerciseName = bundle.getString("exerciseName")!!
-        val reps = bundle.getString("reps")!!
+        reps = bundle.getString("reps")!!
         val sets = bundle.getString("sets")!!
 
         binding.repsOverlayText.text = "0"
@@ -146,7 +147,7 @@ class CameraXLivePreviewActivity : AppCompatActivity(),
 
             override fun onFinish() {
                 timerView.visibility = View.GONE
-               binding.timerText.visibility = View.GONE
+                binding.timerText.visibility = View.GONE
             }
         }
 
@@ -223,7 +224,7 @@ class CameraXLivePreviewActivity : AppCompatActivity(),
         countTimer?.cancel()
     }
 
-    private fun clearDetailsOverlay(){
+    private fun clearDetailsOverlay() {
         binding.repsOverlayText.text = "0"
         binding.errorsOverlayText.text = "0"
         binding.setsOverlayText.text = "1"
@@ -328,7 +329,7 @@ class CameraXLivePreviewActivity : AppCompatActivity(),
                 val rescaleZ = PreferenceUtils.shouldPoseDetectionRescaleZForVisualization(this)
                 val runClassification = PreferenceUtils.shouldPoseDetectionRunClassification(this)
                 PoseDetectorProcessor(
-                    this, poseDetectorOptions, visualizeZ, rescaleZ, exercise
+                    this, poseDetectorOptions, visualizeZ, rescaleZ, exercise, reps.toInt()
                 )
             } else {
                 throw IllegalStateException("Invalid model name")
@@ -378,7 +379,7 @@ class CameraXLivePreviewActivity : AppCompatActivity(),
                         graphicOverlay!!,
                         binding,
 
-                    )
+                        )
                 } catch (e: MlKitException) {
                     Log.e(
                         TAG,

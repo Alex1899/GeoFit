@@ -73,21 +73,17 @@ object BicepCurlAnalysis : ExerciseAnalysis() {
     }
 
 
-    override fun analyseRep(jointAngles: MutableList<Double>): String {
+    override fun analyseRep(jointAngles: Pair<Double, Double>): String {
 
         // TODO get starting position...
         // find min angle, max angle, and compare to thresholds
-        val minValue = min(jointAngles)
-        val indexOfmin = jointAngles.indexOf(minValue)
-        val bottomRepPortion = jointAngles.slice(indexOfmin+1 until jointAngles.size)
-        if(bottomRepPortion.isEmpty()){
-            return "Waiting..."
-        }
-        val minElbowAngle = minValue.roundToInt()
-        val maxElbowAngle = max(bottomRepPortion).roundToInt()
+
+        val minElbowAngle = jointAngles.second
+        val maxElbowAngle = jointAngles.first
+        Log.i("ProcessorKKK", "minAngle = $minElbowAngle  maxAngle = $maxElbowAngle")
         var feedback = ""
 
-        feedback = if (minElbowAngle < 60 && maxElbowAngle >= 138) {
+        feedback = if (minElbowAngle < 68 && maxElbowAngle >= 138) {
             "Correct"
         } else {
             "Wrong"

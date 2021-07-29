@@ -40,9 +40,7 @@ class HomePageFragment : Fragment() {
                 val exerciseData = ExerciseData(map[it]!!.first, map[it]!!.second, it ,getString(R.string.bicep_curl_desc))
                 findNavController().navigate(HomePageFragmentDirections.actionHomePageFragmentToExercisePreviewFragment(exerciseData))
                 viewModel.doneNavigating()
-//                val intent = Intent(activity, CameraXLivePreviewActivity::class.java)
-//                intent.putExtra("exerciseName", it)
-//                activity?.startActivity(intent)
+
 
             }
         })

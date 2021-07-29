@@ -9,18 +9,14 @@ abstract class ExerciseProcessor {
     abstract var lastRepResult: Int
     abstract var jointAnglesMap: MutableMap<Int, Double>
     abstract var pace: Float
-    abstract var feedBack: String
+    abstract var feedBack: MutableMap<Int,String>
     abstract var torso: Float?
     abstract var pose: List<PoseLandmark>?
     abstract var side: String
+    abstract var finished: Boolean
+    abstract var repFinished: Boolean?
 
-    abstract fun getRepCount(repCounter: ExerciseRepCounter): Triple<Int?, Float, MutableList<Double>?>
-    abstract fun getFeedback(repAnalyzer: ExerciseAnalysis, repAngles: MutableList<Double>?): String
+    abstract fun getFeedback(repAnalyzer: ExerciseAnalysis)
     abstract fun resetDetails()
-    abstract fun initilizePose(
-        exercise: String,
-        pose: Pose,
-        repCounter: ExerciseRepCounter,
-        repAnalyzer: ExerciseAnalysis
-    )
+
 }

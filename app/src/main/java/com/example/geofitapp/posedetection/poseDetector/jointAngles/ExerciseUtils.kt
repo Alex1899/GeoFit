@@ -4,6 +4,7 @@ import android.media.AudioManager
 import android.media.ToneGenerator
 import android.util.Log
 import com.example.geofitapp.posedetection.poseDetector.exerciseProcessor.BicepCurlProcessor
+import com.example.geofitapp.posedetection.poseDetector.exerciseProcessor.ExerciseProcessor
 import com.example.geofitapp.posedetection.poseDetector.repAnalysis.BicepCurlAnalysis
 import com.example.geofitapp.posedetection.poseDetector.repCounter.BicepCurlRepCounter
 import com.example.geofitapp.posedetection.poseDetector.repCounter.ExerciseRepCounter
@@ -189,25 +190,16 @@ object ExerciseUtils {
         repCounter: ExerciseRepCounter,
         jointAnglesMap: MutableMap<Int, Double>,
         side: String
-    ): Triple<Int?, Float, MutableList<Double>?> {
+    ): ExerciseProcessor{
         val repsBefore: Int = repCounter.getTotalReps()
-        val triple = repCounter.addNewFramePoseAngles(jointAnglesMap, side)
-        val repsAfter = triple.first
-        val pace = triple.second
-        val repAnglesList = triple.third
-
-        var lastRepResult: Int? = null
-        if (repsAfter > repsBefore) {
+        val exerciseProcessor = repCounter.addNewFramePoseAngles(jointAnglesMap, side)
+        if (exerciseProcessor.lastRepResult > repsBefore) {
             // Play a fun beep when rep counter updates.
             val tg = ToneGenerator(AudioManager.STREAM_NOTIFICATION, 100)
             tg.startTone(ToneGenerator.TONE_PROP_BEEP)
-            lastRepResult = repsAfter
         }
-        if (lastRepResult !== null) {
-            Log.i("PoseDetectorProcessor", "Rep: $lastRepResult")
 
-        }
-        return Triple(lastRepResult, pace, repAnglesList)
+        return exerciseProcessor
     }
 
 }
