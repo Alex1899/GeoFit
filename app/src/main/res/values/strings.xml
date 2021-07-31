@@ -157,6 +157,8 @@
     <string name="reps_txt">Reps</string>
     <string name="sets_txt">Sets</string>
     <string name="weight_txt">Kg</string>
+    <string name="rest_txt">Sec</string>
+
 
 
     <string name="start_exercise_btn">START</string>
@@ -166,6 +168,7 @@
     <string name="side_overlay_text">%s</string>
     <string name="pace_overlay_text">%s</string>
     <string name="erros_overlay_text">%s</string>
+
 
 
 </resources>

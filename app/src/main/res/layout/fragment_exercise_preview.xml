@@ -12,10 +12,11 @@
     </data>
 
 
-    <RelativeLayout
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/primaryLightColor">
+        android:orientation="vertical"
+        android:background="@color/primaryColor">
 
         <FrameLayout
             android:id="@+id/exercise_video"
@@ -52,13 +53,13 @@
         <ScrollView
             android:id="@+id/scrollView"
             android:layout_width="match_parent"
-            android:layout_height="400dp"
-            android:layout_below="@id/exercise_video">
+            android:layout_height="0dp"
+            android:layout_weight="1">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@color/primaryLightColor"
+                android:background="@color/primaryColor"
                 android:orientation="vertical"
                 android:paddingStart="20dp"
                 android:paddingTop="20dp"
@@ -96,100 +97,96 @@
                         android:gravity="center"
                         android:orientation="horizontal">
 
-                        <ImageView
-                            android:id="@+id/reps_minus_icon"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:src="@drawable/ic_minus" />
-
                         <LinearLayout
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginStart="20dp"
-                            android:layout_marginEnd="20dp"
                             android:background="@drawable/circular_view"
                             android:gravity="center"
-                            android:orientation="vertical">
+                            android:layout_marginEnd="15dp"
+                            android:orientation="horizontal">
 
-                            <EditText
-                                android:id="@+id/reps_editText"
+                            <ImageView
+                                android:id="@+id/reps_minus_icon"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:background="@null"
+                                android:src="@drawable/ic_minus__2" />
+
+                            <LinearLayout
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="15dp"
+                                android:layout_marginEnd="15dp"
                                 android:gravity="center"
-                                android:hint="0"
-                                android:inputType="number"
-                                android:textColor="@color/white"
-                                android:textSize="20sp"
-                                tools:text="12" />
+                                android:orientation="vertical">
 
-                            <TextView
-                                android:id="@+id/reps_text"
+                                <EditText
+                                    android:id="@+id/reps_editText"
+                                    style="@style/StyledEditText"
+                                    android:hint="0"
+                                    tools:text="12" />
+
+                                <TextView
+                                    android:id="@+id/reps_text"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="@string/reps_txt"
+                                    android:textColor="@color/white" />
+                            </LinearLayout>
+
+                            <ImageView
+                                android:id="@+id/reps_plus_icon"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="@string/reps_txt"
-                                android:textColor="@color/white" />
+                                android:src="@drawable/ic_plus__1" />
+
                         </LinearLayout>
 
-
-                        <ImageView
-                            android:id="@+id/reps_plus_icon"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:src="@drawable/ic_add" />
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="10dp"
-                        android:gravity="center"
-                        android:orientation="horizontal">
-
-                        <ImageView
-                            android:id="@+id/sets_minus_icon"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:src="@drawable/ic_minus" />
-
+                        <!--                        sets-->
                         <LinearLayout
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginStart="20dp"
-                            android:layout_marginEnd="20dp"
                             android:background="@drawable/circular_view"
                             android:gravity="center"
-                            android:orientation="vertical">
+                            android:orientation="horizontal">
 
-                            <EditText
-                                android:id="@+id/sets_editText"
+                            <ImageView
+                                android:id="@+id/sets_minus_icon"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:background="@null"
+                                android:src="@drawable/ic_minus__2" />
+
+                            <LinearLayout
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="15dp"
+                                android:layout_marginEnd="15dp"
                                 android:gravity="center"
-                                android:hint="0"
+                                android:orientation="vertical">
 
-                                android:inputType="number"
-                                android:textColor="@color/white"
-                                android:textSize="20sp"
-                                tools:text="12" />
 
-                            <TextView
-                                android:id="@+id/sets_text"
+                                <EditText
+                                    android:id="@+id/sets_editText"
+                                    style="@style/StyledEditText"
+                                    android:hint="0"
+                                    tools:text="12" />
+
+                                <TextView
+                                    android:id="@+id/sets_text"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="@string/sets_txt"
+                                    android:textColor="@color/white" />
+                            </LinearLayout>
+
+                            <ImageView
+                                android:id="@+id/sets_plus_icon"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="@string/sets_txt"
-                                android:textColor="@color/white" />
+                                android:src="@drawable/ic_plus__1" />
                         </LinearLayout>
-
-
-                        <ImageView
-                            android:id="@+id/sets_plus_icon"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:src="@drawable/ic_add" />
                     </LinearLayout>
 
+                    <!--  Weight and Rest Start-->
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -198,49 +195,96 @@
                         android:gravity="center"
                         android:orientation="horizontal">
 
-                        <ImageView
-                            android:id="@+id/weight_minus_icon"
+                        <LinearLayout
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:src="@drawable/ic_minus" />
+                            android:background="@drawable/circular_view"
+                            android:gravity="center"
+                            android:layout_marginEnd="15dp"
+                            android:orientation="horizontal">
+
+                            <ImageView
+                                android:id="@+id/weight_minus_icon"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:src="@drawable/ic_minus__2" />
+
+                            <LinearLayout
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="15dp"
+                                android:layout_marginEnd="15dp"
+                                android:gravity="center"
+                                android:orientation="vertical">
+
+
+                                <EditText
+                                    android:id="@+id/weight_editText"
+                                    style="@style/StyledEditText"
+                                    android:hint="0"
+                                    tools:text="12" />
+
+                                <TextView
+                                    android:id="@+id/weight_text"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="@string/weight_txt"
+                                    android:textColor="@color/white" />
+                            </LinearLayout>
+
+                            <ImageView
+                                android:id="@+id/weight_plus_icon"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:src="@drawable/ic_plus__1" />
+                        </LinearLayout>
+
+                        <!--  rest period-->
 
                         <LinearLayout
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginStart="20dp"
-                            android:layout_marginEnd="20dp"
+
                             android:background="@drawable/circular_view"
                             android:gravity="center"
-                            android:orientation="vertical">
+                            android:orientation="horizontal">
 
-                            <EditText
-                                android:id="@+id/weight_editText"
+                            <ImageView
+                                android:id="@+id/rest_minus_icon"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:background="@null"
+                                android:src="@drawable/ic_minus__2" />
+
+                            <LinearLayout
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="15dp"
+                                android:layout_marginEnd="15dp"
                                 android:gravity="center"
-                                android:hint="0"
-                                android:inputType="number"
-                                android:textColor="@color/white"
-                                tools:text = "12"
-                                android:textSize="20sp" />
+                                android:orientation="vertical">
 
-                            <TextView
-                                android:id="@+id/weight_text"
+                                <EditText
+                                    android:id="@+id/rest_editText"
+                                    style="@style/StyledEditText"
+                                    android:hint="0"
+                                    tools:text="60" />
+
+                                <TextView
+                                    android:id="@+id/rest_text"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="@string/rest_txt"
+                                    android:textColor="@color/white" />
+                            </LinearLayout>
+
+                            <ImageView
+                                android:id="@+id/rest_plus_icon"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="@string/weight_txt"
-                                android:textColor="@color/white" />
+                                android:src="@drawable/ic_plus__1" />
                         </LinearLayout>
-
-
-                        <ImageView
-                            android:id="@+id/weight_plus_icon"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:src="@drawable/ic_add" />
+<!--                        rest end weight end below-->
                     </LinearLayout>
-
                 </LinearLayout>
             </LinearLayout>
         </ScrollView>
@@ -249,10 +293,10 @@
             android:id="@+id/start_exercise"
             style="@style/ButtonStyled"
             android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:layout_below="@id/scrollView"
+            android:layout_height="60dp"
+            android:layout_alignParentBottom="true"
             android:text="@string/start_exercise_btn"
             android:textColor="@color/white" />
-    </RelativeLayout>
+    </LinearLayout>
 
 </layout>

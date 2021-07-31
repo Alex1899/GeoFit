@@ -4,6 +4,7 @@ import android.util.Log
 import com.example.geofitapp.posedetection.poseDetector.PoseDetectorProcessor.Companion.exerciseFinished
 import com.example.geofitapp.posedetection.poseDetector.exerciseProcessor.BicepCurlProcessor
 import com.example.geofitapp.posedetection.poseDetector.exerciseProcessor.ExerciseProcessor
+import com.example.geofitapp.posedetection.poseDetector.jointAngles.Utils
 import com.google.common.base.Stopwatch
 import com.google.mlkit.vision.pose.PoseLandmark
 import java.time.Instant
@@ -53,24 +54,27 @@ object BicepCurlRepCounter : ExerciseRepCounter() {
         val maxInAngleList = max(anglesList)
         if (maxElbowAngle == null) {
             maxElbowAngle = maxInAngleList
-            exerciseProcessor.lastRepResult = totalReps
-            exerciseProcessor.pace = finishTime
-            return exerciseProcessor
+            BicepCurlProcessor.lastRepResult = totalReps
+            BicepCurlProcessor.pace = finishTime
+            return BicepCurlProcessor
 
         } else if (freshAngle >= maxElbowAngle!!) {
-            val index = anglesList.indexOf(freshAngle)
-            anglesList = anglesList.subList(index, anglesList.size)
+            if(!poseEntered){
+                val index = anglesList.indexOf(freshAngle)
+                anglesList = anglesList.slice(index until anglesList.size).toMutableList()
+            }
             maxElbowAngle = freshAngle
             Log.i("RepCount", "maxAngle updated=${freshAngle}")
 
-            return exerciseProcessor
+            return BicepCurlProcessor
         } else {
             // if rep count reached return
             if (overallTotalReps != null && totalReps == overallTotalReps!! && poseEntered) {
-                val res = poseEntered()
-                res.finished =  true // finished true
+                poseEntered()
+                BicepCurlProcessor.finished =  true // finished true
+                BicepCurlProcessor.anglesOfInterest.add(BicepCurlProcessor.elbowAnglePairList)
                 exerciseFinished = true
-                return res
+                return BicepCurlProcessor
             }
 
             if (startTime == null) {
@@ -80,11 +84,12 @@ object BicepCurlRepCounter : ExerciseRepCounter() {
             }
 
             if (maxElbowAngle!! - freshAngle <= 30) {
-                return exerciseProcessor
+                return BicepCurlProcessor
             }
 
             if(poseEntered){
-                return poseEntered()
+                poseEntered()
+                return BicepCurlProcessor
             }
 
         }
@@ -101,22 +106,23 @@ object BicepCurlRepCounter : ExerciseRepCounter() {
         } else {
             if (freshAngle - minElbowAngle!! >= 30) {
                 // weight going down
-                val lastIndex = anglesList.lastIndex
-                anglesList = anglesList.slice(lastIndex - 1..lastIndex) as MutableList<Double>
+                analysisAngleList = anglesList.toMutableList()
+                anglesList.clear()
+                anglesList.add(freshAngle)
                 Log.i("RepCount", "anglesList sliced=$anglesList")
                 maxElbowAngle = null
                 poseEntered = true
                 totalReps++
-                exerciseProcessor.lastRepResult = totalReps
+                BicepCurlProcessor.lastRepResult = totalReps
             }
         }
         Log.i("RepCount", "\n\nminAngle=$minElbowAngle\n\n")
 
-        return exerciseProcessor
+        return BicepCurlProcessor
 
     }
 
-    private fun poseEntered(): ExerciseProcessor{
+    private fun poseEntered(){
         Log.i("RepCount", "last maxAngle=$maxElbowAngle")
         poseEntered = false
         val now = System.currentTimeMillis()
@@ -131,14 +137,17 @@ object BicepCurlRepCounter : ExerciseRepCounter() {
         Log.i("Pace", "finishTime = ${String.format("%.1f", finishTime)}")
 
         val index = anglesList.indexOf(maxElbowAngle)
-        analysisAngleList = anglesList.subList(0, index + 1)
+        analysisAngleList.addAll(anglesList.slice(1..index + 1))
 
         anglesList = anglesList.subList(index + 1, anglesList.size)
 
-        exerciseProcessor.pace = finishTime
+        BicepCurlProcessor.pace = finishTime
         if(maxElbowAngle != null && minElbowAngle != null){ // both should never be null here
-            exerciseProcessor.elbowAnglePairList[Pair(maxElbowAngle!!, minElbowAngle!!)] = analysisAngleList
-            exerciseProcessor.repFinished = true
+            val filteredAngleList = Utils.medfilt(analysisAngleList.toMutableList(), 5)
+            val filteredAngleList2 = Utils.medfilt(filteredAngleList, 5)
+
+            BicepCurlProcessor.elbowAnglePairList[Pair(maxElbowAngle!!, minElbowAngle!!)] = filteredAngleList2.distinct().toMutableList()
+            BicepCurlProcessor.repFinished = true
         }
 
         maxElbowAngle = null
@@ -147,9 +156,6 @@ object BicepCurlRepCounter : ExerciseRepCounter() {
             "RepCount", "===================\n" +
                     "Rep $totalReps \n==================="
         )
-
-        return exerciseProcessor
-
     }
 
 //    override fun addNewFramePoseAngles(poseAnglesMap: MutableMap<Int, Double>, side: String): Int {
@@ -219,7 +225,7 @@ object BicepCurlRepCounter : ExerciseRepCounter() {
         minElbowAngle = null
         finishTime = 0f
         startTime = null
-        exerciseProcessor.resetDetails()
+        BicepCurlProcessor.resetDetails()
     }
 
 

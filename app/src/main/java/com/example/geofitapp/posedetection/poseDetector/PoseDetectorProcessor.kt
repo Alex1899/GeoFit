@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
+import android.os.Bundle
 import android.util.Log
 import android.view.View
 import androidx.core.content.ContextCompat.startActivity
@@ -12,14 +13,15 @@ import com.example.geofitapp.posedetection.VisionProcessorBase
 
 import com.example.geofitapp.posedetection.helperClasses.FrameMetadata
 import com.example.geofitapp.posedetection.helperClasses.GraphicOverlay
-import com.example.geofitapp.posedetection.poseDetector.exerciseProcessor.BicepCurlProcessor
 import com.example.geofitapp.posedetection.poseDetector.exerciseProcessor.ExerciseProcessor
 import com.example.geofitapp.posedetection.poseDetector.jointAngles.ExerciseUtils
 import com.example.geofitapp.posedetection.poseDetector.jointAngles.FramePose
+import com.example.geofitapp.posedetection.poseDetector.jointAngles.Utils
 import com.example.geofitapp.posedetection.poseDetector.repAnalysis.ExerciseAnalysis
 import com.example.geofitapp.posedetection.poseDetector.repCounter.ExerciseRepCounter
 import com.example.geofitapp.ui.cameraPreview.detailsOverlay.DetailsOverlay
 import com.example.geofitapp.ui.exerciseSetDetails.ExerciseSetDetails
+import com.example.geofitapp.ui.exerciseSetDetails.ExerciseSetDetailsActivity
 import com.google.android.gms.tasks.Task
 
 import com.google.android.odml.image.MlImage
@@ -46,8 +48,8 @@ class PoseDetectorProcessor(
     private val classificationExecutor: Executor
     private var repCounter: ExerciseRepCounter? = null
     private var repAnalyzer: ExerciseAnalysis? = null
-    private var cacheRep: Int = 0
     private var cacheSide: String? = null
+    private var exerciseProcessor: ExerciseProcessor? = null
 
 
     companion object {
@@ -115,9 +117,29 @@ class PoseDetectorProcessor(
         binding.sideOverlayText.text = "N/A"
     }
 
-    private fun startSetDetailsActivity() {
-        val intent = Intent(context, ExerciseSetDetails::class.java)
-//        intent.putExtra("exerciseName", )
+    private fun startSetDetailsActivity(
+        exerciseProcessor: ExerciseProcessor,
+        binding: ActivityCameraXlivePreviewBinding
+    ) {
+        val intent = Intent(context, ExerciseSetDetailsActivity::class.java)
+        // sets, reps, time taken, and rest timer
+        val angleList = mutableListOf<Double>()
+        for (map in exerciseProcessor.anglesOfInterest) {
+            val list = map.values.toList()
+            for (angles in list) {
+                angleList.addAll(angles)
+            }
+            Log.i("Inspect", "last rep angles = ${list.last()}")
+
+        }
+
+        Log.i("Chart", "first angleList =$angleList")
+        val details = ExerciseSetDetails(
+            binding.setsOverlayText.text.toString(),
+            binding.repsOverlayText.text.toString(),
+            angleList
+        )
+        intent.putExtra("exerciseSetDetails", details)
         startActivity(context, intent, null)
     }
 
@@ -127,9 +149,9 @@ class PoseDetectorProcessor(
         binding: ActivityCameraXlivePreviewBinding
     ) {
 
-        if(exerciseFinished){
+        if (exerciseFinished && exerciseProcessor !== null) {
             //navigate
-            startSetDetailsActivity()
+            startSetDetailsActivity(exerciseProcessor!!, binding)
             exerciseFinished = false
         }
         if (results.pose.allPoseLandmarks.isEmpty()) {
@@ -142,7 +164,7 @@ class PoseDetectorProcessor(
             binding.detailsOverlayView.visibility = View.VISIBLE
         }
 
-        if(cacheSide == null){
+        if (cacheSide == null) {
             cacheSide = ExerciseUtils.detectSide(results.pose)
         }
 
@@ -152,20 +174,20 @@ class PoseDetectorProcessor(
                 cacheSide!!
             ).getFramePose(ExerciseUtils.convertToPoint3D(results.pose.allPoseLandmarks))
 
-        val exerciseProcessor = ExerciseUtils.countReps(
+        exerciseProcessor = ExerciseUtils.countReps(
             repCounter!!,
             jointAnglesMap,
             cacheSide!!
         )
-        exerciseProcessor.side = cacheSide!!
-        exerciseProcessor.jointAnglesMap = jointAnglesMap
+        exerciseProcessor!!.side = cacheSide!!
+        exerciseProcessor!!.jointAnglesMap = jointAnglesMap
 
         var feedBack = ""
-        if(exerciseProcessor.repFinished!!) {
-            exerciseProcessor.getFeedback(repAnalyzer!!)
-            exerciseProcessor.repFinished = false
-            val ls = exerciseProcessor.feedBack.values.toList()
-            feedBack = if(ls.isEmpty()) "" else ls.last()
+        if (exerciseProcessor!!.repFinished!!) {
+            exerciseProcessor!!.getFeedback(repAnalyzer!!)
+            exerciseProcessor!!.repFinished = false
+            val ls = exerciseProcessor!!.feedBack.values.toList()
+            feedBack = if (ls.isEmpty()) "" else ls.last()
             Log.i("ProcessorKKK", "feedback = $feedBack")
         }
 
@@ -174,12 +196,12 @@ class PoseDetectorProcessor(
                 graphicOverlay,
                 results.pose,
                 exercise[0],
-                exerciseProcessor.side,
-                exerciseProcessor.lastRepResult.toString(),
-                exerciseProcessor.jointAnglesMap,
+                exerciseProcessor!!.side,
+                exerciseProcessor!!.lastRepResult.toString(),
+                exerciseProcessor!!.jointAnglesMap,
                 feedBack,
                 binding,
-                exerciseProcessor.pace,
+                exerciseProcessor!!.pace,
                 visualizeZ,
                 rescaleZForVisualization
 

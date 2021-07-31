@@ -178,7 +178,7 @@
                     android:id="@+id/side_overlay_text"
                     style="@style/DetailsTextView"
                     android:text="@string/side_overlay_text"
-                    android:textSize="25sp"
+                    android:textSize="30sp"
                     tools:text="Front" />
 
             </LinearLayout>

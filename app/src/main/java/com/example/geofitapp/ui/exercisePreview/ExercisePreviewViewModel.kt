@@ -8,6 +8,8 @@ class ExercisePreviewViewModel : ViewModel() {
     private val _reps = MutableLiveData<Int>()
     private val _sets = MutableLiveData<Int>()
     private val _weight= MutableLiveData<Float>()
+    private val _rest = MutableLiveData<Int>()
+
 
     val reps: LiveData<Int>
         get() = _reps
@@ -18,11 +20,16 @@ class ExercisePreviewViewModel : ViewModel() {
     val weight: LiveData<Float>
         get() = _weight
 
+    val rest: LiveData<Int>
+        get() = _rest
+
 
     init{
         _reps.value = 12
         _sets.value = 3
         _weight.value = 0f
+        _rest.value = 60
+
     }
 
     fun updateReps(reps: String){
@@ -35,5 +42,10 @@ class ExercisePreviewViewModel : ViewModel() {
 
     fun updateWeight(weight: String){
         _weight.value = weight.toFloat()
+    }
+
+
+    fun updateRest(rest: String){
+        _rest.value = rest.toInt()
     }
 }

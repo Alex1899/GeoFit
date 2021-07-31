@@ -15,6 +15,7 @@ abstract class ExerciseProcessor {
     abstract var side: String
     abstract var finished: Boolean
     abstract var repFinished: Boolean?
+    abstract var anglesOfInterest: MutableList<MutableMap<Pair<Double, Double>, MutableList<Double>>>
 
     abstract fun getFeedback(repAnalyzer: ExerciseAnalysis)
     abstract fun resetDetails()

@@ -53,6 +53,7 @@ android {
 repositories {
     // Depending on AndroidX Snapshot Builds to get the latest CameraX libs.
     maven { url 'https://androidx.dev/snapshots/builds/6787662/artifacts/repository/' }
+    maven { url 'https://jitpack.io' }
 }
 
 
@@ -83,6 +84,9 @@ dependencies {
 
     // On Device Machine Learnings
     implementation "com.google.android.odml:image:1.0.0-beta1"
+
+    //chart
+    implementation 'com.github.PhilJay:MPAndroidChart:v3.1.0'
 
 
     implementation 'com.google.code.gson:gson:2.8.6'

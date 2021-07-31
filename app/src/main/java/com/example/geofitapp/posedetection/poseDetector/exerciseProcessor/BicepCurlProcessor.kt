@@ -18,6 +18,9 @@ object BicepCurlProcessor : ExerciseProcessor() {
     override var side = ""
     override var finished = false
     override var repFinished: Boolean? = false
+    override var anglesOfInterest =
+        mutableListOf<MutableMap<Pair<Double, Double>, MutableList<Double>>>()
+
 
     var elbowAnglePairList = mutableMapOf<Pair<Double, Double>, MutableList<Double>>()
     var upperArmTrunkAnglePairList = mutableMapOf<Pair<Double, Double>, MutableList<Double>>()

@@ -47,6 +47,8 @@ class ExercisePreviewFragment : Fragment() {
         binding.repsEditText.setText(viewModel.reps.value.toString())
         binding.setsEditText.setText(viewModel.sets.value.toString())
         binding.weightEditText.setText(viewModel.weight.value.toString())
+        binding.restEditText.setText(viewModel.rest.value.toString())
+
 
         return binding.root
     }
@@ -90,6 +92,12 @@ class ExercisePreviewFragment : Fragment() {
             }
         }
 
+        binding.restEditText.addTextChangedListener {
+            if (it.toString() != "") {
+                viewModel.updateRest(it.toString())
+            }
+        }
+
         binding.repsMinusIcon.setOnClickListener {
             if (viewModel.reps.value!! > 0) {
                 binding.repsEditText.setText((viewModel.reps.value!! - 1).toString())
@@ -118,6 +126,16 @@ class ExercisePreviewFragment : Fragment() {
 
         binding.weightPlusIcon.setOnClickListener {
             binding.weightEditText.setText((viewModel.weight.value!! + 1).toString())
+        }
+
+        binding.restMinusIcon.setOnClickListener {
+            if (viewModel.rest.value!! > 0) {
+                binding.restEditText.setText((viewModel.rest.value!! - 1).toString())
+            }
+        }
+
+        binding.restPlusIcon.setOnClickListener {
+            binding.restEditText.setText((viewModel.rest.value!! + 1).toString())
         }
 
         binding.startExercise.setOnClickListener {

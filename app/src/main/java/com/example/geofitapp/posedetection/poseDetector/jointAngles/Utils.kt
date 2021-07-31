@@ -78,6 +78,43 @@ object Utils {
         while (iterator.hasNext()) {
             iterator.set(multiply(iterator.next(), multiple))
         }
+
+    }
+
+    fun medfilt(dataList: MutableList<Double>, k: Int): MutableList<Double> {
+        val list = mutableListOf<Double>()
+        val halfK = k / 2 // 2
+        lateinit var window: MutableList<Double>
+        var start = -1
+        var end = -1
+
+        //[2,3,80,6,3,7,8,9]
+        for (i in dataList.indices) { // i = 0
+            // how many 0 to pad on the left is halfK - i
+            if (i < halfK) { //halfK = 2
+                window = DoubleArray(halfK - i) { 0.0 }.toMutableList() // [0,0]
+                start = 0
+                end = i + halfK    // 1
+            } else {
+                start = i - halfK     // 2
+                end = i + halfK       // 4
+            }
+
+            if (end >= dataList.size) {
+                val numsLeft = dataList.size - i - 1
+                val last = dataList.size - 1
+                window.addAll(dataList.slice(start..last))
+                window.addAll(DoubleArray(halfK - numsLeft) { 0.0 }.toList())
+            } else {
+                window.addAll(dataList.slice(start..end)) // [2,3,80]
+            }
+            window.sort()
+            val median = window[window.size / 2]
+            list.add(median)
+            window.clear()
+
+        }
+        return list
     }
 
 
