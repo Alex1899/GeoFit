@@ -9,6 +9,7 @@ abstract class ExerciseProcessor {
     abstract var lastRepResult: Int
     abstract var jointAnglesMap: MutableMap<Int, Double>
     abstract var pace: Float
+    abstract var exerciseFinishTime: Float
     abstract var feedBack: MutableMap<Int,String>
     abstract var torso: Float?
     abstract var pose: List<PoseLandmark>?

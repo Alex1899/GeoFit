@@ -80,7 +80,6 @@ object BicepCurlAnalysis : ExerciseAnalysis() {
 
         val minElbowAngle = jointAngles.second
         val maxElbowAngle = jointAngles.first
-        Log.i("ProcessorKKK", "minAngle = $minElbowAngle  maxAngle = $maxElbowAngle")
         var feedback = ""
 
         feedback = if (minElbowAngle < 68 && maxElbowAngle >= 138) {

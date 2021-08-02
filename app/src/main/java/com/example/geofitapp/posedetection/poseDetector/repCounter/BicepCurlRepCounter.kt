@@ -23,11 +23,11 @@ object BicepCurlRepCounter : ExerciseRepCounter() {
     private var anglesList = mutableListOf<Double>()
     private var analysisAngleList = mutableListOf<Double>()
     private var startTime: Long? = null
+    private var exerciseStartTime: Long? = null
     private var finishTime: Float = 0f
     private var paceAvgList = mutableListOf<Float>()
 
     override var overallTotalReps: Int? = null
-    private var exerciseProcessor = BicepCurlProcessor
 
     private const val DEFAULT_ENTER_THRESHOLD = 90
     private const val DEFAULT_EXIT_THRESHOLD = 130
@@ -73,14 +73,18 @@ object BicepCurlRepCounter : ExerciseRepCounter() {
                 poseEntered()
                 BicepCurlProcessor.finished =  true // finished true
                 BicepCurlProcessor.anglesOfInterest.add(BicepCurlProcessor.elbowAnglePairList)
+                BicepCurlProcessor.exerciseFinishTime = getTimeDiff(exerciseStartTime!!)
+                exerciseStartTime = null
+
                 exerciseFinished = true
                 return BicepCurlProcessor
             }
 
             if (startTime == null) {
                 startTime = System.currentTimeMillis()
-                Log.i("Pace", "start time initialized")
-                Log.i("Pace", "startTime = $startTime")
+            }
+            if(exerciseStartTime == null){
+                exerciseStartTime = System.currentTimeMillis()
             }
 
             if (maxElbowAngle!! - freshAngle <= 30) {
@@ -122,14 +126,17 @@ object BicepCurlRepCounter : ExerciseRepCounter() {
 
     }
 
+    private fun getTimeDiff(time: Long): Float{
+        val now = System.currentTimeMillis()
+        val diff = (now - time).toFloat()
+        return ((diff / 1000) % 60)
+    }
+
     private fun poseEntered(){
         Log.i("RepCount", "last maxAngle=$maxElbowAngle")
         poseEntered = false
-        val now = System.currentTimeMillis()
-        val diff = (now - startTime!!).toFloat()
 
-
-        val endTime = ((diff / 1000) % 60)
+        val endTime = getTimeDiff(startTime!!)
         paceAvgList.add(endTime)
         finishTime = paceAvgList.average().toFloat()
         startTime = null
@@ -225,6 +232,7 @@ object BicepCurlRepCounter : ExerciseRepCounter() {
         minElbowAngle = null
         finishTime = 0f
         startTime = null
+        exerciseStartTime = null
         BicepCurlProcessor.resetDetails()
     }
 

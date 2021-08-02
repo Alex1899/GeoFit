@@ -7,5 +7,7 @@ import kotlinx.parcelize.Parcelize
 data class ExerciseSetDetails(
     val sets: String = "",
     val reps: String = "",
+    val pace: String = "",
+    val exerciseTimeTaken: String = "",
     val angleList: MutableList<Double> = mutableListOf()
 ) : Parcelable

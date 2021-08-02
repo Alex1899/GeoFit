@@ -129,15 +129,18 @@ class PoseDetectorProcessor(
             for (angles in list) {
                 angleList.addAll(angles)
             }
-            Log.i("Inspect", "last rep angles = ${list.last()}")
-
         }
 
         Log.i("Chart", "first angleList =$angleList")
+        val reps = "${binding.repsOverlayText.text}${binding.testRep.text}"
+        val sets = "${binding.setsOverlayText.text}${binding.testSet.text}"
+
         val details = ExerciseSetDetails(
-            binding.setsOverlayText.text.toString(),
-            binding.repsOverlayText.text.toString(),
-            angleList
+            sets,
+            reps,
+            String.format("%.1f", exerciseProcessor.pace)+ "s",
+            String.format("%.1f", exerciseProcessor.exerciseFinishTime) + "s",
+            angleList,
         )
         intent.putExtra("exerciseSetDetails", details)
         startActivity(context, intent, null)

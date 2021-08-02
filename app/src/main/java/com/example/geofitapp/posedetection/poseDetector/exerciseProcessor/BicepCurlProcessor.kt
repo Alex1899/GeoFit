@@ -12,6 +12,7 @@ object BicepCurlProcessor : ExerciseProcessor() {
     override var lastRepResult = 0
     override var jointAnglesMap = mutableMapOf<Int, Double>()
     override var pace = 0f
+    override var exerciseFinishTime = 0f
     override var feedBack = mutableMapOf<Int, String>()
     override var torso: Float? = null
     override var pose: List<PoseLandmark>? = null

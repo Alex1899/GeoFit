@@ -156,6 +156,8 @@
 
     <string name="reps_txt">Reps</string>
     <string name="sets_txt">Sets</string>
+    <string name="pace_txt">Pace</string>
+    <string name="time_txt">Time</string>
     <string name="weight_txt">Kg</string>
     <string name="rest_txt">Sec</string>
 
