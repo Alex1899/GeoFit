@@ -210,7 +210,7 @@ object BicepCurlRepCounter : ExerciseRepCounter() {
 
             )
             BicepCurlProcessor.anglesOfInterest[hipId] = Pair(
-                Pair(max(filteredHipAngles2), 0.0),
+                Pair(max(filteredHipAngles2), min(filteredHipAngles2)),
                 filteredHipAngles2.distinct().toMutableList()
             )
 

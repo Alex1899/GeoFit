@@ -138,6 +138,7 @@ class PoseDetectorProcessor(
             String.format("%.1f", exerciseProcessor.pace)+ "s",
             String.format("%.1f", exerciseProcessor.exerciseFinishTime) + "s",
             allAngles,
+            exerciseProcessor.feedBack
         )
         intent.putExtra("exerciseSetDetails", details)
         startActivity(context, intent, null)

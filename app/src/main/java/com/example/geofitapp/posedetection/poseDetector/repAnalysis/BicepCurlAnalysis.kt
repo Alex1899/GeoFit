@@ -1,12 +1,8 @@
 package com.example.geofitapp.posedetection.poseDetector.repAnalysis
 
-import android.util.Log
 import com.example.geofitapp.posedetection.poseDetector.jointAngles.ExerciseUtils
 import com.google.mlkit.vision.common.PointF3D
 import com.google.mlkit.vision.pose.PoseLandmark
-import java.util.Collections.max
-import java.util.Collections.min
-import kotlin.math.roundToInt
 
 object BicepCurlAnalysis : ExerciseAnalysis() {
     private var side = ""
@@ -87,16 +83,14 @@ object BicepCurlAnalysis : ExerciseAnalysis() {
     }
 
 
-    override fun analyseRep(jointAnglesMap: MutableMap<Int, Pair<Pair<Double, Double>, MutableList<Double>>>): List<MutableMap<String, MutableMap<String, Pair<String, String>>>> {
+    override fun analyseRep(jointAnglesMap: MutableMap<Int, Pair<Pair<Double, Double>, MutableList<Double>>>): MutableMap<String, MutableMap<String, Pair<String, String>>> {
 
         // starting position
         val startingFeedback = getStartingPositionFeedback(jointAnglesMap)
         // middle position
-        val middleFeedback = getMiddlePositionFeedback(jointAnglesMap)
+        val middleFeedback = getMiddlePositionFeedback(jointAnglesMap, startingFeedback)
         // finishing position
-        val finishingFeedback = getFinishingPositionFeedback(jointAnglesMap)
-
-        return listOf(startingFeedback, middleFeedback, finishingFeedback)
+        return getFinishingPositionFeedback(jointAnglesMap, middleFeedback)
     }
 
 
@@ -108,7 +102,7 @@ object BicepCurlAnalysis : ExerciseAnalysis() {
 
         val feedbackMap = mutableMapOf(startingPos to mutableMapOf<String, Pair<String, String>>())
 
-        if (startElbowAngle < 138) {
+        if (startElbowAngle >= 138) {
             feedbackMap[startingPos]!!["Starting Elbow Angle"] = Pair(
                 "Correct",
                 ""
@@ -151,7 +145,10 @@ object BicepCurlAnalysis : ExerciseAnalysis() {
 
     }
 
-    override fun getMiddlePositionFeedback(jointAnglesMap: MutableMap<Int, Pair<Pair<Double, Double>,  MutableList<Double>>>): MutableMap<String, MutableMap<String, Pair<String, String>>> {
+    override fun getMiddlePositionFeedback(
+        jointAnglesMap: MutableMap<Int, Pair<Pair<Double, Double>, MutableList<Double>>>,
+        feedbackMap: MutableMap<String, MutableMap<String, Pair<String, String>>>
+    ): MutableMap<String, MutableMap<String, Pair<String, String>>> {
 
         // elbow angle
         val maxElbowAngle = jointAnglesMap[elbowId]!!.first.first
@@ -165,14 +162,16 @@ object BicepCurlAnalysis : ExerciseAnalysis() {
         val maxHipAngle = jointAnglesMap[hipId]!!.first.first
         val minHipAngle = jointAnglesMap[hipId]!!.first.second
 
-        val feedbackMap = mutableMapOf(middlePos to mutableMapOf<String, Pair<String, String>>())
-
+        if (!feedbackMap.containsKey(middlePos)) {
+            feedbackMap[middlePos] = mutableMapOf()
+        }
         // elbow
         if (minElbowAngle < 68 && maxElbowAngle >= 138) {
             feedbackMap[middlePos]!!["Minimum Elbow Angle"] = Pair(
                 "Correct",
                 "Good Form: The weight was brought up high enough for a good contraction"
             )
+
         } else {
             feedbackMap[middlePos]!!["Minimum Elbow Angle"] = Pair(
                 "Wrong",
@@ -180,16 +179,22 @@ object BicepCurlAnalysis : ExerciseAnalysis() {
                         "weight is too heavy.\nFix: Consider lowering the weight to properly target " +
                         "your biceps and avoid the risk of injury"
             )
+
         }
 
         if (maxShoulderAngle < 21) {
             feedbackMap[middlePos]!!["Maximum Elbow Forward Shift"] =
-                Pair("Correct", "Good Form: Elbows did not move significantly during the movement")
+                Pair(
+                    "Correct",
+                    "Good Form: Elbows did not move significantly during the movement"
+
+                )
         } else {
             feedbackMap[middlePos]!!["Maximum Elbow Forward Shift"] = Pair(
                 "Wrong",
                 "Bad Form: Elbows have been shifted forward significantly.\nFix: Try to keep your elbows " +
                         "closer to your body"
+
             )
         }
 
@@ -197,12 +202,14 @@ object BicepCurlAnalysis : ExerciseAnalysis() {
             feedbackMap[middlePos]!!["Minimum Angle at the Hip"] = Pair(
                 "Correct",
                 "Good Form: No leaning forward excessively"
+
             )
         } else {
             feedbackMap[middlePos]!!["Minimum Angle at the Hip"] = Pair(
                 "Wrong",
                 "Bad Form: Leaning forward significantly.\nFix: Try to keep your back still and straight" +
                         " throughout the movement"
+
             )
         }
 
@@ -211,35 +218,44 @@ object BicepCurlAnalysis : ExerciseAnalysis() {
                 "Correct",
                 "Good Form: No leaning backwards excessively"
             )
+
         } else {
             feedbackMap[middlePos]!!["Maximum Angle at the Hip"] = Pair(
                 "Wrong",
                 "Bad Form: Leaning backwards significantly.This could be because the weight is too heavy." +
                         "This puts a lot of pressure on the lower back.\nFix: Consider lowering the weight." +
                         " Keep your back straight and focus the effort on the biceps only"
+
             )
         }
 
         return feedbackMap
     }
 
-    override fun getFinishingPositionFeedback(jointAnglesMap: MutableMap<Int, Pair<Pair<Double, Double>, MutableList<Double>>>): MutableMap<String, MutableMap<String, Pair<String, String>>> {
+    override fun getFinishingPositionFeedback(
+        jointAnglesMap: MutableMap<Int, Pair<Pair<Double, Double>, MutableList<Double>>>,
+        feedbackMap: MutableMap<String, MutableMap<String, Pair<String, String>>>
+    ): MutableMap<String, MutableMap<String, Pair<String, String>>> {
         val finishElbowAngle = jointAnglesMap[elbowId]!!.second.last()
         val finishShoulderAngle = jointAnglesMap[shoulderId]!!.second.last()
         val finishHipAngle = jointAnglesMap[hipId]!!.second.last()
 
-        val feedbackMap = mutableMapOf(finishingPos to mutableMapOf<String, Pair<String, String>>())
+        if (!feedbackMap.containsKey(finishingPos)) {
+            feedbackMap[finishingPos] = mutableMapOf()
+        }
 
         if (finishElbowAngle >= 138) {
             feedbackMap[finishingPos]!!["Finishing Elbow Angle"] = Pair(
                 "Correct",
                 "Good Form: Weight lowered correctly"
+
             )
         } else {
             feedbackMap[finishingPos]!!["Finishing Elbow Angle"] = Pair(
                 "Wrong",
                 "Bad Form: Incorrect finishing position. The weight was lowered half way.\nFix: Lower the weight until you achieve a " +
                         "correct finishing position"
+
             )
         }
 
@@ -247,12 +263,14 @@ object BicepCurlAnalysis : ExerciseAnalysis() {
             feedbackMap[finishingPos]!!["Finishing Elbow Forward Shift"] = Pair(
                 "Correct",
                 "Good Form: Elbow not moved significantly"
+
             )
         } else {
             feedbackMap[finishingPos]!!["Finishing Elbow Forward Shift"] = Pair(
                 "Wrong",
                 "Bad Form: Incorrect finishing position. Elbows have been shifted forward significantly.\nFix: Keep your elbows " +
                         "closer to your body at the bottom part of the move"
+
             )
         }
 
@@ -260,6 +278,7 @@ object BicepCurlAnalysis : ExerciseAnalysis() {
             feedbackMap[finishingPos]!!["Finishing Angle at the Hip"] = Pair(
                 "Correct",
                 "Good Form: Not significant movement of the torso"
+
             )
         } else {
             feedbackMap[finishingPos]!!["Finishing Angle at the Hip"] = Pair(
@@ -267,6 +286,7 @@ object BicepCurlAnalysis : ExerciseAnalysis() {
                 "Bad Form: Incorrect finishing position. Your torso showed significant movement.\nFix:" +
                         " Try to keep your torso still and straight at the bottom part of the move"
             )
+
         }
 
         return feedbackMap

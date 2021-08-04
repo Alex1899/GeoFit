@@ -31,7 +31,6 @@ class ExerciseSetDetailsActivity : AppCompatActivity() {
         for (triple in exerciseSetDetails.angleList) {
             val angleListY = triple.second
             val pair1 = Pair(max(angleListY).toFloat(), min(angleListY).toFloat())
-            Log.i("SetDetails", "${triple.first} size = ${triple.second.size}")
             val angleListX = (0..angleListY.size).toList()
             val entryList = angleListX.zip(angleListY) { x, y -> Entry(x.toFloat(), y.toFloat()) }
 
@@ -44,7 +43,6 @@ class ExerciseSetDetailsActivity : AppCompatActivity() {
                     this
                 )
             )
-
         }
         val recyclerView = binding.chartRecyclerView
         recyclerView.setHasFixedSize(true)
@@ -58,6 +56,68 @@ class ExerciseSetDetailsActivity : AppCompatActivity() {
         val snapHelper = PagerSnapHelper()
         snapHelper.attachToRecyclerView(recyclerView)
         recyclerView.addItemDecoration(CirclePagerIndicatorDecoration())
+
+        val feedbackRecyclerView = binding.feedbackRecyclerView
+        feedbackRecyclerView.setHasFixedSize(true)
+        feedbackRecyclerView.adapter = FeedbackAdapter(
+            this,
+            getFeedback(exerciseSetDetails),
+            getIncorrectRepsList(exerciseSetDetails)
+        )
+
+        feedbackRecyclerView.layoutManager = LinearLayoutManager(
+            this,
+            LinearLayoutManager.HORIZONTAL, false
+        )
+
+        val snapHelper2 = PagerSnapHelper()
+        snapHelper2.attachToRecyclerView(feedbackRecyclerView)
+        feedbackRecyclerView.addItemDecoration(CirclePagerIndicatorDecoration())
+    }
+
+    private fun getFeedback(exerciseSetDetails: ExerciseSetDetails):
+            MutableMap<String, MutableMap<String, Pair<String, String>>> {
+        val feedbackList = exerciseSetDetails.feedback.values.toList()
+        return feedbackList.first()
+    }
+
+    private fun getIncorrectRepsList(exerciseSetDetails: ExerciseSetDetails): MutableMap<String, MutableMap<String, Pair<MutableList<Int>, MutableList<Int>>>> {
+
+        val repsMap =
+            mutableMapOf<String, MutableMap<String, Pair<MutableList<Int>, MutableList<Int>>>>()
+        for ((rep, map) in exerciseSetDetails.feedback) {
+            for ((key, feedbackMap) in map) {
+                for ((aoiKey, fMap) in feedbackMap) {
+                    if (fMap.first == "Correct") {
+                        if (!repsMap.containsKey(key)) {
+                            repsMap[key] =
+                                mutableMapOf(aoiKey to Pair(mutableListOf(rep), mutableListOf()))
+                        } else {
+                            if(!repsMap[key]!!.containsKey(aoiKey)){
+                                repsMap[key]!![aoiKey] = Pair(mutableListOf(rep), mutableListOf())
+                            }else{
+                                repsMap[key]!![aoiKey]!!.first.add(rep)
+                            }
+
+                        }
+                    } else {
+                        if (!repsMap.containsKey(key)) {
+                            repsMap[key] =
+                                mutableMapOf(aoiKey to Pair(mutableListOf(), mutableListOf(rep)))
+
+                        } else {
+                            if(!repsMap[key]!!.containsKey(aoiKey)){
+                                repsMap[key]!![aoiKey] = Pair(mutableListOf(), mutableListOf(rep))
+                            }else{
+                                repsMap[key]!![aoiKey]!!.second.add(rep)
+                            }
+                        }
+                    }
+                }
+
+            }
+        }
+        return repsMap
     }
 
 
