@@ -9,5 +9,5 @@ data class ExerciseSetDetails(
     val reps: String = "",
     val pace: String = "",
     val exerciseTimeTaken: String = "",
-    val angleList: MutableList<Double> = mutableListOf()
+    val angleList: MutableList<Triple<String, MutableList<Double>, Triple<Float, Float, Boolean>>> = mutableListOf()
 ) : Parcelable

@@ -161,24 +161,18 @@ object ExerciseUtils {
 //            }
 
         }
-        val rightDistance = rightSum/13
-        val leftDistance = leftSum/13
-
-        Log.i("Reps", "rightSum=${rightDistance} leftSum=${leftDistance}")
+//        val rightDistance = rightSum/13
+//        val leftDistance = leftSum/13
+//
+//        Log.i("Reps", "rightSum=${rightDistance} leftSum=${leftDistance}")
 
         var side = ""
         side = when {
-            rightDistance < 0 && leftDistance < 0 -> {
-                "front"
-            }
-            rightDistance > leftDistance -> {
+            rightSum > leftSum -> {
                 "left"
             }
-            rightDistance < leftDistance -> {
-                "right"
-            }
             else -> {
-                "front"
+                "right"
             }
         }
 

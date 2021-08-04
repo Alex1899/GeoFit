@@ -10,15 +10,17 @@ abstract class ExerciseProcessor {
     abstract var jointAnglesMap: MutableMap<Int, Double>
     abstract var pace: Float
     abstract var exerciseFinishTime: Float
-    abstract var feedBack: MutableMap<Int,String>
+    abstract var feedBack: MutableMap<Int, List<MutableMap<String, MutableMap<String, Pair<String, String>>>>>
     abstract var torso: Float?
     abstract var pose: List<PoseLandmark>?
     abstract var side: String
     abstract var finished: Boolean
     abstract var repFinished: Boolean?
-    abstract var anglesOfInterest: MutableList<MutableMap<Pair<Double, Double>, MutableList<Double>>>
+    abstract var anglesOfInterest: MutableMap<Int, Pair<Pair<Double, Double>, MutableList<Double>>>
+    abstract var allAnglesOfInterest: MutableMap<String, Triple<String, MutableList<Double>, Triple<Float, Float, Boolean>>>
 
     abstract fun getFeedback(repAnalyzer: ExerciseAnalysis)
+    abstract fun getRepFormResult(): String
     abstract fun resetDetails()
 
 }

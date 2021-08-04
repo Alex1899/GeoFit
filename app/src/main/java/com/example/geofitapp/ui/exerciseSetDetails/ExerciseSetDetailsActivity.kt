@@ -9,7 +9,10 @@ import androidx.recyclerview.widget.PagerSnapHelper
 import com.example.geofitapp.R
 import com.example.geofitapp.databinding.ActivityExerciseSetDetailsBinding
 import com.example.geofitapp.ui.exerciseSetDetails.lineChart.AnglesLineChart
+import com.github.mikephil.charting.charts.LineChart
 import com.github.mikephil.charting.data.Entry
+import java.util.Collections.max
+import java.util.Collections.min
 
 
 class ExerciseSetDetailsActivity : AppCompatActivity() {
@@ -24,26 +27,39 @@ class ExerciseSetDetailsActivity : AppCompatActivity() {
             intent.getParcelableExtra<ExerciseSetDetails>("exerciseSetDetails")!!
         binding.exerciseSetDetails = exerciseSetDetails
 
-        val angleListY = exerciseSetDetails.angleList
-        val angleListX = (0..angleListY.size).toList()
-        val entryList = angleListX.zip(angleListY) { x, y -> Entry(x.toFloat(), y.toFloat()) }
+        val charts = mutableListOf<LineChart>()
+        for (triple in exerciseSetDetails.angleList) {
+            val angleListY = triple.second
+            val pair1 = Pair(max(angleListY).toFloat(), min(angleListY).toFloat())
+            Log.i("SetDetails", "${triple.first} size = ${triple.second.size}")
+            val angleListX = (0..angleListY.size).toList()
+            val entryList = angleListX.zip(angleListY) { x, y -> Entry(x.toFloat(), y.toFloat()) }
 
-        val chart = AnglesLineChart.initilise(entryList, this)
-        val newChart = AnglesLineChart.initilise(entryList, this)
+            charts.add(
+                AnglesLineChart.initilise(
+                    entryList,
+                    triple.first,
+                    triple.third,
+                    pair1,
+                    this
+                )
+            )
 
+        }
         val recyclerView = binding.chartRecyclerView
         recyclerView.setHasFixedSize(true)
-        recyclerView.adapter = ChartAdapter(this, listOf(chart, newChart))
+        recyclerView.adapter = ChartAdapter(this, charts)
 
-        recyclerView.layoutManager = LinearLayoutManager(this,
-            LinearLayoutManager.HORIZONTAL, false)
+        recyclerView.layoutManager = LinearLayoutManager(
+            this,
+            LinearLayoutManager.HORIZONTAL, false
+        )
 
         val snapHelper = PagerSnapHelper()
         snapHelper.attachToRecyclerView(recyclerView)
         recyclerView.addItemDecoration(CirclePagerIndicatorDecoration())
-
-
     }
+
 
 //
 //    override fun onBackPressed() {

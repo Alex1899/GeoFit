@@ -123,15 +123,12 @@ class PoseDetectorProcessor(
     ) {
         val intent = Intent(context, ExerciseSetDetailsActivity::class.java)
         // sets, reps, time taken, and rest timer
-        val angleList = mutableListOf<Double>()
-        for (map in exerciseProcessor.anglesOfInterest) {
-            val list = map.values.toList()
-            for (angles in list) {
-                angleList.addAll(angles)
-            }
+        val allAngles = mutableListOf<Triple<String, MutableList<Double>, Triple<Float, Float, Boolean>>>()
+        for(triple in exerciseProcessor.allAnglesOfInterest.values.toList()){
+            allAngles.add(triple)
         }
 
-        Log.i("Chart", "first angleList =$angleList")
+
         val reps = "${binding.repsOverlayText.text}${binding.testRep.text}"
         val sets = "${binding.setsOverlayText.text}${binding.testSet.text}"
 
@@ -140,7 +137,7 @@ class PoseDetectorProcessor(
             reps,
             String.format("%.1f", exerciseProcessor.pace)+ "s",
             String.format("%.1f", exerciseProcessor.exerciseFinishTime) + "s",
-            angleList,
+            allAngles,
         )
         intent.putExtra("exerciseSetDetails", details)
         startActivity(context, intent, null)
@@ -189,8 +186,7 @@ class PoseDetectorProcessor(
         if (exerciseProcessor!!.repFinished!!) {
             exerciseProcessor!!.getFeedback(repAnalyzer!!)
             exerciseProcessor!!.repFinished = false
-            val ls = exerciseProcessor!!.feedBack.values.toList()
-            feedBack = if (ls.isEmpty()) "" else ls.last()
+            feedBack = exerciseProcessor!!.getRepFormResult()
             Log.i("ProcessorKKK", "feedback = $feedBack")
         }
 
