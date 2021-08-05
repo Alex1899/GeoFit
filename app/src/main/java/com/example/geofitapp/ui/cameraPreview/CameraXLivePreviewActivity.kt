@@ -84,11 +84,12 @@ class CameraXLivePreviewActivity : AppCompatActivity(),
         val exerciseName = bundle.getString("exerciseName")!!
         reps = bundle.getString("reps")!!
         val sets = bundle.getString("sets")!!
+        val currentSet = bundle.getString("currentSet")!!
 
         binding.repsOverlayText.text = "0"
         binding.testRep.text = getString(R.string.reps_overlay_text, reps)
 
-        binding.setsOverlayText.text = "1"
+        binding.setsOverlayText.text = currentSet
         binding.testSet.text = getString(R.string.sets_overlay_text, sets)
 
         binding.sideOverlayText.text = getString(R.string.side_overlay_text, "N/A")

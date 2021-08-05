@@ -7,12 +7,17 @@ import androidx.lifecycle.ViewModel
 class ExercisePreviewViewModel : ViewModel() {
     private val _reps = MutableLiveData<Int>()
     private val _sets = MutableLiveData<Int>()
+    private val _currentSet = MutableLiveData<Int>()
+
     private val _weight= MutableLiveData<Float>()
     private val _rest = MutableLiveData<Int>()
 
 
     val reps: LiveData<Int>
         get() = _reps
+
+    val currentSet: LiveData<Int>
+        get() = _currentSet
 
     val sets: LiveData<Int>
         get() = _sets
@@ -27,6 +32,7 @@ class ExercisePreviewViewModel : ViewModel() {
     init{
         _reps.value = 12
         _sets.value = 3
+        _currentSet.value = 1
         _weight.value = 0f
         _rest.value = 60
 
@@ -38,6 +44,10 @@ class ExercisePreviewViewModel : ViewModel() {
 
     fun updateSets(sets: String){
         _sets.value = sets.toInt()
+    }
+
+    fun updateCurrentSet(set: String){
+        _currentSet.value = set.toInt()
     }
 
     fun updateWeight(weight: String){

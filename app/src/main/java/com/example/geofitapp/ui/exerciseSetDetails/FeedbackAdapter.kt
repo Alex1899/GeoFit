@@ -7,9 +7,11 @@ import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.core.content.ContextCompat
+import androidx.core.view.marginEnd
 import androidx.recyclerview.widget.RecyclerView
 import com.example.geofitapp.R
 import com.example.geofitapp.databinding.ItemFeedbackViewBinding
@@ -18,7 +20,7 @@ class FeedbackAdapter(
     private val context: Context,
     private val feedbackMap:
     MutableMap<String, MutableMap<String, Pair<String, String>>>,
-    private val incorrectReps: MutableMap<String, MutableMap<String, Pair<MutableList<Int>, MutableList<Int>>>>
+    private val incorrectReps: MutableMap<String, MutableMap<String, Pair<MutableList<Int>, String>>>
 
 ) : RecyclerView.Adapter<FeedbackAdapter.ViewHolder>() {
 
@@ -28,7 +30,7 @@ class FeedbackAdapter(
         fun bind(
             map: MutableMap<String, Pair<String, String>>,
             key: String,
-            incorrectReps: MutableMap<String, MutableMap<String, Pair<MutableList<Int>, MutableList<Int>>>>,
+            incorrectReps: MutableMap<String, MutableMap<String, Pair<MutableList<Int>, String>>>,
             context: Context
         ) {
             val titleTV = TextView(context)
@@ -45,7 +47,7 @@ class FeedbackAdapter(
             // position title
             binding.feedbackLinearLayout.addView(titleTV)
 
-            for ((k, v) in map) {
+            for ((k, _) in map) {
                 val ll = getAoiLabel(context, k, incorrectReps[key]!![k]!!)
                 binding.feedbackLinearLayout.addView(ll)
             }
@@ -54,31 +56,38 @@ class FeedbackAdapter(
         private fun getAoiLabel(
             context: Context,
             text: String,
-            reps: Pair<MutableList<Int>, MutableList<Int>>
+            reps: Pair<MutableList<Int>, String>
         ): LinearLayout {
+            val mainLinearLayout = LinearLayout(context)
+            val mainparams = LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT,
+            ).apply { bottomMargin = 20 }
+            mainLinearLayout.layoutParams = mainparams
+            mainLinearLayout.orientation = LinearLayout.VERTICAL
+            mainLinearLayout.background =
+                ContextCompat.getDrawable(context, R.drawable.aoi_text_overlay)
+
             val linearLayout = LinearLayout(context)
             val params = LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT,
                 LinearLayout.LayoutParams.WRAP_CONTENT,
             ).apply {
-                bottomMargin = 20
                 gravity = Gravity.CENTER_VERTICAL
             }
 
             linearLayout.layoutParams = params
             linearLayout.isBaselineAligned = false
-            linearLayout.background =
-                ContextCompat.getDrawable(context, R.drawable.aoi_text_overlay)
+
 
             val aoiTV = TextView(context)
             val txtParams = LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.WRAP_CONTENT,
                 LinearLayout.LayoutParams.WRAP_CONTENT
-            ).apply { weight = 1f }
+            )
 
             aoiTV.layoutParams = txtParams
             aoiTV.text = text
-
             aoiTV.setTextColor(Color.WHITE)
             aoiTV.setTextSize(TypedValue.COMPLEX_UNIT_SP, 15f)
 
@@ -92,11 +101,11 @@ class FeedbackAdapter(
             val errtext: String
             val color: Int
 
-            if (reps.second.isEmpty()) {
+            if (reps.first.isEmpty()) {
                 errtext = "No Mistakes"
                 color = Color.GREEN
             } else {
-                errtext = "Mistakes in reps:\n" + reps.second.joinToString()
+                errtext = "Mistakes in reps:\n" + reps.first.joinToString()
                 color = Color.RED
             }
             errorTV.text = errtext
@@ -105,12 +114,53 @@ class FeedbackAdapter(
             errorTV.setTextColor(color)
             errorTV.setTextSize(TypedValue.COMPLEX_UNIT_SP, 10f)
 
+            val feedbackTV = TextView(context)
+            feedbackTV.layoutParams = LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT
+            )
+            feedbackTV.text = reps.second
+            feedbackTV.setTextColor(Color.WHITE)
+            feedbackTV.setTextSize(TypedValue.COMPLEX_UNIT_SP, 13f)
+            feedbackTV.visibility = View.GONE
+
+            val icon = ImageView(context)
+            icon.layoutParams = LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.WRAP_CONTENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT,
+            ).apply { marginEnd = 20 }
+            icon.setImageResource(R.drawable.ic_expand_down)
+
+            val iconAoi = LinearLayout(context)
+            iconAoi.layoutParams = LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.WRAP_CONTENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT,
+            ).apply {
+                weight = 1f
+                gravity = Gravity.CENTER_VERTICAL
+            }
+
+            iconAoi.addView(icon)
+            iconAoi.addView(aoiTV)
+
+            linearLayout.setOnClickListener{
+                if(feedbackTV.visibility == View.GONE){
+                    feedbackTV.visibility = View.VISIBLE
+                    icon.setImageResource(R.drawable.ic_expand_up)
+                }else{
+                    feedbackTV.visibility = View.GONE
+                    icon.setImageResource(R.drawable.ic_expand_down)
+                }
+
+            }
 
             // append aoi text and error reps count
-            linearLayout.addView(aoiTV)
+            linearLayout.addView(iconAoi)
             linearLayout.addView(errorTV)
 
-            return linearLayout
+            mainLinearLayout.addView(linearLayout)
+            mainLinearLayout.addView(feedbackTV)
+            return mainLinearLayout
 
         }
 

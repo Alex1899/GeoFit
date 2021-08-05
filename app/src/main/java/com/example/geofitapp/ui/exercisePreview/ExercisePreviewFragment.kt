@@ -15,6 +15,7 @@ import androidx.core.widget.addTextChangedListener
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
 import com.example.geofitapp.R
@@ -27,7 +28,8 @@ class ExercisePreviewFragment : Fragment() {
     private lateinit var binding: FragmentExercisePreviewBinding
     private lateinit var videoPath: String
     private var imagePath: Int? = null
-    private val viewModel: ExercisePreviewViewModel by viewModels()
+    private lateinit var viewModel: ExercisePreviewViewModel
+    private lateinit var viewModelFactory: ViewModelFactory
 
 
     override fun onCreateView(
@@ -38,6 +40,11 @@ class ExercisePreviewFragment : Fragment() {
         binding = DataBindingUtil.inflate(
             inflater, R.layout.fragment_exercise_preview, container, false
         )
+
+        viewModelFactory = ViewModelFactory()
+        viewModel = ViewModelProvider(
+            this, viewModelFactory).get(ExercisePreviewViewModel::class.java)
+
         val arguments = ExercisePreviewFragmentArgs.fromBundle(requireArguments())
         binding.exerciseData = arguments.exerciseData
         videoPath =
@@ -145,6 +152,7 @@ class ExercisePreviewFragment : Fragment() {
                 bundle.putString("exerciseName", binding.exerciseData!!.exerciseName)
                 bundle.putString("reps", viewModel.reps.value.toString())
                 bundle.putString("sets", viewModel.sets.value.toString())
+                bundle.putString("currentSet", viewModel.currentSet.value.toString())
 
                 intent.putExtra("exercise", bundle)
                 activity?.startActivity(intent)

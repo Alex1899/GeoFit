@@ -126,19 +126,22 @@ class PoseDetectorProcessor(
     ) {
         val intent = Intent(context, ExerciseSetDetailsActivity::class.java)
         // sets, reps, time taken, and rest timer
-        val allAngles = mutableListOf<Triple<String, MutableList<Double>, Triple<Float, Float, Boolean>>>()
-        for(triple in exerciseProcessor.allAnglesOfInterest.values.toList()){
+        val allAngles =
+            mutableListOf<Triple<String, MutableList<Double>, Triple<Float, Float, Boolean>>>()
+        for (triple in exerciseProcessor.allAnglesOfInterest.values.toList()) {
             allAngles.add(triple)
         }
 
 
         val reps = "${binding.repsOverlayText.text}${binding.testRep.text}"
-        val sets = "${binding.setsOverlayText.text}${binding.testSet.text}"
+        val set = binding.testSet.text.toString().split("/")[1].toInt()
+        Log.i("SplitTextSet", "set = ${binding.testSet.text.toString().split("/")}")
 
         val details = ExerciseSetDetails(
-            sets,
+            set,
+            binding.setsOverlayText.text.toString().toInt(),
             reps,
-            String.format("%.1f", exerciseProcessor.pace)+ "s",
+            String.format("%.1f", exerciseProcessor.pace) + "s",
             String.format("%.1f", exerciseProcessor.exerciseFinishTime) + "s",
             allAngles,
             exerciseProcessor.feedBack

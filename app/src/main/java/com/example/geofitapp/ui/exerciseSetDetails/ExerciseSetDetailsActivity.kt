@@ -2,12 +2,16 @@ package com.example.geofitapp.ui.exerciseSetDetails
 
 import android.os.Bundle
 import android.util.Log
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.PagerSnapHelper
 import com.example.geofitapp.R
 import com.example.geofitapp.databinding.ActivityExerciseSetDetailsBinding
+import com.example.geofitapp.ui.exercisePreview.ExercisePreviewViewModel
+import com.example.geofitapp.ui.exercisePreview.ViewModelFactory
 import com.example.geofitapp.ui.exerciseSetDetails.lineChart.AnglesLineChart
 import com.github.mikephil.charting.charts.LineChart
 import com.github.mikephil.charting.data.Entry
@@ -17,7 +21,6 @@ import java.util.Collections.min
 
 class ExerciseSetDetailsActivity : AppCompatActivity() {
     private lateinit var binding: ActivityExerciseSetDetailsBinding
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -27,7 +30,16 @@ class ExerciseSetDetailsActivity : AppCompatActivity() {
             intent.getParcelableExtra<ExerciseSetDetails>("exerciseSetDetails")!!
         binding.exerciseSetDetails = exerciseSetDetails
 
-        binding.restartExercise.setOnClickListener{
+        binding.restartExercise.setOnClickListener {
+            val previewViewModel = ViewModelProvider(
+                this, ViewModelFactory()
+            ).get(ExercisePreviewViewModel::class.java)
+            val set = if (exerciseSetDetails.currentSet == exerciseSetDetails.sets) {
+                1
+            } else {
+                exerciseSetDetails.currentSet + 1
+            }
+            previewViewModel.updateCurrentSet(set.toString())
             onBackPressed()
         }
 
@@ -85,34 +97,34 @@ class ExerciseSetDetailsActivity : AppCompatActivity() {
         return feedbackList.first()
     }
 
-    private fun getIncorrectRepsList(exerciseSetDetails: ExerciseSetDetails): MutableMap<String, MutableMap<String, Pair<MutableList<Int>, MutableList<Int>>>> {
+    private fun getIncorrectRepsList(exerciseSetDetails: ExerciseSetDetails): MutableMap<String, MutableMap<String, Pair<MutableList<Int>, String>>> {
         val repsMap =
-            mutableMapOf<String, MutableMap<String, Pair<MutableList<Int>, MutableList<Int>>>>()
+            mutableMapOf<String, MutableMap<String, Pair<MutableList<Int>, String>>>()
         for ((rep, map) in exerciseSetDetails.feedback) {
             for ((key, feedbackMap) in map) {
                 for ((aoiKey, fMap) in feedbackMap) {
-                    if (fMap.first == "Correct") {
+                    val feedbackText = fMap.second
+                    if (fMap.first == "Wrong") {
                         if (!repsMap.containsKey(key)) {
                             repsMap[key] =
-                                mutableMapOf(aoiKey to Pair(mutableListOf(rep), mutableListOf()))
+                                mutableMapOf(aoiKey to Pair(mutableListOf(rep), feedbackText))
                         } else {
-                            if(!repsMap[key]!!.containsKey(aoiKey)){
-                                repsMap[key]!![aoiKey] = Pair(mutableListOf(rep), mutableListOf())
-                            }else{
+                            if (!repsMap[key]!!.containsKey(aoiKey)) {
+                                repsMap[key]!![aoiKey] = Pair(mutableListOf(rep), feedbackText)
+                            } else {
                                 repsMap[key]!![aoiKey]!!.first.add(rep)
+                                repsMap[key]!![aoiKey] =
+                                    repsMap[key]!![aoiKey]!!.copy(second = feedbackText)
                             }
 
                         }
                     } else {
                         if (!repsMap.containsKey(key)) {
                             repsMap[key] =
-                                mutableMapOf(aoiKey to Pair(mutableListOf(), mutableListOf(rep)))
-
+                                mutableMapOf(aoiKey to Pair(mutableListOf(), feedbackText))
                         } else {
-                            if(!repsMap[key]!!.containsKey(aoiKey)){
-                                repsMap[key]!![aoiKey] = Pair(mutableListOf(), mutableListOf(rep))
-                            }else{
-                                repsMap[key]!![aoiKey]!!.second.add(rep)
+                            if (!repsMap[key]!!.containsKey(aoiKey)) {
+                                repsMap[key]!![aoiKey] = Pair(mutableListOf(), feedbackText)
                             }
                         }
                     }
@@ -120,6 +132,7 @@ class ExerciseSetDetailsActivity : AppCompatActivity() {
 
             }
         }
+        Log.i("RepsMap", "repsMap here = $repsMap")
         return repsMap
     }
 

@@ -76,7 +76,7 @@
 
                     <TextView
                         style="@style/DetailsTextView"
-                        android:text="@{exerciseSetDetails.sets}"
+                        android:text="@{@string/set_details_text(exerciseSetDetails.currentSet, exerciseSetDetails.sets)}"
                         android:textSize="20sp"
                         tools:text="12/12"
 
