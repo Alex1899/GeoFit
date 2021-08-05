@@ -25,168 +25,135 @@
             android:layout_height="wrap_content" />
 
 
-        <ScrollView
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1">
+            android:layout_height="match_parent"
+            android:orientation="vertical">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical">
+                android:layout_marginTop="20dp"
+                android:layout_marginBottom="15dp"
+                android:gravity="center"
+                android:orientation="horizontal">
 
                 <LinearLayout
-                    android:layout_width="match_parent"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="20dp"
+                    android:layout_marginEnd="10dp"
+                    android:background="@drawable/set_details_overlay"
                     android:gravity="center"
-                    android:orientation="horizontal">
-
-                    <LinearLayout
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:gravity="center"
-                        android:background="@drawable/set_details_overlay"
-                        android:layout_marginEnd="10dp"
-                        android:orientation="vertical">
-
-                        <TextView
-                            style="@style/OverlayTextView"
-                            android:textSize="11sp"
-                            android:text="@string/reps_txt"
-                            />
-
-                        <TextView
-                            style="@style/DetailsTextView"
-                            android:text="@{exerciseSetDetails.reps}"
-                            android:textSize="20sp"
-                            tools:text="12/12"
-
-                            />
-
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:gravity="center"
-                        android:background="@drawable/set_details_overlay"
-                        android:layout_marginEnd="10dp"
-                        android:orientation="vertical">
-
-                        <TextView
-                            style="@style/OverlayTextView"
-                            android:textSize="11sp"
-                            android:text="@string/sets_txt"
-                            />
-
-                        <TextView
-                            style="@style/DetailsTextView"
-                            android:text="@{exerciseSetDetails.sets}"
-                            android:textSize="20sp"
-                            tools:text="12/12"
-
-                            />
-
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:gravity="center"
-                        android:background="@drawable/set_details_overlay"
-                        android:orientation="vertical">
-
-                        <TextView
-                            style="@style/OverlayTextView"
-                            android:textSize="11sp"
-                            android:text="@string/pace_txt"
-                            />
-
-                        <TextView
-                            style="@style/DetailsTextView"
-                            android:text="@{exerciseSetDetails.pace}"
-                            android:textSize="20sp"
-                            tools:text="2.0s"
-
-                            />
-
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:gravity="center"
-                        android:background="@drawable/set_details_overlay"
-                        android:layout_marginStart="10dp"
-                        android:orientation="vertical">
-
-                        <TextView
-                            style="@style/OverlayTextView"
-                            android:textSize="11sp"
-                            android:text="@string/time_txt"
-                            />
-
-                        <TextView
-                            style="@style/DetailsTextView"
-                            android:text="@{exerciseSetDetails.exerciseTimeTaken}"
-                            android:textSize="20sp"
-                            tools:text="30.0s"
-
-                            />
-
-                    </LinearLayout>
-                </LinearLayout>
-
-<!--                Rep Form Breakdown-->
+                    android:orientation="vertical">
 
                     <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="Form Breakdown"
-                        android:textColor="@color/white"
-                        android:textSize="18sp"
-                        android:textAlignment="center"
-                        android:layout_marginTop="15dp"
-                        android:layout_marginBottom="30dp"
-                       />
+                        style="@style/OverlayTextView"
+                        android:text="@string/reps_txt"
+                        android:textSize="11sp" />
 
-                    <androidx.recyclerview.widget.RecyclerView
-                        android:id="@+id/feedback_recycler_view"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="10dp"
-                        android:layout_marginEnd="10dp"
+                    <TextView
+                        style="@style/DetailsTextView"
+                        android:text="@{exerciseSetDetails.reps}"
+                        android:textSize="20sp"
+                        tools:text="12/12"
+
                         />
+
+                </LinearLayout>
 
                 <LinearLayout
-                    android:layout_width="match_parent"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:baselineAligned="false"
-                    android:gravity="center_vertical"
-                    >
+                    android:layout_marginEnd="10dp"
+                    android:background="@drawable/set_details_overlay"
+                    android:gravity="center"
+                    android:orientation="vertical">
+
                     <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="This is a test"
-                        android:textColor="@color/white"
+                        style="@style/OverlayTextView"
+                        android:text="@string/sets_txt"
+                        android:textSize="11sp" />
+
+                    <TextView
+                        style="@style/DetailsTextView"
+                        android:text="@{exerciseSetDetails.sets}"
                         android:textSize="20sp"
+                        tools:text="12/12"
+
                         />
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Mistakes\nafajaj\nafadf"
-                        android:textColor="@color/white"
-                        android:textSize="20sp" />
                 </LinearLayout>
 
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/set_details_overlay"
+                    android:gravity="center"
+                    android:orientation="vertical">
 
+                    <TextView
+                        style="@style/OverlayTextView"
+                        android:text="@string/pace_txt"
+                        android:textSize="11sp" />
+
+                    <TextView
+                        style="@style/DetailsTextView"
+                        android:text="@{exerciseSetDetails.pace}"
+                        android:textSize="20sp"
+                        tools:text="2.0s"
+
+                        />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:background="@drawable/set_details_overlay"
+                    android:gravity="center"
+                    android:orientation="vertical">
+
+                    <TextView
+                        style="@style/OverlayTextView"
+                        android:text="@string/time_txt"
+                        android:textSize="11sp" />
+
+                    <TextView
+                        style="@style/DetailsTextView"
+                        android:text="@{exerciseSetDetails.exerciseTimeTaken}"
+                        android:textSize="20sp"
+                        tools:text="30.0s"
+
+                        />
+
+                </LinearLayout>
             </LinearLayout>
-        </ScrollView>
 
+            <!--Rep Form Breakdown-->
 
+            <!--            <ScrollView-->
+            <!--                android:layout_width="match_parent"-->
+            <!--                android:layout_height="0dp"-->
+            <!--                android:layout_weight="1">-->
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/feedback_recycler_view"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1" />
+            <!--            </ScrollView>-->
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/restart_exercise"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:text="@string/restart_exercise_btn"
+                android:layout_marginStart="10dp"
+                android:layout_marginEnd="10dp"
+                android:background="@drawable/rounded_button"
+                android:textColor="@color/white" />
+
+        </LinearLayout>
     </LinearLayout>
 </layout>

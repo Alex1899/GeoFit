@@ -98,6 +98,9 @@ class PoseDetectorProcessor(
 
                         repAnalyzer =
                             ExerciseUtils.exerciseRepCounterAnalyzerMap[exercise[0]]!!.second
+
+                        exerciseProcessor = ExerciseProcessor
+                        exerciseProcessor!!.setAnglesOfInterestMap(ExerciseUtils.exerciseAnglesOfInterestMap[exercise[0]]!!)
                     }
 
                     PoseWithRepCounting(pose)

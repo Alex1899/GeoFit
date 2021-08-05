@@ -1,26 +1,57 @@
 package com.example.geofitapp.posedetection.poseDetector.exerciseProcessor
 
+import com.example.geofitapp.posedetection.poseDetector.jointAngles.AnalyzerUtils
 import com.example.geofitapp.posedetection.poseDetector.repAnalysis.ExerciseAnalysis
-import com.example.geofitapp.posedetection.poseDetector.repCounter.ExerciseRepCounter
-import com.google.mlkit.vision.pose.Pose
 import com.google.mlkit.vision.pose.PoseLandmark
 
-abstract class ExerciseProcessor {
-    abstract var lastRepResult: Int
-    abstract var jointAnglesMap: MutableMap<Int, Double>
-    abstract var pace: Float
-    abstract var exerciseFinishTime: Float
-    abstract var feedBack: MutableMap<Int, MutableMap<String, MutableMap<String, Pair<String, String>>>>
-    abstract var torso: Float?
-    abstract var pose: List<PoseLandmark>?
-    abstract var side: String
-    abstract var finished: Boolean
-    abstract var repFinished: Boolean?
-    abstract var anglesOfInterest: MutableMap<Int, Pair<Pair<Double, Double>, MutableList<Double>>>
-    abstract var allAnglesOfInterest: MutableMap<String, Triple<String, MutableList<Double>, Triple<Float, Float, Boolean>>>
+object ExerciseProcessor {
+    var lastRepResult = 0
+    var jointAnglesMap = mutableMapOf<Int, Double>()
+    var pace = 0f
+    var exerciseFinishTime = 0f
+    var feedBack =
+        mutableMapOf<Int, MutableMap<String, MutableMap<String, Pair<String, String>>>>()
+    var torso: Float? = null
+    var pose: List<PoseLandmark>? = null
+    var side = ""
+    var finished = false
+    var repFinished: Boolean? = false
+    var anglesOfInterest =
+        mutableMapOf<Int, Pair<Pair<Double, Double>, MutableList<Double>>>()
 
-    abstract fun getFeedback(repAnalyzer: ExerciseAnalysis)
-    abstract fun getRepFormResult(): String
-    abstract fun resetDetails()
+    var allAnglesOfInterest =
+        mutableMapOf<String, Triple<String, MutableList<Double>, Triple<Float, Float, Boolean>>>()
+
+    fun setAnglesOfInterestMap(map: MutableMap<String, Triple<String, MutableList<Double>, Triple<Float, Float, Boolean>>>) {
+        allAnglesOfInterest = map
+    }
+
+    fun getFeedback(repAnalyzer: ExerciseAnalysis) {
+        feedBack[lastRepResult] = AnalyzerUtils.analyseRep(
+            anglesOfInterest, repAnalyzer
+        )
+    }
+
+    fun getRepFormResult(): String {
+        val map = feedBack.values.toList().last()
+        for ((_, value) in map) {
+            for ((_, v) in value) {
+                if (v.first == "Wrong") {
+                    return "Wrong"
+                }
+            }
+        }
+        return "Correct"
+    }
+
+    fun resetDetails() {
+        lastRepResult = 0
+        pace = 0f
+        feedBack.clear()
+        side = ""
+        repFinished = false
+        finished = false
+        anglesOfInterest.clear()
+    }
 
 }

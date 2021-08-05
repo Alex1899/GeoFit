@@ -5,97 +5,17 @@ import com.google.mlkit.vision.common.PointF3D
 import com.google.mlkit.vision.pose.PoseLandmark
 
 object BicepCurlAnalysis : ExerciseAnalysis() {
-    private var side = ""
-    private var elbowId = -1
-    private var shoulderId = -1
-    private var hipId = -1
+    override var side = ""
+    override var elbowId: Int? = null
+    override var shoulderId: Int? = null
+    override var hipId: Int? = null
 
     private val startingPos = "Starting Position"
     private val middlePos = "Middle Position"
     private val finishingPos = "Finishing Position"
 
-    override fun getExercisePose(
-        normalizedLm: MutableList<PointF3D>,
-        side: String
-    ): MutableMap<Int, Double> {
-        this.side = side
-        // calculate joint angles
-        val jointAngles = mutableMapOf<Int, Double>()
-
-        when (side) {
-            "right" -> {
-                elbowId = PoseLandmark.RIGHT_ELBOW
-                shoulderId = PoseLandmark.RIGHT_SHOULDER
-                hipId = PoseLandmark.RIGHT_HIP
-
-                val rightElbowAngle = ExerciseUtils.getAngle(
-                    normalizedLm[PoseLandmark.RIGHT_SHOULDER],
-                    normalizedLm[PoseLandmark.RIGHT_ELBOW],
-                    normalizedLm[PoseLandmark.RIGHT_WRIST]
-                )
-
-                val rightShoulderAngle = ExerciseUtils.getAngle(
-                    normalizedLm[PoseLandmark.RIGHT_ELBOW],
-                    normalizedLm[PoseLandmark.RIGHT_SHOULDER],
-                    normalizedLm[PoseLandmark.RIGHT_HIP]
-                )
-
-                val rightHipAngle = ExerciseUtils.getAngle(
-                    normalizedLm[PoseLandmark.RIGHT_SHOULDER],
-                    normalizedLm[PoseLandmark.RIGHT_HIP],
-                    normalizedLm[PoseLandmark.RIGHT_KNEE]
-                )
-                jointAngles[elbowId] = rightElbowAngle
-                jointAngles[shoulderId] = rightShoulderAngle
-                jointAngles[hipId] = rightHipAngle
-            }
-            else -> {
-                elbowId = PoseLandmark.LEFT_ELBOW
-                shoulderId = PoseLandmark.LEFT_SHOULDER
-                hipId = PoseLandmark.LEFT_HIP
-
-                val leftElbowAngle = ExerciseUtils.getAngle(
-                    normalizedLm[PoseLandmark.LEFT_SHOULDER],
-                    normalizedLm[PoseLandmark.LEFT_ELBOW],
-                    normalizedLm[PoseLandmark.LEFT_WRIST]
-                )
-
-                val leftShoulderAngle = ExerciseUtils.getAngle(
-                    normalizedLm[PoseLandmark.LEFT_ELBOW],
-                    normalizedLm[PoseLandmark.LEFT_SHOULDER],
-                    normalizedLm[PoseLandmark.LEFT_HIP]
-                )
-
-                val leftHipAngle = ExerciseUtils.getAngle(
-                    normalizedLm[PoseLandmark.LEFT_SHOULDER],
-                    normalizedLm[PoseLandmark.LEFT_HIP],
-                    normalizedLm[PoseLandmark.LEFT_KNEE]
-                )
-                jointAngles[elbowId] = leftElbowAngle
-                jointAngles[shoulderId] = leftShoulderAngle
-                jointAngles[hipId] = leftHipAngle
-
-            }
-
-        }
-
-        return jointAngles
-    }
-
-
-    override fun analyseRep(jointAnglesMap: MutableMap<Int, Pair<Pair<Double, Double>, MutableList<Double>>>): MutableMap<String, MutableMap<String, Pair<String, String>>> {
-
-        // starting position
-        val startingFeedback = getStartingPositionFeedback(jointAnglesMap)
-        // middle position
-        val middleFeedback = getMiddlePositionFeedback(jointAnglesMap, startingFeedback)
-        // finishing position
-        return getFinishingPositionFeedback(jointAnglesMap, middleFeedback)
-    }
-
 
     override fun getStartingPositionFeedback(jointAnglesMap: MutableMap<Int, Pair<Pair<Double, Double>, MutableList<Double>>>): MutableMap<String, MutableMap<String, Pair<String, String>>> {
-
         val startElbowAngle = jointAnglesMap[elbowId]!!.second[0]
         val startShoulderAngle = jointAnglesMap[shoulderId]!!.second[0]
         val startHipAngle = jointAnglesMap[hipId]!!.second[0]

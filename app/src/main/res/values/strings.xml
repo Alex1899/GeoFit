@@ -164,6 +164,7 @@
 
 
     <string name="start_exercise_btn">START</string>
+    <string name="restart_exercise_btn">RESTART</string>
 
     <string name="reps_overlay_text">/%s</string>
     <string name="sets_overlay_text">/%s</string>

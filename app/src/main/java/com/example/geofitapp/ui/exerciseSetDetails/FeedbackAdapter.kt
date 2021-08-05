@@ -2,7 +2,6 @@ package com.example.geofitapp.ui.exerciseSetDetails
 
 import android.content.Context
 import android.graphics.Color
-import android.graphics.drawable.Drawable
 import android.util.TypedValue
 import android.view.Gravity
 import android.view.LayoutInflater
@@ -10,10 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.TextView
-import androidx.annotation.ColorRes
-import androidx.annotation.DrawableRes
 import androidx.core.content.ContextCompat
-import androidx.core.view.marginBottom
 import androidx.recyclerview.widget.RecyclerView
 import com.example.geofitapp.R
 import com.example.geofitapp.databinding.ItemFeedbackViewBinding
@@ -53,10 +49,6 @@ class FeedbackAdapter(
                 val ll = getAoiLabel(context, k, incorrectReps[key]!![k]!!)
                 binding.feedbackLinearLayout.addView(ll)
             }
-
-
-            // aoi labels
-
         }
 
         private fun getAoiLabel(
@@ -104,10 +96,12 @@ class FeedbackAdapter(
                 errtext = "No Mistakes"
                 color = Color.GREEN
             } else {
-                errtext = "Mistakes in reps: " + reps.second.joinToString()
+                errtext = "Mistakes in reps:\n" + reps.second.joinToString()
                 color = Color.RED
             }
             errorTV.text = errtext
+            errorTV.gravity = Gravity.CENTER
+            errorTV.textAlignment = TextView.TEXT_ALIGNMENT_CENTER
             errorTV.setTextColor(color)
             errorTV.setTextSize(TypedValue.COMPLEX_UNIT_SP, 10f)
 

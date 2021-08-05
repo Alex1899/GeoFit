@@ -2,8 +2,6 @@ package com.example.geofitapp.posedetection.poseDetector.jointAngles
 
 import android.media.AudioManager
 import android.media.ToneGenerator
-import android.util.Log
-import com.example.geofitapp.posedetection.poseDetector.exerciseProcessor.BicepCurlProcessor
 import com.example.geofitapp.posedetection.poseDetector.exerciseProcessor.ExerciseProcessor
 import com.example.geofitapp.posedetection.poseDetector.repAnalysis.BicepCurlAnalysis
 import com.example.geofitapp.posedetection.poseDetector.repCounter.BicepCurlRepCounter
@@ -18,15 +16,55 @@ object ExerciseUtils {
     val exerciseAnglesMap =
         mutableMapOf(
             "Dumbbell Bicep Curl" to { normalizedLm: MutableList<PointF3D>, side: String ->
-                BicepCurlAnalysis.getExercisePose(
+                AnalyzerUtils.getExercisePose(
                     normalizedLm,
-                    side
+                    side,
+                    BicepCurlAnalysis
                 )
             }
         )
     val exerciseRepCounterAnalyzerMap = mutableMapOf(
-        "Dumbbell Bicep Curl" to Triple(BicepCurlRepCounter, BicepCurlAnalysis, BicepCurlProcessor)
+        "Dumbbell Bicep Curl" to Pair(BicepCurlRepCounter, BicepCurlAnalysis)
     )
+
+    val exerciseAnglesOfInterestMap = mutableMapOf(
+        "Dumbbell Bicep Curl" to mutableMapOf(
+            "elbow" to Triple(
+                "Sequence of elbow angles",
+                mutableListOf(),
+                Triple(138f, 68f, false)
+            ),
+            "shoulder" to Triple(
+                "Sequence of elbow shift angles",
+                mutableListOf(),
+                Triple(21f, 0f, true)
+            ),
+            "hip" to Triple(
+                "Sequence of angles at the hip",
+                mutableListOf<Double>(),
+                Triple(195f, 165f, true)
+            )
+        ),
+        "Triceps Pushdown" to mutableMapOf(
+            "elbow" to Triple(
+                "Sequence of elbow angles",
+                mutableListOf(),
+                Triple(150f, 62f, false)
+            ),
+            "shoulder" to Triple(
+                "Sequence of elbow shift angles",
+                mutableListOf(),
+                Triple(24f, 0f, true)
+            ),
+            "hip" to Triple(
+                "Sequence of angles at the hip",
+                mutableListOf<Double>(),
+                Triple(195f, 150f, true)
+            )
+        ),
+        // shoulder press
+        // front raise
+        )
 
 
     fun convertToPoint3D(lm: List<PoseLandmark>): MutableList<PointF3D> {
@@ -61,6 +99,7 @@ object ExerciseUtils {
         }
         return result
     }
+
     fun magnitude(arr: List<Double>, N: Int): Double {
 
         // Stores the final magnitude
@@ -107,8 +146,10 @@ object ExerciseUtils {
 
         // Stores angle between given vectors
 
-        return kotlin.math.acos(dotProductOfVectors /
-                (magnitudeOfA * magnitudeOfB))
+        return kotlin.math.acos(
+            dotProductOfVectors /
+                    (magnitudeOfA * magnitudeOfB)
+        )
     }
 
     fun detectSide(pose: Pose): String {
@@ -126,7 +167,7 @@ object ExerciseUtils {
             PoseLandmark.RIGHT_PINKY,
             PoseLandmark.RIGHT_THUMB,
             PoseLandmark.RIGHT_INDEX,
-            )
+        )
 
         var rightSum = 0.0f
         for (landmark in rightSide) {
@@ -184,7 +225,7 @@ object ExerciseUtils {
         repCounter: ExerciseRepCounter,
         jointAnglesMap: MutableMap<Int, Double>,
         side: String
-    ): ExerciseProcessor{
+    ): ExerciseProcessor {
         val repsBefore: Int = repCounter.getTotalReps()
         val exerciseProcessor = repCounter.addNewFramePoseAngles(jointAnglesMap, side)
         if (exerciseProcessor.lastRepResult > repsBefore) {
@@ -195,5 +236,6 @@ object ExerciseUtils {
 
         return exerciseProcessor
     }
+
 
 }

@@ -27,6 +27,10 @@ class ExerciseSetDetailsActivity : AppCompatActivity() {
             intent.getParcelableExtra<ExerciseSetDetails>("exerciseSetDetails")!!
         binding.exerciseSetDetails = exerciseSetDetails
 
+        binding.restartExercise.setOnClickListener{
+            onBackPressed()
+        }
+
         val charts = mutableListOf<LineChart>()
         for (triple in exerciseSetDetails.angleList) {
             val angleListY = triple.second
@@ -82,7 +86,6 @@ class ExerciseSetDetailsActivity : AppCompatActivity() {
     }
 
     private fun getIncorrectRepsList(exerciseSetDetails: ExerciseSetDetails): MutableMap<String, MutableMap<String, Pair<MutableList<Int>, MutableList<Int>>>> {
-
         val repsMap =
             mutableMapOf<String, MutableMap<String, Pair<MutableList<Int>, MutableList<Int>>>>()
         for ((rep, map) in exerciseSetDetails.feedback) {
