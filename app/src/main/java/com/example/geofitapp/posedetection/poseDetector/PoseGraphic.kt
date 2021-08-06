@@ -51,14 +51,14 @@ class PoseGraphic internal constructor(
 
     init {
         whitePaint.strokeWidth = STROKE_WIDTH
-        whitePaint.color = Color.BLACK
+        whitePaint.color = Color.WHITE
         whitePaint.textSize = IN_FRAME_LIKELIHOOD_TEXT_SIZE
         leftPaint = Paint()
         leftPaint.strokeWidth = STROKE_WIDTH
-        leftPaint.color = Color.GREEN
+        leftPaint.color = Color.YELLOW
         rightPaint = Paint()
         rightPaint.strokeWidth = STROKE_WIDTH
-        rightPaint.color = Color.YELLOW
+        rightPaint.color = Color.BLUE
 
         repResultPaint = Paint()
         repResultPaint.color = Color.WHITE
@@ -195,6 +195,22 @@ class PoseGraphic internal constructor(
 //            drawPoint(canvas, elbow.position3D, whitePaint)
 //        }
 
+        // get landmarks
+        val landmarksList = mutableListOf<PoseLandmark>()
+        for ((lmId, _) in jointAnglesMap) {
+            val lm = pose.getPoseLandmark(lmId)!!
+            landmarksList.add(lm)
+        }
+        val p = if(side == "right") rightPaint else leftPaint
+
+        for(index in landmarksList.indices) {
+            if(index + 1 >= landmarksList.size){
+                drawPoint(canvas, landmarksList[index].position3D, p)
+                return
+            }
+            drawPoint(canvas, landmarksList[index].position3D, p)
+            drawLine(canvas, landmarksList[index], landmarksList[index+1], whitePaint)
+        }
 
         // Draw degrees for all points
         for ((lmId, angle) in jointAnglesMap) {
@@ -211,7 +227,7 @@ class PoseGraphic internal constructor(
     }
 
     private fun drawPoint(canvas: Canvas, landmark: PointF3D, paint: Paint) {
-        maybeUpdatePaintColor(paint, canvas, landmark.z)
+        //maybeUpdatePaintColor(paint, canvas, landmark.z)
         canvas.drawCircle(translateX(landmark.x), translateY(landmark.y), DOT_RADIUS, paint)
     }
 
@@ -226,7 +242,7 @@ class PoseGraphic internal constructor(
 
         // Gets average z for the current body line
         val avgZInImagePixel = (start.z + end.z) / 2
-        maybeUpdatePaintColor(paint, canvas, avgZInImagePixel)
+        //maybeUpdatePaintColor(paint, canvas, avgZInImagePixel)
 
         canvas.drawLine(
             translateX(start.x),

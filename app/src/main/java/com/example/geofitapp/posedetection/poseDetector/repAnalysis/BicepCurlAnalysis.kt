@@ -38,7 +38,7 @@ object BicepCurlAnalysis : ExerciseAnalysis() {
         if (startShoulderAngle < 21) {
             feedbackMap[startingPos]!!["Starting Elbow Forward Shift"] = Pair(
                 "Correct",
-                "Good Form: Elbows are positioned close to the torss"
+                "Good Form: Elbows are positioned close to the torso"
             )
         } else {
             feedbackMap[startingPos]!!["Starting Elbow Forward Shift"] = Pair(

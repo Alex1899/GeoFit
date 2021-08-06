@@ -52,6 +52,14 @@ object ExerciseProcessor {
         repFinished = false
         finished = false
         anglesOfInterest.clear()
+        jointAnglesMap.clear()
+        clearAllAnglesOfInterestMap()
+    }
+
+    private fun clearAllAnglesOfInterestMap(){
+        for ((_, v) in allAnglesOfInterest){
+            v.second.clear()
+        }
     }
 
 }

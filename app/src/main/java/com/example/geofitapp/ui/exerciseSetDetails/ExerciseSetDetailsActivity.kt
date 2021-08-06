@@ -10,6 +10,9 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.PagerSnapHelper
 import com.example.geofitapp.R
 import com.example.geofitapp.databinding.ActivityExerciseSetDetailsBinding
+import com.example.geofitapp.posedetection.poseDetector.PoseDetectorProcessor
+import com.example.geofitapp.posedetection.poseDetector.exerciseProcessor.ExerciseProcessor
+import com.example.geofitapp.posedetection.poseDetector.jointAngles.ExerciseUtils
 import com.example.geofitapp.ui.exercisePreview.ExercisePreviewViewModel
 import com.example.geofitapp.ui.exercisePreview.ViewModelFactory
 import com.example.geofitapp.ui.exerciseSetDetails.lineChart.AnglesLineChart
@@ -40,6 +43,8 @@ class ExerciseSetDetailsActivity : AppCompatActivity() {
                 exerciseSetDetails.currentSet + 1
             }
             previewViewModel.updateCurrentSet(set.toString())
+            ExerciseProcessor.resetDetails()
+            Log.i("ProcessorAllAOI", "all aoi cleared = ${ExerciseProcessor.allAnglesOfInterest.values.toList()}")
             onBackPressed()
         }
 
@@ -56,6 +61,7 @@ class ExerciseSetDetailsActivity : AppCompatActivity() {
                     triple.first,
                     triple.third,
                     pair1,
+                    ExerciseUtils.isYaxisInverted[exerciseSetDetails.exerciseName]!!,
                     this
                 )
             )

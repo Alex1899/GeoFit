@@ -91,16 +91,24 @@ class PoseDetectorProcessor(
                 { task ->
                     val pose = task.result
                     Log.i("PoseDetectorProcessor", "Rep counter initialized")
-                    if (repCounter == null && repAnalyzer == null) {
-                        repCounter =
-                            ExerciseUtils.exerciseRepCounterAnalyzerMap[exercise[0]]!!.first
-                        repCounter!!.overallTotalReps = totalReps
 
-                        repAnalyzer =
-                            ExerciseUtils.exerciseRepCounterAnalyzerMap[exercise[0]]!!.second
+                    if (pose.allPoseLandmarks.isNotEmpty()) {
+                        if (cacheSide == null) {
+                            cacheSide = ExerciseUtils.detectSide(pose)
+                        }
 
-                        exerciseProcessor = ExerciseProcessor
-                        exerciseProcessor!!.setAnglesOfInterestMap(ExerciseUtils.exerciseAnglesOfInterestMap[exercise[0]]!!)
+                        if (repCounter == null) {
+                            repCounter =
+                                ExerciseUtils.exerciseRepCounterAnalyzerMap[exercise[0]]!!.first
+                            repCounter!!.overallTotalReps = totalReps
+                            repCounter!!.init(cacheSide!!)
+
+                            repAnalyzer =
+                                ExerciseUtils.exerciseRepCounterAnalyzerMap[exercise[0]]!!.second
+
+                            exerciseProcessor = ExerciseProcessor
+                            exerciseProcessor!!.setAnglesOfInterestMap(ExerciseUtils.exerciseAnglesOfInterestMap[exercise[0]]!!)
+                        }
                     }
 
                     PoseWithRepCounting(pose)
@@ -108,10 +116,10 @@ class PoseDetectorProcessor(
             )
     }
 
-
     @SuppressLint("SetTextI18n")
     override fun resetInfo(binding: ActivityCameraXlivePreviewBinding) {
-        repCounter!!.resetTotalReps()
+        repCounter?.resetTotalReps()
+        repCounter = null
         binding.detailsOverlayView.visibility = View.GONE
         binding.repsOverlayText.text = "0"
         binding.errorsOverlayText.text = "0"
@@ -128,6 +136,10 @@ class PoseDetectorProcessor(
         // sets, reps, time taken, and rest timer
         val allAngles =
             mutableListOf<Triple<String, MutableList<Double>, Triple<Float, Float, Boolean>>>()
+        Log.i(
+            "ProcessorAllAOI",
+            "all aoi map in processor = ${exerciseProcessor.allAnglesOfInterest.values.toList()}"
+        )
         for (triple in exerciseProcessor.allAnglesOfInterest.values.toList()) {
             allAngles.add(triple)
         }
@@ -135,9 +147,9 @@ class PoseDetectorProcessor(
 
         val reps = "${binding.repsOverlayText.text}${binding.testRep.text}"
         val set = binding.testSet.text.toString().split("/")[1].toInt()
-        Log.i("SplitTextSet", "set = ${binding.testSet.text.toString().split("/")}")
 
         val details = ExerciseSetDetails(
+            exercise[0],
             set,
             binding.setsOverlayText.text.toString().toInt(),
             reps,
@@ -147,6 +159,8 @@ class PoseDetectorProcessor(
             exerciseProcessor.feedBack
         )
         intent.putExtra("exerciseSetDetails", details)
+
+        resetInfo(binding)
         startActivity(context, intent, null)
     }
 
@@ -160,6 +174,7 @@ class PoseDetectorProcessor(
             //navigate
             startSetDetailsActivity(exerciseProcessor!!, binding)
             exerciseFinished = false
+            return
         }
         if (results.pose.allPoseLandmarks.isEmpty()) {
             Log.i("RepCount", "\n=================NOT STARTED=================")
@@ -171,10 +186,6 @@ class PoseDetectorProcessor(
             binding.detailsOverlayView.visibility = View.VISIBLE
         }
 
-        if (cacheSide == null) {
-            cacheSide = ExerciseUtils.detectSide(results.pose)
-        }
-
         val jointAnglesMap =
             FramePose(
                 exercise[0],
@@ -184,7 +195,7 @@ class PoseDetectorProcessor(
         exerciseProcessor = ExerciseUtils.countReps(
             repCounter!!,
             jointAnglesMap,
-            cacheSide!!
+            ExerciseUtils.mainAOIindexMap[exercise[0]]!![cacheSide]!!
         )
         exerciseProcessor!!.side = cacheSide!!
         exerciseProcessor!!.jointAnglesMap = jointAnglesMap

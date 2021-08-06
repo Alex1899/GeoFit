@@ -5,6 +5,7 @@ import kotlinx.parcelize.Parcelize
 
 @Parcelize
 data class ExerciseSetDetails(
+    val exerciseName: String = "",
     val sets: Int = 0,
     val currentSet: Int = 0,
     val reps: String = "",

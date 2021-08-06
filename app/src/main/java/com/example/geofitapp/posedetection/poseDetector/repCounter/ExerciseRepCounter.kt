@@ -5,7 +5,8 @@ import com.example.geofitapp.posedetection.poseDetector.exerciseProcessor.Exerci
 abstract class ExerciseRepCounter {
     abstract var overallTotalReps: Int?
 
-    abstract fun addNewFramePoseAngles(angleMap: MutableMap<Int, Double>, side: String): ExerciseProcessor
+    abstract fun init(side: String)
+    abstract fun addNewFramePoseAngles(angleMap: MutableMap<Int, Double>, mainAOIindex: Int): ExerciseProcessor
     abstract fun getTotalReps(): Int
     abstract fun resetTotalReps()
 }

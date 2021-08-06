@@ -30,6 +30,7 @@ object AnglesLineChart {
         chartLabel: String,
         limitPair: Triple<Float, Float, Boolean>,
         minMaxPair: Pair<Float, Float>,
+        isYinverted: Boolean,
         context: Context
     ): LineChart {
 
@@ -122,7 +123,7 @@ object AnglesLineChart {
         chart.axisLeft.addLimitLine(ll1)
         chart.axisLeft.addLimitLine(ll2)
 
-        chart.axisLeft.isInverted = true
+        chart.axisLeft.isInverted = isYinverted
         chart.axisLeft.axisMinimum = min
         chart.axisLeft.axisMaximum = max
         chart.axisLeft.valueFormatter = custom
@@ -143,7 +144,7 @@ object AnglesLineChart {
 
         chart.axisRight.valueFormatter = custom
         chart.axisRight.textColor = Color.WHITE
-        chart.axisRight.isInverted = true
+        chart.axisRight.isInverted = isYinverted
         chart.axisRight.typeface = mTf
         chart.axisRight.axisMinimum = min
         chart.axisRight.axisMaximum = max

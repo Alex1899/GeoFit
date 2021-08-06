@@ -4,8 +4,9 @@ import android.media.AudioManager
 import android.media.ToneGenerator
 import com.example.geofitapp.posedetection.poseDetector.exerciseProcessor.ExerciseProcessor
 import com.example.geofitapp.posedetection.poseDetector.repAnalysis.BicepCurlAnalysis
-import com.example.geofitapp.posedetection.poseDetector.repCounter.BicepCurlRepCounter
-import com.example.geofitapp.posedetection.poseDetector.repCounter.ExerciseRepCounter
+import com.example.geofitapp.posedetection.poseDetector.repAnalysis.FrontRaiseAnalysis
+import com.example.geofitapp.posedetection.poseDetector.repAnalysis.TricepsPushdownAnalysis
+import com.example.geofitapp.posedetection.poseDetector.repCounter.*
 import com.google.mlkit.vision.common.PointF3D
 import com.google.mlkit.vision.pose.Pose
 import com.google.mlkit.vision.pose.PoseLandmark
@@ -13,18 +14,11 @@ import kotlin.math.abs
 import kotlin.math.sqrt
 
 object ExerciseUtils {
-    val exerciseAnglesMap =
-        mutableMapOf(
-            "Dumbbell Bicep Curl" to { normalizedLm: MutableList<PointF3D>, side: String ->
-                AnalyzerUtils.getExercisePose(
-                    normalizedLm,
-                    side,
-                    BicepCurlAnalysis
-                )
-            }
-        )
+
     val exerciseRepCounterAnalyzerMap = mutableMapOf(
-        "Dumbbell Bicep Curl" to Pair(BicepCurlRepCounter, BicepCurlAnalysis)
+        "Dumbbell Bicep Curl" to Pair(SideMaxMinRepCounter, BicepCurlAnalysis),
+        "Triceps Pushdown" to Pair(SideMinMaxRepCounter, TricepsPushdownAnalysis),
+        "Front Raise" to Pair(SideMinMaxRepCounter, FrontRaiseAnalysis)
     )
 
     val exerciseAnglesOfInterestMap = mutableMapOf(
@@ -49,7 +43,7 @@ object ExerciseUtils {
             "elbow" to Triple(
                 "Sequence of elbow angles",
                 mutableListOf(),
-                Triple(150f, 62f, false)
+                Triple(150f, 109f, false)
             ),
             "shoulder" to Triple(
                 "Sequence of elbow shift angles",
@@ -64,7 +58,35 @@ object ExerciseUtils {
         ),
         // shoulder press
         // front raise
+    )
+
+    // line chart y inverted boolean
+    val isYaxisInverted = mutableMapOf(
+        "Dumbbell Bicep Curl" to true,
+        "Triceps Pushdown" to false,
+        "Front Raise" to false,
+        "Shoulder Press" to false
+    )
+
+    val mainAOIindexMap = mutableMapOf(
+        "Dumbbell Bicep Curl" to mutableMapOf(
+            "left" to PoseLandmark.LEFT_ELBOW,
+            "right" to PoseLandmark.RIGHT_ELBOW
+        ),
+        "Triceps Pushdown" to mutableMapOf(
+            "left" to PoseLandmark.LEFT_ELBOW,
+            "right" to PoseLandmark.RIGHT_ELBOW
+        ),
+        "Front Raise" to mutableMapOf(
+            "left" to PoseLandmark.LEFT_SHOULDER,
+            "right" to PoseLandmark.RIGHT_SHOULDER
+        ),
+        "Shoulder Press" to mutableMapOf(
+            "left" to PoseLandmark.LEFT_ELBOW,
+            "right" to PoseLandmark.RIGHT_ELBOW
         )
+
+    )
 
 
     fun convertToPoint3D(lm: List<PoseLandmark>): MutableList<PointF3D> {
@@ -224,10 +246,10 @@ object ExerciseUtils {
     fun countReps(
         repCounter: ExerciseRepCounter,
         jointAnglesMap: MutableMap<Int, Double>,
-        side: String
+        mainAOIindex: Int
     ): ExerciseProcessor {
         val repsBefore: Int = repCounter.getTotalReps()
-        val exerciseProcessor = repCounter.addNewFramePoseAngles(jointAnglesMap, side)
+        val exerciseProcessor = repCounter.addNewFramePoseAngles(jointAnglesMap, mainAOIindex)
         if (exerciseProcessor.lastRepResult > repsBefore) {
             // Play a fun beep when rep counter updates.
             val tg = ToneGenerator(AudioManager.STREAM_NOTIFICATION, 100)

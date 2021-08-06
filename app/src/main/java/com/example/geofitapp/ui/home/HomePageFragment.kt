@@ -20,7 +20,11 @@ class HomePageFragment : Fragment() {
     private val viewModel: HomePageViewModel by viewModels()
 
     companion object{
-        val map = mutableMapOf( "Dumbbell Bicep Curl" to Pair(R.raw.bicep_curl_tut, R.drawable.bicep_vid_thumbnail))
+        val map = mutableMapOf(
+            "Dumbbell Bicep Curl" to Triple(R.raw.bicep_curl_tut, R.drawable.bicep_vid_thumbnail, R.string.bicep_curl_desc),
+            "Triceps Pushdown" to Triple(R.raw.triceps_pushdown_tut, R.drawable.triceps_pushdown_thumb, R.string.triceps_pushdown_desc)
+        )
+
     }
 
 
@@ -37,10 +41,9 @@ class HomePageFragment : Fragment() {
 
         viewModel.exerciseName.observe(viewLifecycleOwner, {
             if(it !== ""){
-                val exerciseData = ExerciseData(map[it]!!.first, map[it]!!.second, it ,getString(R.string.bicep_curl_desc))
+                val exerciseData = ExerciseData(map[it]!!.first, map[it]!!.second, it ,getString(map[it]!!.third))
                 findNavController().navigate(HomePageFragmentDirections.actionHomePageFragmentToExercisePreviewFragment(exerciseData))
                 viewModel.doneNavigating()
-
 
             }
         })

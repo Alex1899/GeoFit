@@ -28,8 +28,7 @@ class FramePose(
             normalize(lm)
         }
         // get function from exercise name
-        val getPose = ExerciseUtils.exerciseAnglesMap[exercise]!!
-        return getPose(normalizedLandmarks, side)
+        return AnalyzerUtils.getPose(exercise, normalizedLandmarks, side)
     }
 
     private fun normalize(lm: MutableList<PointF3D>): MutableList<PointF3D> {
