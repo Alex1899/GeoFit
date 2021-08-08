@@ -47,14 +47,20 @@ object SideMinMaxRepCounter : ExerciseRepCounter() {
 
     override fun addNewFramePoseAngles(
         angleMap: MutableMap<Int, Double>,
-        mainAOIindex: Int
+        mainAOIidx: List<Int>
     ): ExerciseProcessor {
-        val freshAngle = angleMap[elbowId]!!
+        val freshElbowAngle = angleMap[elbowId]!!
         val freshShoulderAngle = angleMap[shoulderId]!!
         val freshHipAngle = angleMap[hipId]!!
-        aoiListMap[elbowId]!!.add(freshAngle)
+        aoiListMap[elbowId]!!.add(freshElbowAngle)
         aoiListMap[shoulderId]!!.add(freshShoulderAngle)
         aoiListMap[hipId]!!.add(freshHipAngle)
+        val mainAOIindex = mainAOIidx[0]
+
+        val mainAoiAngle = angleMap[mainAOIindex]!!
+
+        Log.i("RaiseCheck", "freshAngles = ${aoiListMap[mainAOIindex]!!}")
+        Log.i("RaiseCheck", "minAngle = $minAngle maxAngle = $maxAngle")
 
         if (minAngle == null) {
             minAngle = Collections.min(aoiListMap[mainAOIindex]!!)
@@ -62,9 +68,9 @@ object SideMinMaxRepCounter : ExerciseRepCounter() {
             ExerciseProcessor.pace = finishTime
             return ExerciseProcessor
 
-        } else if (freshAngle <= minAngle!!) {
+        } else if (mainAoiAngle <= minAngle!!) {
             if (!poseEntered) {
-                val index = aoiListMap[mainAOIindex]!!.indexOf(freshAngle)
+                val index = aoiListMap[mainAOIindex]!!.lastIndex
                 aoiListMap[elbowId] =
                     aoiListMap[elbowId]!!.slice(index until aoiListMap[elbowId]!!.size)
                         .toMutableList()
@@ -74,8 +80,9 @@ object SideMinMaxRepCounter : ExerciseRepCounter() {
                 aoiListMap[hipId] =
                     aoiListMap[hipId]!!.slice(index until aoiListMap[hipId]!!.size).toMutableList()
             }
-            minAngle = freshAngle
-            Log.i("RepCount", "maxAngle updated=${freshAngle}")
+            Log.i("RaiseCheck", "minAngle updated to new min angle = $mainAoiAngle")
+
+            minAngle = mainAoiAngle
 
             return ExerciseProcessor
         } else {
@@ -83,7 +90,7 @@ object SideMinMaxRepCounter : ExerciseRepCounter() {
             // if rep count reached return
             if (overallTotalReps != null && totalReps == overallTotalReps!! && poseEntered) {
                 // for last rep, if change is less than 5 continue
-                if(freshAngle - minAngle!! < 10) return ExerciseProcessor
+                if(mainAoiAngle - minAngle!! < 10) return ExerciseProcessor
 
                 poseEntered(mainAOIindex)
                 ExerciseProcessor.finished = true // finished true
@@ -100,7 +107,7 @@ object SideMinMaxRepCounter : ExerciseRepCounter() {
                 exerciseStartTime = System.currentTimeMillis()
             }
 
-            if (freshAngle - minAngle!! <= 30) {
+            if (mainAoiAngle - minAngle!! <= 30) {
                 return ExerciseProcessor
             }
 
@@ -113,13 +120,19 @@ object SideMinMaxRepCounter : ExerciseRepCounter() {
 
         // min angle
         if (maxAngle == null) {
-            maxAngle = freshAngle
-        } else if (maxAngle!! < freshAngle) {
-            maxAngle = freshAngle
-            Log.i("RepCount", "current min updated to=$freshAngle")
+            maxAngle = mainAoiAngle
+        } else if (maxAngle!! < mainAoiAngle) {
+            Log.i("RaiseCheck", "maxAngle updated to new max angle $mainAoiAngle")
+
+            maxAngle = mainAoiAngle
         } else {
-            if (maxAngle!! - freshAngle >= 30) {
+            if (maxAngle!! - mainAoiAngle >= 30) {
                 // weight going down
+                Log.i("RaiseCheck", "===================")
+                Log.i("RaiseCheck", "Going down; minAngle = $minAngle maxAngle = $maxAngle")
+                Log.i("RaiseCheck", "===================")
+
+
                 analysisAngleListMap[elbowId] = aoiListMap[elbowId]!!.toMutableList()
                 analysisAngleListMap[shoulderId] = aoiListMap[shoulderId]!!.toMutableList()
                 analysisAngleListMap[hipId] = aoiListMap[hipId]!!.toMutableList()
@@ -128,14 +141,22 @@ object SideMinMaxRepCounter : ExerciseRepCounter() {
                 aoiListMap[shoulderId]!!.clear()
                 aoiListMap[hipId]!!.clear()
 
-                aoiListMap[elbowId]!!.add(freshAngle)
+                aoiListMap[elbowId]!!.add(freshElbowAngle)
                 aoiListMap[shoulderId]!!.add(freshShoulderAngle)
                 aoiListMap[hipId]!!.add(freshHipAngle)
+
+                Log.i("RaiseCheck", "anglesList cleared = ${aoiListMap[mainAOIindex]!!}")
+
 
                 minAngle = null
                 poseEntered = true
                 totalReps++
                 ExerciseProcessor.lastRepResult = totalReps
+                Log.i("RaiseCheck", "===========================")
+                Log.i("RaiseCheck", "Rep $totalReps")
+                Log.i("RaiseCheck", "===========================")
+
+
             }
         }
 
@@ -207,11 +228,11 @@ object SideMinMaxRepCounter : ExerciseRepCounter() {
                 filteredHipAngles2.distinct().toMutableList()
             )
 
-            ExerciseProcessor.allAnglesOfInterest["elbow"]!!.second.addAll(filteredElbowAngleList2)
-            ExerciseProcessor.allAnglesOfInterest["shoulder"]!!.second.addAll(
+            ExerciseProcessor.allAnglesOfInterest["elbow"]!!.second.first.addAll(filteredElbowAngleList2)
+            ExerciseProcessor.allAnglesOfInterest["shoulder"]!!.second.first.addAll(
                 filteredShoulderAngles2
             )
-            ExerciseProcessor.allAnglesOfInterest["hip"]!!.second.addAll(filteredHipAngles2)
+            ExerciseProcessor.allAnglesOfInterest["hip"]!!.second.first.addAll(filteredHipAngles2)
 
             ExerciseProcessor.repFinished = true
 

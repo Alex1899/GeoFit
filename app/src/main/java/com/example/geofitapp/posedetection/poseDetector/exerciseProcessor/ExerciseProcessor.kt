@@ -20,9 +20,9 @@ object ExerciseProcessor {
         mutableMapOf<Int, Pair<Pair<Double, Double>, MutableList<Double>>>()
 
     var allAnglesOfInterest =
-        mutableMapOf<String, Triple<String, MutableList<Double>, Triple<Float, Float, Boolean>>>()
+        mutableMapOf<String, Triple<Pair<String, String?>, Pair<MutableList<Double>, MutableList<Double>?>, List<Triple<Float?, Float?, Boolean>>>>()
 
-    fun setAnglesOfInterestMap(map: MutableMap<String, Triple<String, MutableList<Double>, Triple<Float, Float, Boolean>>>) {
+    fun setAnglesOfInterestMap(map: MutableMap<String, Triple<Pair<String, String?>, Pair<MutableList<Double>, MutableList<Double>?>, List<Triple<Float?, Float?, Boolean>>>>) {
         allAnglesOfInterest = map
     }
 
@@ -58,7 +58,9 @@ object ExerciseProcessor {
 
     private fun clearAllAnglesOfInterestMap(){
         for ((_, v) in allAnglesOfInterest){
-            v.second.clear()
+            v.second.first.clear()
+            v.second.second?.clear()
+
         }
     }
 

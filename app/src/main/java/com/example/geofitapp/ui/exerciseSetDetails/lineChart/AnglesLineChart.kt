@@ -2,13 +2,8 @@ package com.example.geofitapp.ui.exerciseSetDetails.lineChart
 
 import android.content.Context
 import android.graphics.Color
-import android.graphics.Insets
 import android.graphics.Typeface
-import android.util.DisplayMetrics
-import android.util.Log
-import android.view.WindowInsets
 import android.widget.FrameLayout
-import android.widget.LinearLayout
 import androidx.core.content.ContextCompat.getColor
 import com.example.geofitapp.R
 import com.github.mikephil.charting.charts.LineChart
@@ -20,16 +15,15 @@ import com.github.mikephil.charting.data.LineData
 import com.github.mikephil.charting.data.LineDataSet
 import com.github.mikephil.charting.formatter.ValueFormatter
 import com.github.mikephil.charting.utils.ColorTemplate
-import java.lang.Math.*
 
 
 object AnglesLineChart {
 
     fun initilise(
-        entryList: List<Entry>,
-        chartLabel: String,
-        limitPair: Triple<Float, Float, Boolean>,
-        minMaxPair: Pair<Float, Float>,
+        entryList: Pair<List<Entry>, List<Entry>?>,
+        chartLabel: Pair<String, String?>,
+        limitPair: List<Triple<Float?, Float?, Boolean>>,
+        minMaxPair: Pair<Pair<Float, Float>, Pair<Float, Float>?>,
         isYinverted: Boolean,
         context: Context
     ): LineChart {
@@ -46,68 +40,131 @@ object AnglesLineChart {
 //        chart.isAutoScaleMinMaxEnabled = true
         chart.setBackgroundColor(getColor(context, R.color.primaryColor))
 
-        val dataSet = LineDataSet(entryList, chartLabel)
+        val dataSet = LineDataSet(entryList.first, chartLabel.first)
+        var dataSet2: LineDataSet? = null
+
+        if (entryList.second !== null) {
+            dataSet2 = LineDataSet(entryList.second!!, chartLabel.second!!)
+            dataSet2.lineWidth = 2.5f
+            dataSet2.setDrawCircles(false)
+//        dataSet.circleRadius = 3f
+            dataSet2.isHighlightEnabled = false
+            dataSet2.highLightColor = Color.rgb(244, 117, 117)
+            dataSet2.color = ColorTemplate.MATERIAL_COLORS[1]
+            dataSet2.setCircleColor(ColorTemplate.MATERIAL_COLORS[1])
+            dataSet2.setDrawValues(false)
+        }
 
         dataSet.lineWidth = 2.5f
         dataSet.setDrawCircles(false)
 //        dataSet.circleRadius = 3f
         dataSet.isHighlightEnabled = false
         dataSet.highLightColor = Color.rgb(244, 117, 117)
-        dataSet.color = ColorTemplate.VORDIPLOM_COLORS[0]
-        dataSet.setCircleColor(ColorTemplate.VORDIPLOM_COLORS[0])
+        dataSet.color = ColorTemplate.MATERIAL_COLORS[2]
+        dataSet.setCircleColor(ColorTemplate.MATERIAL_COLORS[2])
         dataSet.setDrawValues(false)
 
-        val lineData = LineData(dataSet)
+
+        val lineData = if(dataSet2 !== null) LineData(dataSet, dataSet2) else LineData(dataSet)
+
         val mTf = Typeface.createFromAsset(context.assets, "OpenSans-Regular.ttf")
 
         // chart min and max values
-        val val1 = kotlin.math.abs(minMaxPair.second - limitPair.second)
-        val val2 = kotlin.math.abs(minMaxPair.first - limitPair.first)
-        val maxVal = val1.coerceAtLeast(val2)
+        val maxValueExtremasTriple = limitPair[0]
+        val minValueExtremasTriple = limitPair[1]
 
-        val max = minMaxPair.first.coerceAtLeast(limitPair.first) + maxVal
-        val min = minMaxPair.second.coerceAtMost(limitPair.second) - maxVal
 
-        val ll1 = LimitLine(limitPair.first, "Max Threshold")
-        val ll1Color = if (minMaxPair.first >= limitPair.first && !limitPair.third) {
-            Color.GREEN
-        } else if (minMaxPair.first >= limitPair.first && limitPair.third) {
-            Color.RED
-        } else {
-            if (!limitPair.third) {
+
+        val val1 = kotlin.math.abs(minMaxPair.first.second - minValueExtremasTriple.second!!)
+        val val2 = kotlin.math.abs(minMaxPair.first.first - maxValueExtremasTriple.first!!)
+        var maxVal = val1.coerceAtLeast(val2)
+        if (maxVal <= 5) {
+            maxVal += 20
+        }
+
+        val max = minMaxPair.first.first.coerceAtLeast(maxValueExtremasTriple.first!!) + maxVal
+        val min = minMaxPair.first.second.coerceAtMost(minValueExtremasTriple.second!!) - maxVal
+
+
+        val llMaxForMax = LimitLine(maxValueExtremasTriple.first!!, "Max Threshold For Max Angle")
+
+        val llMaxForMaxColor =
+            if (minMaxPair.first.first >= maxValueExtremasTriple.first!! && maxValueExtremasTriple.third) {
+                Color.GREEN
+            } else if (minMaxPair.first.first >= maxValueExtremasTriple.first!! && !maxValueExtremasTriple.third) {
                 Color.RED
             } else {
-                Color.GREEN
+                if (!maxValueExtremasTriple.third) {
+                    Color.GREEN
+                } else {
+                    Color.RED
+                }
             }
-        }
-        ll1.lineWidth = 2f
-        ll1.enableDashedLine(40f, 20f, 0f)
-        ll1.labelPosition = LimitLine.LimitLabelPosition.LEFT_TOP
-        ll1.textSize = 10f
-        ll1.textColor = Color.WHITE
+        llMaxForMax.lineWidth = 2f
+        llMaxForMax.enableDashedLine(40f, 20f, 0f)
+        llMaxForMax.labelPosition = LimitLine.LimitLabelPosition.LEFT_TOP
+        llMaxForMax.textSize = 10f
+        llMaxForMax.textColor = Color.WHITE
         // set this color programatically, i.e red is value is above
-        ll1.lineColor = ll1Color
+        llMaxForMax.lineColor = llMaxForMaxColor
+
+        var llMinForMax: LimitLine? = null
+        if (maxValueExtremasTriple.second !== null) {
+            llMinForMax = LimitLine(maxValueExtremasTriple.second!!, "Min Threshold For Max Angle")
+
+            val llMinForMaxColor = if (minMaxPair.first.first >= maxValueExtremasTriple.second!!) {
+                Color.GREEN
+            } else {
+                Color.RED
+            }
+            llMinForMax.lineWidth = 2f
+            llMinForMax.enableDashedLine(40f, 20f, 0f)
+            llMinForMax.labelPosition = LimitLine.LimitLabelPosition.LEFT_TOP
+            llMinForMax.textSize = 10f
+            llMinForMax.textColor = Color.WHITE
+            // set this color programatically, i.e red is value is above
+            llMinForMax.lineColor = llMinForMaxColor
+        }
 
 
-        val ll2 = LimitLine(limitPair.second, "Min Threshold")
-        val ll2Color = if (minMaxPair.second <= limitPair.second && !limitPair.third) {
-            Color.GREEN
-        } else if (minMaxPair.second <= limitPair.second && limitPair.third) {
-            Color.RED
-        } else {
-            if (!limitPair.third) {
+        val llMinForMin = LimitLine(minValueExtremasTriple.second!!, "Min Threshold For Min Angle")
+        val llMinForMinColor =
+            if (minMaxPair.first.second <= minValueExtremasTriple.second!! && minValueExtremasTriple.third) {
+                Color.GREEN
+            } else if (minMaxPair.first.second <= minValueExtremasTriple.second!! && !minValueExtremasTriple.third) {
+                Color.RED
+            } else {
+                if (minValueExtremasTriple.third) {
+                    Color.RED
+                } else {
+                    Color.GREEN
+                }
+            }
+
+        llMinForMin.lineWidth = 2f
+        llMinForMin.enableDashedLine(40f, 20f, 0f)
+        llMinForMin.labelPosition = LimitLine.LimitLabelPosition.LEFT_TOP
+        llMinForMin.textSize = 10f
+        llMinForMin.textColor = Color.WHITE
+        llMinForMin.lineColor = llMinForMinColor
+
+
+        var llMaxForMin: LimitLine? = null
+        if (minValueExtremasTriple.first !== null) {
+            llMaxForMin = LimitLine(minValueExtremasTriple.first!!, "Max Threshold For Min Angle")
+
+            val llMaxForMinColor = if (minMaxPair.first.second >= minValueExtremasTriple.first!!) {
                 Color.RED
             } else {
                 Color.GREEN
             }
+            llMaxForMin.lineWidth = 2f
+            llMaxForMin.enableDashedLine(40f, 20f, 0f)
+            llMaxForMin.labelPosition = LimitLine.LimitLabelPosition.LEFT_TOP
+            llMaxForMin.textSize = 10f
+            llMaxForMin.textColor = Color.WHITE
+            llMaxForMin.lineColor = llMaxForMinColor
         }
-
-        ll2.lineWidth = 2f
-        ll2.enableDashedLine(40f, 20f, 0f)
-        ll2.labelPosition = LimitLine.LimitLabelPosition.LEFT_TOP
-        ll2.textSize = 10f
-        ll2.textColor = Color.WHITE
-        ll2.lineColor = ll2Color
 
 
         // draw limit lines behind data instead of on top
@@ -120,8 +177,19 @@ object AnglesLineChart {
 
 
         // add limit lines
-        chart.axisLeft.addLimitLine(ll1)
-        chart.axisLeft.addLimitLine(ll2)
+        chart.axisLeft.apply {
+            addLimitLine(llMaxForMax)
+            addLimitLine(llMinForMin)
+
+            if (llMinForMax !== null) {
+                addLimitLine(llMinForMax)
+            }
+
+            if (llMaxForMin !== null) {
+                addLimitLine(llMaxForMin)
+            }
+        }
+
 
         chart.axisLeft.isInverted = isYinverted
         chart.axisLeft.axisMinimum = min
@@ -154,8 +222,9 @@ object AnglesLineChart {
         chart.setDrawGridBackground(false)
 
         val l = chart.legend
-        l.verticalAlignment = Legend.LegendVerticalAlignment.BOTTOM
+        l.verticalAlignment = Legend.LegendVerticalAlignment.TOP
         l.horizontalAlignment = Legend.LegendHorizontalAlignment.CENTER
+        l.orientation = Legend.LegendOrientation.VERTICAL
         l.textColor = Color.WHITE
 
         //chart.invalidate()

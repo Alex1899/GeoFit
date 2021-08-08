@@ -32,14 +32,17 @@
             <FrameLayout
                 android:id="@+id/video_background"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="270dp"
+                android:background="@color/primaryColor"
+                android:layout_gravity="center"
+                >
 
                 <ImageView
                     android:id="@+id/videoView_thumbnail"
                     android:layout_width="match_parent"
-                    android:layout_height="220dp"
+                    android:layout_height="match_parent"
                     android:scaleType="centerCrop"
-                    tools:src="@drawable/bicep_vid_thumbnail" />
+                    tools:src="@drawable/shoulder_press_thumb" />
 
                 <ImageView
                     android:id="@+id/playBtn"

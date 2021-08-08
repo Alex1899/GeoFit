@@ -11,6 +11,6 @@ data class ExerciseSetDetails(
     val reps: String = "",
     val pace: String = "",
     val exerciseTimeTaken: String = "",
-    val angleList: MutableList<Triple<String, MutableList<Double>, Triple<Float, Float, Boolean>>> = mutableListOf(),
+    val angleList: MutableList<Triple<Pair<String, String?>, Pair<MutableList<Double>, MutableList<Double>?>, List<Triple<Float?, Float?, Boolean>>>> = mutableListOf(),
     val feedback: MutableMap<Int, MutableMap<String, MutableMap<String, Pair<String, String>>>>
 ) : Parcelable

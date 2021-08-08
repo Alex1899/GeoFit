@@ -7,6 +7,8 @@ import android.graphics.Bitmap
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import androidx.camera.core.CameraProvider
+import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.content.ContextCompat.startActivity
 import com.example.geofitapp.databinding.ActivityCameraXlivePreviewBinding
 import com.example.geofitapp.posedetection.VisionProcessorBase
@@ -41,7 +43,8 @@ class PoseDetectorProcessor(
     private val visualizeZ: Boolean,
     private val rescaleZForVisualization: Boolean,
     private val exercise: MutableList<String>,
-    private val totalReps: Int
+    private val totalReps: Int,
+    private val cameraProvider: ProcessCameraProvider
 ) : VisionProcessorBase<PoseDetectorProcessor.PoseWithRepCounting>(context) {
 
     private val detector: PoseDetector = PoseDetection.getClient(options)
@@ -90,11 +93,10 @@ class PoseDetectorProcessor(
                 classificationExecutor,
                 { task ->
                     val pose = task.result
-                    Log.i("PoseDetectorProcessor", "Rep counter initialized")
 
                     if (pose.allPoseLandmarks.isNotEmpty()) {
                         if (cacheSide == null) {
-                            cacheSide = ExerciseUtils.detectSide(pose)
+                            cacheSide = ExerciseUtils.getExerciseSide(exercise[0], pose)
                         }
 
                         if (repCounter == null) {
@@ -119,7 +121,6 @@ class PoseDetectorProcessor(
     @SuppressLint("SetTextI18n")
     override fun resetInfo(binding: ActivityCameraXlivePreviewBinding) {
         repCounter?.resetTotalReps()
-        repCounter = null
         binding.detailsOverlayView.visibility = View.GONE
         binding.repsOverlayText.text = "0"
         binding.errorsOverlayText.text = "0"
@@ -135,11 +136,7 @@ class PoseDetectorProcessor(
         val intent = Intent(context, ExerciseSetDetailsActivity::class.java)
         // sets, reps, time taken, and rest timer
         val allAngles =
-            mutableListOf<Triple<String, MutableList<Double>, Triple<Float, Float, Boolean>>>()
-        Log.i(
-            "ProcessorAllAOI",
-            "all aoi map in processor = ${exerciseProcessor.allAnglesOfInterest.values.toList()}"
-        )
+            mutableListOf<Triple<Pair<String,String?>, Pair<MutableList<Double>, MutableList<Double>?>, List<Triple<Float?, Float?, Boolean>>>>()
         for (triple in exerciseProcessor.allAnglesOfInterest.values.toList()) {
             allAngles.add(triple)
         }
@@ -172,13 +169,13 @@ class PoseDetectorProcessor(
 
         if (exerciseFinished && exerciseProcessor !== null) {
             //navigate
+            cameraProvider.unbindAll()
             startSetDetailsActivity(exerciseProcessor!!, binding)
             exerciseFinished = false
             return
         }
         if (results.pose.allPoseLandmarks.isEmpty()) {
-            Log.i("RepCount", "\n=================NOT STARTED=================")
-            resetInfo(binding)
+//            resetInfo(binding)
             return
         }
 
@@ -205,7 +202,6 @@ class PoseDetectorProcessor(
             exerciseProcessor!!.getFeedback(repAnalyzer!!)
             exerciseProcessor!!.repFinished = false
             feedBack = exerciseProcessor!!.getRepFormResult()
-            Log.i("ProcessorKKK", "feedback = $feedBack")
         }
 
         graphicOverlay.add(

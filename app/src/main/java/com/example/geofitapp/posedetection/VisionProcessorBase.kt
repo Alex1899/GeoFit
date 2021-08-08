@@ -9,8 +9,10 @@ import android.util.Log
 import android.widget.Toast
 import androidx.annotation.GuardedBy
 import androidx.annotation.RequiresApi
+import androidx.camera.core.CameraProvider
 import androidx.camera.core.ExperimentalGetImage
 import androidx.camera.core.ImageProxy
+import androidx.camera.lifecycle.ProcessCameraProvider
 import com.example.geofitapp.databinding.ActivityCameraXlivePreviewBinding
 import com.example.geofitapp.posedetection.helperClasses.*
 import com.example.geofitapp.posedetection.poseDetector.PoseDetectorProcessor
@@ -222,7 +224,7 @@ abstract class VisionProcessorBase<T> protected constructor(context: Context) :
             binding,
             bitmap,  /* shouldShowFps= */
             true,
-            frameStartMs
+            frameStartMs,
         ) // When the image is from CameraX analysis use case, must call image.close() on received
             // images when finished using them. Otherwise, new images may not be received or the camera
             // may stall.

@@ -21,8 +21,10 @@ class HomePageFragment : Fragment() {
 
     companion object{
         val map = mutableMapOf(
-            "Dumbbell Bicep Curl" to Triple(R.raw.bicep_curl_tut, R.drawable.bicep_vid_thumbnail, R.string.bicep_curl_desc),
-            "Triceps Pushdown" to Triple(R.raw.triceps_pushdown_tut, R.drawable.triceps_pushdown_thumb, R.string.triceps_pushdown_desc)
+            "Dumbbell Bicep Curl" to Triple(R.raw.bicep_curl_tut, R.drawable.bicep_curl_thumb, R.string.bicep_curl_desc),
+            "Triceps Pushdown" to Triple(R.raw.triceps_pushdown_tut, R.drawable.triceps_pushdown_thumb, R.string.triceps_pushdown_desc),
+            "Shoulder Press" to Triple(R.raw.shoulder_press_tut, R.drawable.shoulder_press_thumb, R.string.shoulder_press_desc),
+            "Front Raise" to Triple(R.raw.front_raise_tut, R.drawable.front_raise_thumb, R.string.front_raise_desc)
         )
 
     }

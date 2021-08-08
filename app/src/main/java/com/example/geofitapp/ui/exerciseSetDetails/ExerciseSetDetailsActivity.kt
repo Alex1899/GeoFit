@@ -44,23 +44,34 @@ class ExerciseSetDetailsActivity : AppCompatActivity() {
             }
             previewViewModel.updateCurrentSet(set.toString())
             ExerciseProcessor.resetDetails()
-            Log.i("ProcessorAllAOI", "all aoi cleared = ${ExerciseProcessor.allAnglesOfInterest.values.toList()}")
             onBackPressed()
         }
 
         val charts = mutableListOf<LineChart>()
         for (triple in exerciseSetDetails.angleList) {
-            val angleListY = triple.second
-            val pair1 = Pair(max(angleListY).toFloat(), min(angleListY).toFloat())
+            val angleListPair = triple.second
+            val angleListY = angleListPair.first
+            var angleListY2: MutableList<Double>?
+            var pair2:  Pair<Float, Float>? = null
+            var entryList2:  List<Entry>? = null
+
             val angleListX = (0..angleListY.size).toList()
+
+            if(angleListPair.second !== null){
+                angleListY2 = angleListPair.second!!
+                pair2 = Pair(max(angleListY2).toFloat(), min(angleListY2).toFloat())
+                entryList2 = angleListX.zip(angleListY2) { x, y -> Entry(x.toFloat(), y.toFloat()) }
+
+            }
+            val pair1 = Pair(max(angleListY).toFloat(), min(angleListY).toFloat())
             val entryList = angleListX.zip(angleListY) { x, y -> Entry(x.toFloat(), y.toFloat()) }
 
             charts.add(
                 AnglesLineChart.initilise(
-                    entryList,
+                    Pair(entryList,entryList2),
                     triple.first,
                     triple.third,
-                    pair1,
+                    Pair(pair1,pair2),
                     ExerciseUtils.isYaxisInverted[exerciseSetDetails.exerciseName]!!,
                     this
                 )
@@ -138,7 +149,6 @@ class ExerciseSetDetailsActivity : AppCompatActivity() {
 
             }
         }
-        Log.i("RepsMap", "repsMap here = $repsMap")
         return repsMap
     }
 

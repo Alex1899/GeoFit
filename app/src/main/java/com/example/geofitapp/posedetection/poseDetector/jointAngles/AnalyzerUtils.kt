@@ -1,16 +1,19 @@
 package com.example.geofitapp.posedetection.poseDetector.jointAngles
 
-import com.example.geofitapp.posedetection.poseDetector.repAnalysis.BicepCurlAnalysis
-import com.example.geofitapp.posedetection.poseDetector.repAnalysis.ExerciseAnalysis
-import com.example.geofitapp.posedetection.poseDetector.repAnalysis.TricepsPushdownAnalysis
+import android.util.Log
+import com.example.geofitapp.posedetection.poseDetector.repAnalysis.*
 import com.google.mlkit.vision.common.PointF3D
+import com.google.mlkit.vision.pose.Pose
 import com.google.mlkit.vision.pose.PoseLandmark
 
 object AnalyzerUtils {
 
     private val exerciseAnalysisMap = mutableMapOf(
         "Dumbbell Bicep Curl" to BicepCurlAnalysis,
-        "Triceps Pushdown" to TricepsPushdownAnalysis
+        "Triceps Pushdown" to TricepsPushdownAnalysis,
+        "Front Raise" to FrontRaiseAnalysis,
+        "Shoulder Press" to ShoulderPressAnalysis
+
     )
 
     fun getPose(
@@ -61,7 +64,7 @@ object AnalyzerUtils {
                 jointAngles[exerciseAnalysis.shoulderId!!] = rightShoulderAngle
                 jointAngles[exerciseAnalysis.hipId!!] = rightHipAngle
             }
-            else -> {
+            "left" -> {
                 exerciseAnalysis.elbowId = PoseLandmark.LEFT_ELBOW
                 exerciseAnalysis.shoulderId = PoseLandmark.LEFT_SHOULDER
                 exerciseAnalysis.hipId = PoseLandmark.LEFT_HIP
@@ -89,6 +92,39 @@ object AnalyzerUtils {
                 jointAngles[exerciseAnalysis.shoulderId!!] = leftShoulderAngle
                 jointAngles[exerciseAnalysis.hipId!!] = leftHipAngle
 
+            }
+            else -> {
+                val leftElbowAngle = ExerciseUtils.getAngle(
+                    normalizedLm[PoseLandmark.LEFT_SHOULDER],
+                    normalizedLm[PoseLandmark.LEFT_ELBOW],
+                    normalizedLm[PoseLandmark.LEFT_WRIST]
+                )
+
+                val leftShoulderAngle = ExerciseUtils.getAngle(
+                    normalizedLm[PoseLandmark.LEFT_ELBOW],
+                    normalizedLm[PoseLandmark.LEFT_SHOULDER],
+                    normalizedLm[PoseLandmark.LEFT_HIP]
+                )
+
+                val rightElbowAngle = ExerciseUtils.getAngle(
+                    normalizedLm[PoseLandmark.RIGHT_SHOULDER],
+                    normalizedLm[PoseLandmark.RIGHT_ELBOW],
+                    normalizedLm[PoseLandmark.RIGHT_WRIST]
+                )
+
+                val rightShoulderAngle = ExerciseUtils.getAngle(
+                    normalizedLm[PoseLandmark.RIGHT_ELBOW],
+                    normalizedLm[PoseLandmark.RIGHT_SHOULDER],
+                    normalizedLm[PoseLandmark.RIGHT_HIP]
+                )
+
+                jointAngles[PoseLandmark.LEFT_WRIST] = 0.0
+                jointAngles[PoseLandmark.LEFT_ELBOW] = leftElbowAngle
+                jointAngles[PoseLandmark.LEFT_SHOULDER] = leftShoulderAngle
+
+                jointAngles[PoseLandmark.RIGHT_WRIST] = 0.0
+                jointAngles[PoseLandmark.RIGHT_ELBOW] = rightElbowAngle
+                jointAngles[PoseLandmark.RIGHT_SHOULDER] = rightShoulderAngle
             }
 
         }

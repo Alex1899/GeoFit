@@ -5,6 +5,7 @@ import android.graphics.Bitmap;
 import android.os.Build.VERSION_CODES;
 import androidx.annotation.RequiresApi;
 import androidx.camera.core.ImageProxy;
+import androidx.camera.lifecycle.ProcessCameraProvider;
 
 import com.example.geofitapp.databinding.ActivityCameraXlivePreviewBinding;
 import com.example.geofitapp.ui.cameraPreview.detailsOverlay.DetailsOverlay;

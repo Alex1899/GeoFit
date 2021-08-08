@@ -158,6 +158,13 @@
         a compound motion. This makes it a great exercise for targeting your triceps.
         The primary muscle group worked by the triceps pushdown is, as you may have guessed, your triceps.</string>
 
+    <string name="front_raise_desc">The front raise, also known as the dumbbell front raise, is a weight training exercise that targets your shoulder muscles.
+        Perform front raises by standing and using an overhand grip to lift a pair of dumbbells from the front of your thighs to shoulder level in front of your body.
+        With proper form, front raises are an effective shoulder workout with many benefits.</string>
+
+    <string name="shoulder_press_desc">The shoulder press is one of the best exercises for strengthening your shoulders and upper back.
+        The biggest benefactor of the shoulder press is the front portion of your shoulder muscle (anterior deltoid) but you\'ll also be working out your deltoids, triceps, trapezius and pecs. </string>
+
     <string name="reps_txt">Reps</string>
     <string name="sets_txt">Sets</string>
     <string name="pace_txt">Pace</string>

@@ -35,7 +35,7 @@ class PoseGraphic internal constructor(
     private val visualizeZ: Boolean,
     private val rescaleZForVisualization: Boolean
 
-    ) : GraphicOverlay.Graphic(overlay) {
+) : GraphicOverlay.Graphic(overlay) {
     private var zMin = java.lang.Float.MAX_VALUE
     private var zMax = java.lang.Float.MIN_VALUE
     private val leftPaint: Paint
@@ -81,119 +81,10 @@ class PoseGraphic internal constructor(
         binding.paceOverlayText.text = String.format("%.1f", pace) + "s"
         binding.sideOverlayText.text = side
 
-        if(feedback === "Wrong"){
+        if (feedback === "Wrong") {
             val prev = binding.errorsOverlayText.text.toString()
             binding.errorsOverlayText.text = (prev.toInt() + 1).toString()
         }
-//        detailsOverlay.addDetails(repCounterResult, String.format("%.1f", pace), side)
-
-
-//        // Draw all the points
-//        for (landmark in landmarks) {
-//            drawPoint(canvas, landmark.position3D, whitePaint)
-//            if (visualizeZ && rescaleZForVisualization) {
-//                zMin = min(zMin, landmark.position3D.z)
-//                zMax = max(zMax, landmark.position3D.z)
-//            }
-//        }
-//        val nose = pose.getPoseLandmark(PoseLandmark.NOSE)
-//        val lefyEyeInner = pose.getPoseLandmark(PoseLandmark.LEFT_EYE_INNER)
-//        val lefyEye = pose.getPoseLandmark(PoseLandmark.LEFT_EYE)
-//        val leftEyeOuter = pose.getPoseLandmark(PoseLandmark.LEFT_EYE_OUTER)
-//        val rightEyeInner = pose.getPoseLandmark(PoseLandmark.RIGHT_EYE_INNER)
-//        val rightEye = pose.getPoseLandmark(PoseLandmark.RIGHT_EYE)
-//        val rightEyeOuter = pose.getPoseLandmark(PoseLandmark.RIGHT_EYE_OUTER)
-//        val leftEar = pose.getPoseLandmark(PoseLandmark.LEFT_EAR)
-//        val rightEar = pose.getPoseLandmark(PoseLandmark.RIGHT_EAR)
-//        val leftMouth = pose.getPoseLandmark(PoseLandmark.LEFT_MOUTH)
-//        val rightMouth = pose.getPoseLandmark(PoseLandmark.RIGHT_MOUTH)
-//
-//        val leftShoulder = pose.getPoseLandmark(PoseLandmark.LEFT_SHOULDER)
-//        val rightShoulder = pose.getPoseLandmark(PoseLandmark.RIGHT_SHOULDER)
-//        val leftElbow = pose.getPoseLandmark(PoseLandmark.LEFT_ELBOW)
-//        val rightElbow = pose.getPoseLandmark(PoseLandmark.RIGHT_ELBOW)
-//        val leftWrist = pose.getPoseLandmark(PoseLandmark.LEFT_WRIST)
-//        val rightWrist = pose.getPoseLandmark(PoseLandmark.RIGHT_WRIST)
-//        val leftHip = pose.getPoseLandmark(PoseLandmark.LEFT_HIP)
-//        val rightHip = pose.getPoseLandmark(PoseLandmark.RIGHT_HIP)
-//        val leftKnee = pose.getPoseLandmark(PoseLandmark.LEFT_KNEE)
-//        val rightKnee = pose.getPoseLandmark(PoseLandmark.RIGHT_KNEE)
-//        val leftAnkle = pose.getPoseLandmark(PoseLandmark.LEFT_ANKLE)
-//        val rightAnkle = pose.getPoseLandmark(PoseLandmark.RIGHT_ANKLE)
-//
-//        val leftPinky = pose.getPoseLandmark(PoseLandmark.LEFT_PINKY)
-//        val rightPinky = pose.getPoseLandmark(PoseLandmark.RIGHT_PINKY)
-//        val leftIndex = pose.getPoseLandmark(PoseLandmark.LEFT_INDEX)
-//        val rightIndex = pose.getPoseLandmark(PoseLandmark.RIGHT_INDEX)
-//        val leftThumb = pose.getPoseLandmark(PoseLandmark.LEFT_THUMB)
-//        val rightThumb = pose.getPoseLandmark(PoseLandmark.RIGHT_THUMB)
-//        val leftHeel = pose.getPoseLandmark(PoseLandmark.LEFT_HEEL)
-//        val rightHeel = pose.getPoseLandmark(PoseLandmark.RIGHT_HEEL)
-//        val leftFootIndex = pose.getPoseLandmark(PoseLandmark.LEFT_FOOT_INDEX)
-//        val rightFootIndex = pose.getPoseLandmark(PoseLandmark.RIGHT_FOOT_INDEX)
-//
-//        // Face
-//        drawLine(canvas, nose, lefyEyeInner, whitePaint)
-//        drawLine(canvas, lefyEyeInner, lefyEye, whitePaint)
-//        drawLine(canvas, lefyEye, leftEyeOuter, whitePaint)
-//        drawLine(canvas, leftEyeOuter, leftEar, whitePaint)
-//        drawLine(canvas, nose, rightEyeInner, whitePaint)
-//        drawLine(canvas, rightEyeInner, rightEye, whitePaint)
-//        drawLine(canvas, rightEye, rightEyeOuter, whitePaint)
-//        drawLine(canvas, rightEyeOuter, rightEar, whitePaint)
-//        drawLine(canvas, leftMouth, rightMouth, whitePaint)
-//
-//        drawLine(canvas, leftShoulder, rightShoulder, whitePaint)
-//        drawLine(canvas, leftHip, rightHip, whitePaint)
-//
-//        // Left body
-//        drawLine(canvas, leftShoulder, leftElbow, leftPaint)
-//        drawLine(canvas, leftElbow, leftWrist, leftPaint)
-//        drawLine(canvas, leftShoulder, leftHip, leftPaint)
-//        drawLine(canvas, leftHip, leftKnee, leftPaint)
-//        drawLine(canvas, leftKnee, leftAnkle, leftPaint)
-//        drawLine(canvas, leftWrist, leftThumb, leftPaint)
-//        drawLine(canvas, leftWrist, leftPinky, leftPaint)
-//        drawLine(canvas, leftWrist, leftIndex, leftPaint)
-//        drawLine(canvas, leftIndex, leftPinky, leftPaint)
-//        drawLine(canvas, leftAnkle, leftHeel, leftPaint)
-//        drawLine(canvas, leftHeel, leftFootIndex, leftPaint)
-//
-//        // Right body
-//        drawLine(canvas, rightShoulder, rightElbow, rightPaint)
-//        drawLine(canvas, rightElbow, rightWrist, rightPaint)
-//        drawLine(canvas, rightShoulder, rightHip, rightPaint)
-//        drawLine(canvas, rightHip, rightKnee, rightPaint)
-//        drawLine(canvas, rightKnee, rightAnkle, rightPaint)
-//        drawLine(canvas, rightWrist, rightThumb, rightPaint)
-//        drawLine(canvas, rightWrist, rightPinky, rightPaint)
-//        drawLine(canvas, rightWrist, rightIndex, rightPaint)
-//        drawLine(canvas, rightIndex, rightPinky, rightPaint)
-//        drawLine(canvas, rightAnkle, rightHeel, rightPaint)
-//        drawLine(canvas, rightHeel, rightFootIndex, rightPaint)
-
-//        var elbow: PoseLandmark? = null
-//        if (exercise[1] == "front") {
-//            val rightElbow = pose.getPoseLandmark(PoseLandmark.RIGHT_ELBOW)!!
-//            val leftElbow = pose.getPoseLandmark(PoseLandmark.LEFT_ELBOW)!!
-//
-//            val rightShoulder = pose.getPoseLandmark(PoseLandmark.RIGHT_SHOULDER)!!
-//            val leftShoulder = pose.getPoseLandmark(PoseLandmark.LEFT_SHOULDER)!!
-//
-//            drawPoint(canvas, rightElbow.position3D, whitePaint)
-//            drawPoint(canvas, leftElbow.position3D, whitePaint)
-//
-//            drawPoint(canvas, rightShoulder.position3D, whitePaint)
-//            drawPoint(canvas, leftShoulder.position3D, whitePaint)
-//
-//        } else {
-//            elbow= if (exercise[1] == "right") {
-//                pose.getPoseLandmark(PoseLandmark.RIGHT_ELBOW)!!
-//            } else {
-//                pose.getPoseLandmark(PoseLandmark.LEFT_ELBOW)!!
-//            }
-//            drawPoint(canvas, elbow.position3D, whitePaint)
-//        }
 
         // get landmarks
         val landmarksList = mutableListOf<PoseLandmark>()
@@ -201,28 +92,77 @@ class PoseGraphic internal constructor(
             val lm = pose.getPoseLandmark(lmId)!!
             landmarksList.add(lm)
         }
-        val p = if(side == "right") rightPaint else leftPaint
+        val p = if (side == "right") rightPaint else leftPaint
 
-        for(index in landmarksList.indices) {
-            if(index + 1 >= landmarksList.size){
+        if (side != "front") {
+            for (index in landmarksList.indices) {
+                if (index + 1 >= landmarksList.size) {
+                    drawPoint(canvas, landmarksList[index].position3D, p)
+                    return
+                }
                 drawPoint(canvas, landmarksList[index].position3D, p)
-                return
+                drawLine(canvas, landmarksList[index], landmarksList[index + 1], whitePaint)
             }
-            drawPoint(canvas, landmarksList[index].position3D, p)
-            drawLine(canvas, landmarksList[index], landmarksList[index+1], whitePaint)
+        } else {
+            // shoulder press specific
+            for (lm in landmarksList) {
+                drawPoint(canvas, lm.position3D, p)
+            }
+            drawLine(
+                canvas,
+                pose.getPoseLandmark(PoseLandmark.LEFT_WRIST),
+                pose.getPoseLandmark(PoseLandmark.LEFT_ELBOW),
+                whitePaint
+            )
+            drawLine(
+                canvas,
+                pose.getPoseLandmark(PoseLandmark.LEFT_ELBOW),
+                pose.getPoseLandmark(PoseLandmark.LEFT_SHOULDER),
+                whitePaint
+            )
+
+            drawLine(
+                canvas,
+                pose.getPoseLandmark(PoseLandmark.LEFT_SHOULDER),
+                pose.getPoseLandmark(PoseLandmark.LEFT_HIP),
+                whitePaint
+            )
+            drawPoint(canvas, pose.getPoseLandmark(PoseLandmark.LEFT_HIP)!!.position3D, p)
+
+            drawLine(
+                canvas,
+                pose.getPoseLandmark(PoseLandmark.RIGHT_WRIST),
+                pose.getPoseLandmark(PoseLandmark.RIGHT_ELBOW),
+                whitePaint
+            )
+            drawLine(
+                canvas,
+                pose.getPoseLandmark(PoseLandmark.RIGHT_ELBOW),
+                pose.getPoseLandmark(PoseLandmark.RIGHT_SHOULDER),
+                whitePaint
+            )
+            drawLine(
+                canvas,
+                pose.getPoseLandmark(PoseLandmark.RIGHT_SHOULDER),
+                pose.getPoseLandmark(PoseLandmark.RIGHT_HIP),
+                whitePaint
+            )
+            drawPoint(canvas, pose.getPoseLandmark(PoseLandmark.RIGHT_HIP)!!.position3D, p)
+
+
         }
 
         // Draw degrees for all points
-        for ((lmId, angle) in jointAnglesMap) {
-            val lm = pose.getPoseLandmark(lmId)!!
-            canvas.drawText(
-//                    String.format("%.1f", angle),
-                angle.roundToInt().toString(),
-                translateX(lm.position.x),
-                translateY(lm.position.y),
-                whitePaint
-            )
-        }
+//        for ((lmId, angle) in jointAnglesMap) {
+//            val lm = pose.getPoseLandmark(lmId)!!
+//            canvas.drawText(
+////                    String.format("%.1f", angle),
+//                angle.roundToInt().toString(),
+//                translateX(lm.position.x),
+//                translateY(lm.position.y),
+//                whitePaint
+//            )
+//        }
 
     }
 

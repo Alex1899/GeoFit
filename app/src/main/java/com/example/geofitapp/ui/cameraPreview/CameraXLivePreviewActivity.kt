@@ -2,7 +2,6 @@ package com.example.geofitapp.ui.cameraPreview
 
 //import com.example.geofitapp.posedetection.poseDetector.Classifier
 
-import android.R.string
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.pm.PackageManager
@@ -11,15 +10,12 @@ import android.graphics.drawable.ColorDrawable
 import android.os.Build
 import android.os.Bundle
 import android.os.CountDownTimer
-import android.text.SpannableString
-import android.text.style.RelativeSizeSpan
 import android.util.Log
 import android.view.ScaleGestureDetector
 import android.view.View
 import android.view.Window
 import android.view.WindowManager
 import android.widget.CompoundButton
-import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.camera.core.*
@@ -225,14 +221,6 @@ class CameraXLivePreviewActivity : AppCompatActivity(),
         countTimer?.cancel()
     }
 
-    private fun clearDetailsOverlay() {
-        binding.repsOverlayText.text = "0"
-        binding.errorsOverlayText.text = "0"
-        binding.setsOverlayText.text = "1"
-        binding.paceOverlayText.text = "0.0s"
-        binding.sideOverlayText.text = "N/A"
-    }
-
     private fun bindAllCameraUseCases() {
         if (cameraProvider != null) {
             // As required by CameraX API, unbinds all use cases before trying to re-bind any of them.
@@ -273,6 +261,10 @@ class CameraXLivePreviewActivity : AppCompatActivity(),
         if (camera!!.cameraInfo.hasFlashUnit()) {
             camera!!.cameraControl.enableTorch(flash)
         }
+    }
+
+    private fun mStopCamera() {
+        cameraProvider!!.unbindAll()
     }
 
     @SuppressLint("ClickableViewAccessibility")
@@ -330,7 +322,7 @@ class CameraXLivePreviewActivity : AppCompatActivity(),
                 val rescaleZ = PreferenceUtils.shouldPoseDetectionRescaleZForVisualization(this)
                 val runClassification = PreferenceUtils.shouldPoseDetectionRunClassification(this)
                 PoseDetectorProcessor(
-                    this, poseDetectorOptions, visualizeZ, rescaleZ, exercise, reps.toInt()
+                    this, poseDetectorOptions, visualizeZ, rescaleZ, exercise, reps.toInt(), cameraProvider!!
                 )
             } else {
                 throw IllegalStateException("Invalid model name")
@@ -379,7 +371,6 @@ class CameraXLivePreviewActivity : AppCompatActivity(),
                         imageProxy,
                         graphicOverlay!!,
                         binding,
-
                         )
                 } catch (e: MlKitException) {
                     Log.e(

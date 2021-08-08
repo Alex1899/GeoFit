@@ -1,8 +1,7 @@
 package com.example.geofitapp.posedetection.poseDetector.repAnalysis
 
-object FrontRaiseAnalysis : ExerciseAnalysis(){
+object FrontRaiseAnalysis : ExerciseAnalysis() {
     override var side = ""
-
     // initilized in the getFramePose function
     override var elbowId: Int? = null
     override var shoulderId: Int? = null
@@ -20,42 +19,42 @@ object FrontRaiseAnalysis : ExerciseAnalysis(){
 
         val feedbackMap = mutableMapOf(startingPos to mutableMapOf<String, Pair<String, String>>())
 
-        if (109 > startElbowAngle && startElbowAngle >= 62) {
+        if (181 > startElbowAngle && startElbowAngle >= 148) {
             feedbackMap[startingPos]!!["Starting Elbow Angle"] = Pair(
                 "Correct",
-                "Good Form: Correct starting position"
+                "Good Form: Your arm is fully extended."
             )
         } else {
             feedbackMap[startingPos]!!["Starting Elbow Angle"] = Pair(
                 "Wrong",
-                "Bad Form: Incorrect starting position.\n\n" +
-                        "Fix: Try to have your forearm at approximately 90 degrees to your upper arm"
+                "Bad Form: Incorrect starting position. Your arm is not fully extended." +
+                        "\n\nFix: Try to have your elbows fully extended throughout the movement."
             )
         }
 
-        if (startShoulderAngle < 24) {
+        if (15 > startShoulderAngle && startShoulderAngle >= 0.02) {
             feedbackMap[startingPos]!!["Starting Elbow Forward Shift"] = Pair(
                 "Correct",
-                "Good Form: Elbows are positioned close to the torso"
+                "Good Form: Elbow is positioned close to the torso."
             )
         } else {
             feedbackMap[startingPos]!!["Starting Elbow Forward Shift"] = Pair(
                 "Wrong",
-                "Bad Form: Incorrect starting position. Your elbow showed significant movement forward.\n\nFix: " +
-                        "Try to keep your elbows still and close to your torso throughout the movement."
+                "Bad Form: Incorrect starting position. Your elbow showed significant movement.\n\nFix: " +
+                        "Try to keep your elbows still and close to your torso at the starting position of the move.'"
             )
         }
 
-        if (startHipAngle < 150 || startHipAngle > 195) {
-            feedbackMap[startingPos]!!["Starting Angle at the Hip"] = Pair(
-                "Wrong",
-                "Bad Form: Incorrect starting position. Your torso showed significant movement.\nFix: " +
-                        "Try to keep your torso still and straight throughout the movement"
-            )
-        } else {
+        if (startHipAngle >= 154 && startHipAngle < 195) {
             feedbackMap[startingPos]!!["Starting Angle at the Hip"] = Pair(
                 "Correct",
                 "Good Form: No significant movement of the torso"
+            )
+        } else {
+            feedbackMap[startingPos]!!["Starting Angle at the Hip"] = Pair(
+                "Wrong",
+                "Bad Form: Incorrect starting position. Your torso showed significant movement.\n\nFix: " +
+                        "Try to keep your torso still and straight throughout the movement.'"
             )
         }
 
@@ -74,7 +73,7 @@ object FrontRaiseAnalysis : ExerciseAnalysis(){
 
         // shoulder-trunk
         val maxShoulderAngle = jointAnglesMap[shoulderId]!!.first.first
-//        val minShoulderAngle = jointAnglesMap[shoulderId]!!.first.second
+        val minShoulderAngle = jointAnglesMap[shoulderId]!!.first.second
 
         // hip angle
         val maxHipAngle = jointAnglesMap[hipId]!!.first.first
@@ -84,41 +83,59 @@ object FrontRaiseAnalysis : ExerciseAnalysis(){
             feedbackMap[middlePos] = mutableMapOf()
         }
         // elbow
-        if (maxElbowAngle >= 150) {
+        if (minElbowAngle < 181 && minElbowAngle >= 148) {
             feedbackMap[middlePos]!!["Minimum Elbow Angle"] = Pair(
                 "Correct",
-                "Good Form: Your arms were fully extended at the bottom part of the move"
+                "Good Form: Your forearm is at the correct angle to your upper arm"
             )
 
         } else {
             feedbackMap[middlePos]!!["Minimum Elbow Angle"] = Pair(
                 "Wrong",
-                "Bad Form: You arms were not fully extended at the bottom part of the move.\n" +
-                        "This could be because the weight is too heavy.\n\nFix: Consider lowering the weight " +
-                        "to properly target your triceps and avoid the risk of injury. Focus on fully " +
-                        "extending your arms at the bottom of the move to achieve more exertion " +
-                        "on the triceps."
+                "Bad Form: Your elbow is not extended enough.\n\nFix: Focus on having your elbows extended" +
+                        " throughout the movement for a better front deltoids contraction"
             )
 
         }
 
-        if (maxShoulderAngle < 24) {
+        if (69 <= maxShoulderAngle && maxShoulderAngle < 122) {
             feedbackMap[middlePos]!!["Maximum Elbow Forward Shift"] =
                 Pair(
                     "Correct",
-                    "Good Form: Elbows did not move significantly during the movement"
-
+                    "Good Form: The weight was brought up high enough"
                 )
         } else {
-            feedbackMap[middlePos]!!["Maximum Elbow Forward Shift"] = Pair(
-                "Wrong",
-                "Bad Form: Elbows have been shifted forward significantly.\nFix: Try to keep your elbows " +
-                        "closer to your body"
+            if (maxShoulderAngle < 69) {
+                feedbackMap[middlePos]!!["Maximum Elbow Forward Shift"] = Pair(
+                    "Wrong",
+                    "Bad Form: The weight has not been brought up high enough. This could be because the weight" +
+                            " is too heavy.\n\nFix: Consider lowering the weight to properly target your front deltoids " +
+                            "and avoid the risk of injury"
+                )
+            }
+            if (maxShoulderAngle > 122) {
+                feedbackMap[middlePos]!!["Maximum Elbow Forward Shift"] = Pair(
+                    "Wrong",
+                    "Bad Form: The weight has been brought up way too much.\n\nFix: Try not to bring the weight" +
+                            " higher than your shoulder level in order to keep the tension on front deltoids"
+                )
+            }
+        }
 
+        if (15 > minShoulderAngle && minShoulderAngle >= 0.01) {
+            feedbackMap[middlePos]!!["Minimum Elbow Forward Shift"] = Pair(
+                "Correct",
+                "Good Form: Elbow return to the correct position"
+            )
+        } else {
+            feedbackMap[middlePos]!!["Minimum Elbow Forward Shift"] = Pair(
+                "Wrong",
+                "Bad Form: Incorrect elbow position. The weight was lowered halfway.\n\nFix: Focus on lowering" +
+                        "the weight fully at the bottom part of the move"
             )
         }
 
-        if (minHipAngle >= 150) {
+        if (minHipAngle >= 154) {
             feedbackMap[middlePos]!!["Minimum Angle at the Hip"] = Pair(
                 "Correct",
                 "Good Form: No leaning forward excessively"
@@ -127,14 +144,12 @@ object FrontRaiseAnalysis : ExerciseAnalysis(){
         } else {
             feedbackMap[middlePos]!!["Minimum Angle at the Hip"] = Pair(
                 "Wrong",
-                "Bad Form: Leaning forward significantly. This could be because the weight is too heavy." +
-                        "This puts a lot of pressure on the lower back.\n\nFix: Consider lowering the weight." +
-                        "Keep your back straight and focus the effort on the triceps only"
-
+                "Bad Form: Leaning forward significantly.\n\nFix: Try to keep your back still and straight" +
+                        " throughout the movement"
             )
         }
 
-        if (195 > maxHipAngle && maxHipAngle >= 150) {
+        if (195 > maxHipAngle && maxHipAngle >= 154) {
             feedbackMap[middlePos]!!["Maximum Angle at the Hip"] = Pair(
                 "Correct",
                 "Good Form: No leaning backwards excessively"
@@ -165,7 +180,7 @@ object FrontRaiseAnalysis : ExerciseAnalysis(){
             feedbackMap[finishingPos] = mutableMapOf()
         }
 
-        if (finishElbowAngle >= 62 && 109 > finishElbowAngle) {
+        if (finishElbowAngle >= 148 && 181 > finishElbowAngle) {
             feedbackMap[finishingPos]!!["Finishing Elbow Angle"] = Pair(
                 "Correct",
                 "Good Form: Your arm was fully extended during the finishing part of the movement"
@@ -175,35 +190,35 @@ object FrontRaiseAnalysis : ExerciseAnalysis(){
             feedbackMap[finishingPos]!!["Finishing Elbow Angle"] = Pair(
                 "Wrong",
                 "Bad Form: Incorrect finishing position. Your forearm is at incorrect angle to your upper arm.\n\nFix:" +
-                        "Try to keep your forearm at approximately 90 degrees to your upper arm at the top part of the move"
+                        "Try to extend your arms at the bottom part of the move"
             )
         }
 
-        if (finishShoulderAngle < 24) {
+        if (finishShoulderAngle < 15 && finishShoulderAngle >= 0.01) {
             feedbackMap[finishingPos]!!["Finishing Elbow Forward Shift"] = Pair(
                 "Correct",
-                "Good Form: Elbow not moved significantly"
+                "Good Form: Correct finishing position of the elbow"
 
             )
         } else {
             feedbackMap[finishingPos]!!["Finishing Elbow Forward Shift"] = Pair(
                 "Wrong",
-                "Bad Form: Incorrect finishing position. Elbows have been shifted forward significantly.\nFix: Keep your elbows " +
-                        "closer to your body at the bottom part of the move"
+                "Bad Form: Incorrect finishing position. Elbows have been shifted forward significantly.\\n\nFix: Keep your elbows" +
+                        " closer to your body at the bottom part of the move."
 
             )
         }
 
-        if (finishHipAngle >= 150 && 195 > finishHipAngle) {
+        if (finishHipAngle >= 154 && 195 > finishHipAngle) {
             feedbackMap[finishingPos]!!["Finishing Angle at the Hip"] = Pair(
                 "Correct",
-                "Good Form: Not significant movement of the torso"
+                "Good Form: No significant movement of the torso"
 
             )
         } else {
             feedbackMap[finishingPos]!!["Finishing Angle at the Hip"] = Pair(
                 "Wrong",
-                "Bad Form: Incorrect finishing position. Your torso showed significant movement.\nFix:" +
+                "Bad Form: Incorrect finishing position. Your torso showed significant movement.\n\nFix:" +
                         " Try to keep your torso still and straight at the bottom part of the move"
             )
 
