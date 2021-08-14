@@ -3,6 +3,7 @@ package com.example.geofitapp.ui.cameraPreview
 //import com.example.geofitapp.posedetection.poseDetector.Classifier
 
 import android.annotation.SuppressLint
+import android.app.ActionBar
 import android.content.Context
 import android.content.pm.PackageManager
 import android.graphics.Color
@@ -10,17 +11,17 @@ import android.graphics.drawable.ColorDrawable
 import android.os.Build
 import android.os.Bundle
 import android.os.CountDownTimer
+import android.speech.tts.TextToSpeech
 import android.util.Log
-import android.view.ScaleGestureDetector
-import android.view.View
-import android.view.Window
-import android.view.WindowManager
+import android.view.*
 import android.widget.CompoundButton
+import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.camera.core.*
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.view.PreviewView
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.app.ActivityCompat
 import androidx.core.app.ActivityCompat.OnRequestPermissionsResultCallback
 import androidx.core.content.ContextCompat
@@ -57,6 +58,7 @@ class CameraXLivePreviewActivity : AppCompatActivity(),
     private var exercise: MutableList<String> = mutableListOf()
     private var countTimer: CountDownTimer? = null
     private lateinit var binding: ActivityCameraXlivePreviewBinding
+    private lateinit var textToSpeech: TextToSpeech
     private var reps = ""
 
 
@@ -72,8 +74,9 @@ class CameraXLivePreviewActivity : AppCompatActivity(),
         binding = DataBindingUtil.setContentView(this, R.layout.activity_camera_xlive_preview)
         previewView = binding.previewView
 
-        val colorDrawable = ColorDrawable(Color.parseColor("#342c3a"))
+        val colorDrawable = ColorDrawable(Color.parseColor("#161616"))
         supportActionBar?.setBackgroundDrawable(colorDrawable)
+
 
         // get exercise name
         val bundle = intent.getBundleExtra("exercise")!!
@@ -92,6 +95,10 @@ class CameraXLivePreviewActivity : AppCompatActivity(),
         binding.paceOverlayText.text = getString(R.string.pace_overlay_text, "0.0s")
         binding.errorsOverlayText.text = getString(R.string.erros_overlay_text, "0")
 
+        binding.switchCamera.setOnClickListener {
+            switchCamera()
+        }
+
         exercise.add(exerciseName)
         supportActionBar?.title = exerciseName
 
@@ -99,8 +106,10 @@ class CameraXLivePreviewActivity : AppCompatActivity(),
             val window: Window = this.window
             window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
             window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS)
-            window.statusBarColor = this.resources.getColor(R.color.background)
+            window.statusBarColor = this.resources.getColor(R.color.primaryColor)
         }
+
+
 
         setupOnCreate()
         ViewModelProvider(this, ViewModelProvider.AndroidViewModelFactory.getInstance(application))
@@ -117,11 +126,48 @@ class CameraXLivePreviewActivity : AppCompatActivity(),
         if (!allPermissionsGranted()) {
             runtimePermissions
         }
-//        tflite.initialize()
-//            .addOnSuccessListener { Log.i("Tflite", "Tflite model initilized successfully") }
-//            .addOnFailureListener{ e -> Log.e("Tflite", "Error initializing classifier")}
+
+        textToSpeech = TextToSpeech(
+            this
+        ) { i ->
+            if (i != TextToSpeech.ERROR) {
+                // To Choose language of speech
+                textToSpeech.language = Locale.UK
+            }
+        }
+
 
     }
+
+    private fun switchCamera() {
+        if (cameraProvider == null) {
+            return
+        }
+        val newLensFacing = if (lensFacing == CameraSelector.LENS_FACING_FRONT) {
+            CameraSelector.LENS_FACING_BACK
+        } else {
+            CameraSelector.LENS_FACING_FRONT
+        }
+        val newCameraSelector =
+            CameraSelector.Builder().requireLensFacing(newLensFacing).build()
+        try {
+            if (cameraProvider!!.hasCamera(newCameraSelector)) {
+                lensFacing = newLensFacing
+                cameraSelector = newCameraSelector
+                bindAllCameraUseCases()
+                bindAnalysisUseCase()
+                return
+            }
+        } catch (e: CameraInfoUnavailableException) {
+            // Falls through
+        }
+        Toast.makeText(
+            applicationContext, "This device does not have lens with facing: $newLensFacing",
+            Toast.LENGTH_SHORT
+        )
+            .show()
+    }
+
 
     private fun startTimer() {
         // start timer
@@ -202,6 +248,7 @@ class CameraXLivePreviewActivity : AppCompatActivity(),
     public override fun onResume() {
         super.onResume()
         bindAllCameraUseCases()
+        bindAnalysisUseCase()
     }
 
     override fun onPause() {
@@ -209,6 +256,7 @@ class CameraXLivePreviewActivity : AppCompatActivity(),
         if (imageProcessor != null) {
             imageProcessor!!.stop()
         }
+        textToSpeech.stop()
         countTimer?.cancel()
     }
 
@@ -218,6 +266,7 @@ class CameraXLivePreviewActivity : AppCompatActivity(),
             imageProcessor!!.stop()
             imageProcessor!!.resetInfo(binding)
         }
+        textToSpeech.shutdown()
         countTimer?.cancel()
     }
 
@@ -254,12 +303,27 @@ class CameraXLivePreviewActivity : AppCompatActivity(),
             cameraSelector!!, previewUseCase
         )
         attachZoomListener()
+        attachFlashListener()
 
     }
 
     fun addFlash(flash: Boolean) {
+        camera!!.cameraControl.enableTorch(flash)
+
+    }
+
+    fun attachFlashListener() {
         if (camera!!.cameraInfo.hasFlashUnit()) {
-            camera!!.cameraControl.enableTorch(flash)
+            binding.flashIcon.setOnClickListener {
+                addFlash(camera!!.cameraInfo.torchState.value == TorchState.OFF)
+            }
+            camera!!.cameraInfo.torchState.observe(this, { torchState ->
+                if (torchState == TorchState.OFF) {
+                    binding.flashIcon.setImageResource(R.drawable.ic_flash)
+                } else {
+                    binding.flashIcon.setImageResource(R.drawable.ic_no_flash)
+                }
+            })
         }
     }
 
@@ -322,7 +386,15 @@ class CameraXLivePreviewActivity : AppCompatActivity(),
                 val rescaleZ = PreferenceUtils.shouldPoseDetectionRescaleZForVisualization(this)
                 val runClassification = PreferenceUtils.shouldPoseDetectionRunClassification(this)
                 PoseDetectorProcessor(
-                    this, poseDetectorOptions, visualizeZ, rescaleZ, exercise, reps.toInt(), cameraProvider!!
+                    this,
+                    poseDetectorOptions,
+                    visualizeZ,
+                    rescaleZ,
+                    exercise,
+                    reps.toInt(),
+                    cameraProvider!!,
+                    textToSpeech,
+                    this
                 )
             } else {
                 throw IllegalStateException("Invalid model name")
@@ -371,7 +443,7 @@ class CameraXLivePreviewActivity : AppCompatActivity(),
                         imageProxy,
                         graphicOverlay!!,
                         binding,
-                        )
+                    )
                 } catch (e: MlKitException) {
                     Log.e(
                         TAG,

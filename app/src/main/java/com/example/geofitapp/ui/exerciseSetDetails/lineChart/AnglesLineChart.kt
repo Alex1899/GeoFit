@@ -222,10 +222,11 @@ object AnglesLineChart {
         chart.setDrawGridBackground(false)
 
         val l = chart.legend
-        l.verticalAlignment = Legend.LegendVerticalAlignment.TOP
+//        l.verticalAlignment = Legend.LegendVerticalAlignment.BOTTOM
         l.horizontalAlignment = Legend.LegendHorizontalAlignment.CENTER
-        l.orientation = Legend.LegendOrientation.VERTICAL
+//        l.orientation = Legend.LegendOrientation.VERTICAL
         l.textColor = Color.WHITE
+        l.setDrawInside(true)
 
         //chart.invalidate()
 //        chart.animateX(1500)

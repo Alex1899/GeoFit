@@ -12,17 +12,17 @@ abstract class ExerciseAnalysis {
 
     abstract fun getStartingPositionFeedback(
         jointAnglesMap: MutableMap<Int, Pair<Pair<Double, Double>, MutableList<Double>>>
-    ): MutableMap<String, MutableMap<String, Pair<String, String>>>
+    ): MutableMap<String, MutableMap<String, Triple<String, String, String>>>
 
     abstract fun getMiddlePositionFeedback(
         jointAnglesMap: MutableMap<Int, Pair<Pair<Double, Double>, MutableList<Double>>>,
-        feedbackMap: MutableMap<String, MutableMap<String, Pair<String, String>>>
-    ): MutableMap<String, MutableMap<String, Pair<String, String>>>
+        feedbackMap: MutableMap<String, MutableMap<String, Triple<String, String, String>>>
+    ): MutableMap<String, MutableMap<String, Triple<String, String, String>>>
 
     abstract fun getFinishingPositionFeedback(
         jointAnglesMap: MutableMap<Int, Pair<Pair<Double, Double>, MutableList<Double>>>,
-        feedbackMap: MutableMap<String, MutableMap<String, Pair<String, String>>>
-    ): MutableMap<String, MutableMap<String, Pair<String, String>>>
+        feedbackMap: MutableMap<String, MutableMap<String, Triple<String, String, String>>>
+    ): MutableMap<String, MutableMap<String, Triple<String, String, String>>>
 
 
 }

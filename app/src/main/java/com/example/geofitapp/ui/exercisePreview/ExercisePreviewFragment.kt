@@ -1,27 +1,23 @@
 package com.example.geofitapp.ui.exercisePreview
 
 import android.content.Intent
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
-import android.text.SpannableString
-import android.text.Spanned.SPAN_INCLUSIVE_INCLUSIVE
-import android.text.style.AbsoluteSizeSpan
-import android.text.style.RelativeSizeSpan
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.MediaController
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.widget.addTextChangedListener
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
-import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
 import com.example.geofitapp.R
 import com.example.geofitapp.databinding.FragmentExercisePreviewBinding
 import com.example.geofitapp.ui.cameraPreview.CameraXLivePreviewActivity
-import com.example.geofitapp.ui.home.HomePageViewModel
 
 
 class ExercisePreviewFragment : Fragment() {

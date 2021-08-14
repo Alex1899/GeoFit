@@ -68,7 +68,7 @@ public class PreferenceUtils {
 //        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
         try {
 //            return android.util.Size.parseSize(sharedPreferences.getString(prefKey, null));
-            return android.util.Size.parseSize("400x400");
+            return android.util.Size.parseSize("600x600");
         } catch (Exception e) {
             return null;
         }

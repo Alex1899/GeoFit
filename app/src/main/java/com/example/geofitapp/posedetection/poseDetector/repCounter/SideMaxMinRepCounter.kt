@@ -25,7 +25,7 @@ object SideMaxMinRepCounter : ExerciseRepCounter() {
     private var aoiListMap = mutableMapOf<Int, MutableList<Double>>()
     override var overallTotalReps: Int? = null
 
-    private var increaseVal: Double = 0.0
+    private var lastRepStart: Double? = null
 
 
     override fun init(side: String) {
@@ -84,14 +84,17 @@ object SideMaxMinRepCounter : ExerciseRepCounter() {
 
             return ExerciseProcessor
         } else {
+
             // if rep count reached return
             if (overallTotalReps != null && totalReps == overallTotalReps!! && poseEntered) {
-                if(maxAngle!! - mainAoiAngle < 10) return ExerciseProcessor
-                poseEntered(mainAOIindex)
-                ExerciseProcessor.finished = true // finished true
-                ExerciseProcessor.exerciseFinishTime = getTimeDiff(exerciseStartTime!!)
-                exerciseStartTime = null
-                PoseDetectorProcessor.exerciseFinished = true
+                if (kotlin.math.abs(maxAngle!! - lastRepStart!!) < 10) {
+                    poseEntered(mainAOIindex)
+                    ExerciseProcessor.finished = true // finished true
+                    ExerciseProcessor.exerciseFinishTime = getTimeDiff(exerciseStartTime!!)
+                    exerciseStartTime = null
+                    PoseDetectorProcessor.exerciseFinished = true
+                    resetTotalReps()
+                }
                 return ExerciseProcessor
             }
 
@@ -158,7 +161,10 @@ object SideMaxMinRepCounter : ExerciseRepCounter() {
         finishTime = paceAvgList.average().toFloat()
         startTime = null
 
-
+        // save the starting main aoi angle for comparison
+        if (overallTotalReps!! - 1 == totalReps) {
+            lastRepStart = maxAngle
+        }
         val index = aoiListMap[mainAOIindex]!!.indexOf(maxAngle)
         analysisAngleListMap[elbowId]!!.addAll(aoiListMap[elbowId]!!.slice(1..index + 1))
         analysisAngleListMap[shoulderId]!!.addAll(aoiListMap[shoulderId]!!.slice(1..index + 1))
@@ -187,19 +193,24 @@ object SideMaxMinRepCounter : ExerciseRepCounter() {
             val filteredHipAngles2 = Utils.medfilt(filteredHipAngles, 5)
 
             ExerciseProcessor.anglesOfInterest[elbowId] = Pair(
-                Pair(maxAngle!!, minAngle!!),
+                if (mainAOIindex == elbowId) Pair(maxAngle!!, minAngle!!) else Pair(
+                    Collections.max(filteredElbowAngleList2),
+                    Collections.min(filteredElbowAngleList2)
+                ),
                 filteredElbowAngleList2.distinct().toMutableList()
             )
             ExerciseProcessor.anglesOfInterest[shoulderId] = Pair(
-                Pair(
-                    Collections.max(filteredShoulderAngles2),
-                    Collections.min(filteredShoulderAngles2)
-                ),
+                if (mainAOIindex == shoulderId) Pair(maxAngle!!, minAngle!!) else
+                    Pair(
+                        Collections.max(filteredShoulderAngles2),
+                        Collections.min(filteredShoulderAngles2)
+                    ),
                 filteredShoulderAngles2.distinct().toMutableList()
 
             )
             ExerciseProcessor.anglesOfInterest[hipId] = Pair(
-                Pair(Collections.max(filteredHipAngles2), Collections.min(filteredHipAngles2)),
+                if (mainAOIindex == hipId) Pair(maxAngle!!, minAngle!!) else
+                    Pair(Collections.max(filteredHipAngles2), Collections.min(filteredHipAngles2)),
                 filteredHipAngles2.distinct().toMutableList()
             )
 

@@ -10,7 +10,7 @@ object ExerciseProcessor {
     var pace = 0f
     var exerciseFinishTime = 0f
     var feedBack =
-        mutableMapOf<Int, MutableMap<String, MutableMap<String, Pair<String, String>>>>()
+        mutableMapOf<Int, MutableMap<String, MutableMap<String, Triple<String, String, String>>>>()
     var torso: Float? = null
     var pose: List<PoseLandmark>? = null
     var side = ""
@@ -32,16 +32,27 @@ object ExerciseProcessor {
         )
     }
 
-    fun getRepFormResult(): String {
+    fun getRepFormResult(): Pair<String, MutableList<String>> {
         val map = feedBack.values.toList().last()
+        var stringArr= mutableListOf<String>()
         for ((_, value) in map) {
             for ((_, v) in value) {
                 if (v.first == "Wrong") {
-                    return "Wrong"
+                    stringArr.add(v.third)
                 }
             }
+
+//            if(stringArr.size == 3) {
+//                return Pair("Wrong", stringArr[0]+"," + stringArr[1] + "and " + stringArr[2])
+//            }
+//            if(stringArr.size == 2){
+//                return Pair("Wrong", stringArr[0]+" and " + stringArr[1])
+//            }
+//            return Pair("Wrong", if(stringArr.isNotEmpty()) stringArr[0] else "")
         }
-        return "Correct"
+
+        stringArr = stringArr.distinct().toMutableList()
+        return if(stringArr.isEmpty()) Pair("Correct", stringArr) else Pair("Wrong", stringArr)
     }
 
     fun resetDetails() {

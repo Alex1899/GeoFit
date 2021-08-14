@@ -19,7 +19,7 @@ import com.example.geofitapp.databinding.ItemFeedbackViewBinding
 class FeedbackAdapter(
     private val context: Context,
     private val feedbackMap:
-    MutableMap<String, MutableMap<String, Pair<String, String>>>,
+    MutableMap<String, MutableMap<String, Triple<String, String, String>>>,
     private val incorrectReps: MutableMap<String, MutableMap<String, Pair<MutableList<Int>, String>>>
 
 ) : RecyclerView.Adapter<FeedbackAdapter.ViewHolder>() {
@@ -28,7 +28,7 @@ class FeedbackAdapter(
         RecyclerView.ViewHolder(binding.root) {
 
         fun bind(
-            map: MutableMap<String, Pair<String, String>>,
+            map: MutableMap<String, Triple<String, String, String>>,
             key: String,
             incorrectReps: MutableMap<String, MutableMap<String, Pair<MutableList<Int>, String>>>,
             context: Context
@@ -62,7 +62,7 @@ class FeedbackAdapter(
             val mainparams = LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT,
                 LinearLayout.LayoutParams.WRAP_CONTENT,
-            ).apply { bottomMargin = 20 }
+            ).apply { bottomMargin = 25 }
             mainLinearLayout.layoutParams = mainparams
             mainLinearLayout.orientation = LinearLayout.VERTICAL
             mainLinearLayout.background =

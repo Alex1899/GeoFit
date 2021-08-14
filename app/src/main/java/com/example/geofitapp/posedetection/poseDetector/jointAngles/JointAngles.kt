@@ -12,7 +12,7 @@ import com.google.mlkit.vision.common.PointF3D
 import com.google.mlkit.vision.pose.PoseLandmark
 import java.util.*
 
-class FramePose(
+class JointAngles(
     private val exercise: String,
     private val side: String,
     private val torso: Float? = null

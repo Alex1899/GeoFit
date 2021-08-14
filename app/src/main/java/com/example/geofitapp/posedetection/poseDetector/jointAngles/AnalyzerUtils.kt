@@ -1,6 +1,7 @@
 package com.example.geofitapp.posedetection.poseDetector.jointAngles
 
 import android.util.Log
+import com.example.geofitapp.R
 import com.example.geofitapp.posedetection.poseDetector.repAnalysis.*
 import com.google.mlkit.vision.common.PointF3D
 import com.google.mlkit.vision.pose.Pose
@@ -15,6 +16,20 @@ object AnalyzerUtils {
         "Shoulder Press" to ShoulderPressAnalysis
 
     )
+
+    fun getOverallFeedbackFromMistakeCount(num: Int): Pair<String, Int> {
+        if(num == 10){
+            return Pair("Excellent Form!", R.color.goodResult)
+        }
+        if(num == 9 || num == 8){
+            return Pair("Good Form!", R.color.goodResult)
+        }
+        if(num == 7){
+            return Pair("Not Bad", R.color.goodResult)
+        }
+        return Pair("Incorrect Form", R.color.red)
+
+    }
 
     fun getPose(
         exercise: String,
@@ -135,7 +150,7 @@ object AnalyzerUtils {
     fun analyseRep(
         jointAnglesMap: MutableMap<Int, Pair<Pair<Double, Double>, MutableList<Double>>>,
         exerciseAnalysis: ExerciseAnalysis
-    ): MutableMap<String, MutableMap<String, Pair<String, String>>> {
+    ): MutableMap<String, MutableMap<String, Triple<String, String, String>>> {
 
         // starting position
         val startingFeedback = exerciseAnalysis.getStartingPositionFeedback(jointAnglesMap)

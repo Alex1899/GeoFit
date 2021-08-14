@@ -25,8 +25,12 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.GeoFitApp">
-        <activity android:name=".ui.exerciseSetDetails.ExerciseSetDetailsActivity" />
-        <activity android:name=".ui.MainActivity">
+        <activity
+            android:name=".ui.exerciseSetDetails.ExerciseSetDetailsActivity"
+            android:theme="@style/Theme.AppCompat.NoActionBar"
+            />
+        <activity android:name=".ui.MainActivity"
+           >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

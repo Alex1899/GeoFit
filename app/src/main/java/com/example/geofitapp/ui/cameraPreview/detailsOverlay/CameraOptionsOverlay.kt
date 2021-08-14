@@ -49,9 +49,5 @@ class CameraOptionsOverlay constructor(context: Context?, attributeSet: Attribut
         )
         optionsPath.addRoundRect(optionsRect, optionsCorners, Path.Direction.CW)
         canvas.drawPath(optionsPath, paint)
-
-        val optionsDivCenterX = optionsRect.centerX()
-        val optionsDivCentery = optionsRect.centerY()
-
     }
 }

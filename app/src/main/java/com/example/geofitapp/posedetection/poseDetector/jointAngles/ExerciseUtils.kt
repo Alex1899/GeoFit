@@ -28,7 +28,7 @@ object ExerciseUtils {
         mutableMapOf<String, MutableMap<String, Triple<Pair<String, String?>, Pair<MutableList<Double>, MutableList<Double>?>, List<Triple<Float?, Float?, Boolean>>>>>(
             "Dumbbell Bicep Curl" to mutableMapOf(
                 "elbow" to Triple(
-                    Pair("Sequence of elbow angles", null),
+                    Pair("Elbow angles", null),
                     Pair(
                         mutableListOf<Double>(), null
                     ),                         //TODO
@@ -39,14 +39,14 @@ object ExerciseUtils {
                     // Triple(minAngleMax, minAngleMin, cross =true or false
                 ),
                 "shoulder" to Triple(
-                    Pair("Sequence of angles between elbow and torso", null),
+                    Pair("Elbow-torso angles", null),
                     Pair(
                         mutableListOf<Double>(), null
                     ),
                     listOf(Triple(21f, null, false), Triple(null, 0f, false))
                 ),
                 "hip" to Triple(
-                    Pair("Sequence of angles at the hip", null),
+                    Pair("Hip angles", null),
                     Pair(
                         mutableListOf<Double>(), null
                     ),
@@ -55,21 +55,21 @@ object ExerciseUtils {
             ),
             "Triceps Pushdown" to mutableMapOf(
                 "elbow" to Triple(
-                    Pair("Sequence of elbow angles", null),
+                    Pair("Elbow angles", null),
                     Pair(
                         mutableListOf<Double>(), null
                     ),
                     listOf(Triple(150f, null, true), Triple(null, 109f, true))
                 ),
                 "shoulder" to Triple(
-                    Pair("Sequence of angles between elbow and torso", null),
+                    Pair("Elbow-torso angles", null),
                     Pair(
                         mutableListOf<Double>(), null
                     ),
                     listOf(Triple(24f, null, false), Triple(null, 0f, false))
                 ),
                 "hip" to Triple(
-                    Pair("Sequence of angles at the hip", null),
+                    Pair("Hip angles", null),
                     Pair(
                         mutableListOf<Double>(), null
                     ),
@@ -79,7 +79,7 @@ object ExerciseUtils {
             // shoulder press
             "Shoulder Press" to mutableMapOf(
                 "elbow" to Triple(
-                    Pair("Sequence of left elbow angles", "Sequence of right elbow angles"),
+                    Pair("Left elbow angles", "Right elbow angles"),
                     Pair(
                         mutableListOf<Double>(), mutableListOf<Double>()
                     ),
@@ -88,8 +88,8 @@ object ExerciseUtils {
 
                 "shoulder" to Triple(
                     Pair(
-                        "Sequence of angles between left elbow and torso",
-                        "Sequence of angles between right elbow and torso"
+                        "Left elbow-torso angles",
+                        "Right elbow-torso angles"
                     ),
                     Pair(
                         mutableListOf<Double>(), mutableListOf<Double>()
@@ -101,21 +101,21 @@ object ExerciseUtils {
             // front raise
             "Front Raise" to mutableMapOf(
                 "elbow" to Triple(
-                    Pair("Sequence of elbow angles", null),
+                    Pair("Elbow angles", null),
                     Pair(
                         mutableListOf(), null
                     ),
                     listOf(Triple(181f, null, false), Triple(null, 148f, false))
                 ),
                 "shoulder" to Triple(
-                    Pair("Sequence of angles between elbow and torso", null),
+                    Pair("Elbow-torso angles", null),
                     Pair(
                         mutableListOf(), null
                     ),
                     listOf(Triple(122f, null, false), Triple(null, 67f, true))
                 ),
                 "hip" to Triple(
-                    Pair("Sequence of angles at the hip",null),
+                    Pair("Hip angles",null),
                     Pair(
                         mutableListOf(), null
                     ),
@@ -272,6 +272,9 @@ object ExerciseUtils {
 //                rightSum++
 //            }
         }
+        Log.i("InFrameLikelihood", "right ankle =${pose.getPoseLandmark(PoseLandmark.RIGHT_ANKLE)?.inFrameLikelihood} z=${pose.getPoseLandmark(PoseLandmark.RIGHT_ANKLE)?.position3D?.z}")
+        Log.i("InFrameLikelihood", "left ankle =${pose.getPoseLandmark(PoseLandmark.LEFT_ANKLE)?.inFrameLikelihood}  z=${pose.getPoseLandmark(PoseLandmark.LEFT_ANKLE)?.position3D?.z}")
+
 
         val leftSide = listOf(
             PoseLandmark.LEFT_EAR,

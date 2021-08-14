@@ -4,10 +4,9 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
-import android.os.Bundle
+import android.speech.tts.TextToSpeech
 import android.util.Log
 import android.view.View
-import androidx.camera.core.CameraProvider
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.content.ContextCompat.startActivity
 import com.example.geofitapp.databinding.ActivityCameraXlivePreviewBinding
@@ -17,10 +16,10 @@ import com.example.geofitapp.posedetection.helperClasses.FrameMetadata
 import com.example.geofitapp.posedetection.helperClasses.GraphicOverlay
 import com.example.geofitapp.posedetection.poseDetector.exerciseProcessor.ExerciseProcessor
 import com.example.geofitapp.posedetection.poseDetector.jointAngles.ExerciseUtils
-import com.example.geofitapp.posedetection.poseDetector.jointAngles.FramePose
-import com.example.geofitapp.posedetection.poseDetector.jointAngles.Utils
+import com.example.geofitapp.posedetection.poseDetector.jointAngles.JointAngles
 import com.example.geofitapp.posedetection.poseDetector.repAnalysis.ExerciseAnalysis
 import com.example.geofitapp.posedetection.poseDetector.repCounter.ExerciseRepCounter
+import com.example.geofitapp.ui.cameraPreview.CameraXLivePreviewActivity
 import com.example.geofitapp.ui.cameraPreview.detailsOverlay.DetailsOverlay
 import com.example.geofitapp.ui.exerciseSetDetails.ExerciseSetDetails
 import com.example.geofitapp.ui.exerciseSetDetails.ExerciseSetDetailsActivity
@@ -44,7 +43,9 @@ class PoseDetectorProcessor(
     private val rescaleZForVisualization: Boolean,
     private val exercise: MutableList<String>,
     private val totalReps: Int,
-    private val cameraProvider: ProcessCameraProvider
+    private val cameraProvider: ProcessCameraProvider,
+    private val textToSpeech: TextToSpeech,
+    private val activity: CameraXLivePreviewActivity
 ) : VisionProcessorBase<PoseDetectorProcessor.PoseWithRepCounting>(context) {
 
     private val detector: PoseDetector = PoseDetection.getClient(options)
@@ -52,7 +53,7 @@ class PoseDetectorProcessor(
     private var repCounter: ExerciseRepCounter? = null
     private var repAnalyzer: ExerciseAnalysis? = null
     private var cacheSide: String? = null
-    private var exerciseProcessor: ExerciseProcessor? = null
+    private var feedbackMemo = mutableListOf<String>()
 
 
     companion object {
@@ -108,8 +109,7 @@ class PoseDetectorProcessor(
                             repAnalyzer =
                                 ExerciseUtils.exerciseRepCounterAnalyzerMap[exercise[0]]!!.second
 
-                            exerciseProcessor = ExerciseProcessor
-                            exerciseProcessor!!.setAnglesOfInterestMap(ExerciseUtils.exerciseAnglesOfInterestMap[exercise[0]]!!)
+                            ExerciseProcessor.setAnglesOfInterestMap(ExerciseUtils.exerciseAnglesOfInterestMap[exercise[0]]!!)
                         }
                     }
 
@@ -130,14 +130,13 @@ class PoseDetectorProcessor(
     }
 
     private fun startSetDetailsActivity(
-        exerciseProcessor: ExerciseProcessor,
         binding: ActivityCameraXlivePreviewBinding
     ) {
         val intent = Intent(context, ExerciseSetDetailsActivity::class.java)
         // sets, reps, time taken, and rest timer
         val allAngles =
-            mutableListOf<Triple<Pair<String,String?>, Pair<MutableList<Double>, MutableList<Double>?>, List<Triple<Float?, Float?, Boolean>>>>()
-        for (triple in exerciseProcessor.allAnglesOfInterest.values.toList()) {
+            mutableListOf<Triple<Pair<String, String?>, Pair<MutableList<Double>, MutableList<Double>?>, List<Triple<Float?, Float?, Boolean>>>>()
+        for (triple in ExerciseProcessor.allAnglesOfInterest.values.toList()) {
             allAngles.add(triple)
         }
 
@@ -150,15 +149,16 @@ class PoseDetectorProcessor(
             set,
             binding.setsOverlayText.text.toString().toInt(),
             reps,
-            String.format("%.1f", exerciseProcessor.pace) + "s",
-            String.format("%.1f", exerciseProcessor.exerciseFinishTime) + "s",
+            String.format("%.1f", ExerciseProcessor.pace) + "s",
+            String.format("%.1f", ExerciseProcessor.exerciseFinishTime) + "s",
             allAngles,
-            exerciseProcessor.feedBack
+            ExerciseProcessor.feedBack
         )
         intent.putExtra("exerciseSetDetails", details)
 
         resetInfo(binding)
         startActivity(context, intent, null)
+        activity.finish()
     }
 
     override fun onSuccess(
@@ -167,10 +167,10 @@ class PoseDetectorProcessor(
         binding: ActivityCameraXlivePreviewBinding
     ) {
 
-        if (exerciseFinished && exerciseProcessor !== null) {
+        if (exerciseFinished) {
             //navigate
             cameraProvider.unbindAll()
-            startSetDetailsActivity(exerciseProcessor!!, binding)
+            startSetDetailsActivity(binding)
             exerciseFinished = false
             return
         }
@@ -184,24 +184,44 @@ class PoseDetectorProcessor(
         }
 
         val jointAnglesMap =
-            FramePose(
+            JointAngles(
                 exercise[0],
                 cacheSide!!
             ).getFramePose(ExerciseUtils.convertToPoint3D(results.pose.allPoseLandmarks))
 
-        exerciseProcessor = ExerciseUtils.countReps(
+        ExerciseUtils.countReps(
             repCounter!!,
             jointAnglesMap,
             ExerciseUtils.mainAOIindexMap[exercise[0]]!![cacheSide]!!
         )
-        exerciseProcessor!!.side = cacheSide!!
-        exerciseProcessor!!.jointAnglesMap = jointAnglesMap
+        ExerciseProcessor.side = cacheSide!!
+        ExerciseProcessor.jointAnglesMap = jointAnglesMap
 
         var feedBack = ""
-        if (exerciseProcessor!!.repFinished!!) {
-            exerciseProcessor!!.getFeedback(repAnalyzer!!)
-            exerciseProcessor!!.repFinished = false
-            feedBack = exerciseProcessor!!.getRepFormResult()
+        if (ExerciseProcessor.repFinished!!) {
+            ExerciseProcessor.getFeedback(repAnalyzer!!)
+            ExerciseProcessor.repFinished = false
+            val pair = ExerciseProcessor.getRepFormResult()
+            feedBack = pair.first
+            if (pair.second.isNotEmpty()) {
+                //&& pair.second!!.length <= TextToSpeech.getMaxSpeechInputLength()
+//                Log.i("TTSFeedback", "feedback list =${pair.second}")
+                feedbackMemo.addAll(pair.second)
+            }
+
+            // talk feedback after 40% of reps
+            if (ExerciseProcessor.lastRepResult == (totalReps * 0.4).toInt() ||
+                ExerciseProcessor.lastRepResult == (totalReps * 0.8).toInt()
+            ) {
+                textToSpeech.speak(
+                    getSpeechFeedback(feedbackMemo.distinct().toMutableList()),
+                    TextToSpeech.QUEUE_FLUSH,
+                    null,
+                    "tts1"
+                );
+                feedbackMemo.clear()
+            }
+
         }
 
         graphicOverlay.add(
@@ -209,17 +229,34 @@ class PoseDetectorProcessor(
                 graphicOverlay,
                 results.pose,
                 exercise[0],
-                exerciseProcessor!!.side,
-                exerciseProcessor!!.lastRepResult.toString(),
-                exerciseProcessor!!.jointAnglesMap,
+                ExerciseProcessor.side,
+                ExerciseProcessor.lastRepResult.toString(),
+                ExerciseProcessor.jointAnglesMap,
                 feedBack,
                 binding,
-                exerciseProcessor!!.pace,
+                ExerciseProcessor.pace,
                 visualizeZ,
                 rescaleZForVisualization
-
             )
         )
+    }
+
+    private fun getSpeechFeedback(stringsArr: MutableList<String>): String {
+        if (stringsArr.size > 3) {
+            val arr = stringsArr.slice(0 until 3).toMutableList()
+            return "${arr[0]}, ${arr[1]}, and ${arr[2]}"
+        }
+
+        if (stringsArr.size == 3) {
+            return "${stringsArr[0]}, ${stringsArr[1]}, and ${stringsArr[2]}"
+        }
+
+        if (stringsArr.size == 2) {
+            return "${stringsArr[0]} and ${stringsArr[1]}"
+        }
+
+        return if (stringsArr.isEmpty()) "Well done! Keep going" else stringsArr[0]
+
     }
 
     override fun onFailure(e: Exception) {

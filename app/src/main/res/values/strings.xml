@@ -184,5 +184,8 @@
     <string name="pace_overlay_text">%s</string>
     <string name="erros_overlay_text">%s</string>
 
+    <string name="mistakes_number_text">%d/10</string>
+    <string name="exercise_feedback_text">%s Result</string>
+
 
 </resources>

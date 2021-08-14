@@ -42,7 +42,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:scaleType="centerCrop"
-                    tools:src="@drawable/shoulder_press_thumb" />
+                    tools:src="@drawable/bicep_curl_thumb" />
 
                 <ImageView
                     android:id="@+id/playBtn"
@@ -85,7 +85,7 @@
                     android:layout_marginTop="20dp"
                     android:text="@{exerciseData.description}"
                     android:textColor="@color/white"
-                    tools:text="This is a bicep curl desc" />
+                    tools:text="@string/bicep_curl_desc" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -171,7 +171,7 @@
                                     android:id="@+id/sets_editText"
                                     style="@style/StyledEditText"
                                     android:hint="0"
-                                    tools:text="12" />
+                                    tools:text="3" />
 
                                 <TextView
                                     android:id="@+id/sets_text"

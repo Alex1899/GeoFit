@@ -26,6 +26,8 @@ object SideMinMaxRepCounter : ExerciseRepCounter() {
     private var aoiListMap = mutableMapOf<Int, MutableList<Double>>()
     override var overallTotalReps: Int? = null
 
+    private var lastRepStart: Double? = null
+
 
     override fun init(side: String) {
         if (side == "right") {
@@ -90,13 +92,14 @@ object SideMinMaxRepCounter : ExerciseRepCounter() {
             // if rep count reached return
             if (overallTotalReps != null && totalReps == overallTotalReps!! && poseEntered) {
                 // for last rep, if change is less than 5 continue
-                if(mainAoiAngle - minAngle!! < 10) return ExerciseProcessor
-
-                poseEntered(mainAOIindex)
-                ExerciseProcessor.finished = true // finished true
-                ExerciseProcessor.exerciseFinishTime = getTimeDiff(exerciseStartTime!!)
-                exerciseStartTime = null
-                PoseDetectorProcessor.exerciseFinished = true
+                if (kotlin.math.abs(minAngle!! - lastRepStart!!) < 10) {
+                    poseEntered(mainAOIindex)
+                    ExerciseProcessor.finished = true // finished true
+                    ExerciseProcessor.exerciseFinishTime = getTimeDiff(exerciseStartTime!!)
+                    exerciseStartTime = null
+                    PoseDetectorProcessor.exerciseFinished = true
+                    resetTotalReps()
+                }
                 return ExerciseProcessor
             }
 
@@ -147,7 +150,9 @@ object SideMinMaxRepCounter : ExerciseRepCounter() {
 
                 Log.i("RaiseCheck", "anglesList cleared = ${aoiListMap[mainAOIindex]!!}")
 
+                // save the starting main aoi angle for comparison
 
+                lastRepStart = minAngle
                 minAngle = null
                 poseEntered = true
                 totalReps++
@@ -212,23 +217,30 @@ object SideMinMaxRepCounter : ExerciseRepCounter() {
             val filteredHipAngles2 = Utils.medfilt(filteredHipAngles, 5)
 
             ExerciseProcessor.anglesOfInterest[elbowId] = Pair(
-                Pair(maxAngle!!, minAngle!!),
+                if (mainAOIindex == elbowId) Pair(maxAngle!!, minAngle!!) else Pair(
+                    Collections.max(filteredElbowAngleList2),
+                    Collections.min(filteredElbowAngleList2)
+                ),
                 filteredElbowAngleList2.distinct().toMutableList()
             )
             ExerciseProcessor.anglesOfInterest[shoulderId] = Pair(
-                Pair(
-                    Collections.max(filteredShoulderAngles2),
-                    Collections.min(filteredShoulderAngles2)
-                ),
+                if (mainAOIindex == shoulderId) Pair(maxAngle!!, minAngle!!) else
+                    Pair(
+                        Collections.max(filteredShoulderAngles2),
+                        Collections.min(filteredShoulderAngles2)
+                    ),
                 filteredShoulderAngles2.distinct().toMutableList()
 
             )
             ExerciseProcessor.anglesOfInterest[hipId] = Pair(
-                Pair(Collections.max(filteredHipAngles2), Collections.min(filteredHipAngles2)),
+                if (mainAOIindex == hipId) Pair(maxAngle!!, minAngle!!) else
+                    Pair(Collections.max(filteredHipAngles2), Collections.min(filteredHipAngles2)),
                 filteredHipAngles2.distinct().toMutableList()
             )
 
-            ExerciseProcessor.allAnglesOfInterest["elbow"]!!.second.first.addAll(filteredElbowAngleList2)
+            ExerciseProcessor.allAnglesOfInterest["elbow"]!!.second.first.addAll(
+                filteredElbowAngleList2
+            )
             ExerciseProcessor.allAnglesOfInterest["shoulder"]!!.second.first.addAll(
                 filteredShoulderAngles2
             )
