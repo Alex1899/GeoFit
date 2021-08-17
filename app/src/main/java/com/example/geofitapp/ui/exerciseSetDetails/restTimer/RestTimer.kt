@@ -55,9 +55,6 @@ class RestTimer(val context: Context, val binding: ActivityExerciseSetDetailsBin
 
         if(timerState == TimerState.Stopped){
             onTimerFinished()
-            PrefUtil.setTimerState(TimerState.NotStarted, context)
-            timerState = TimerState.NotStarted
-            updateCountdownUI()
             return
         }
 
@@ -101,7 +98,7 @@ class RestTimer(val context: Context, val binding: ActivityExerciseSetDetailsBin
         PrefUtil.setSecondsRemaining(0, context)
         PrefUtil.setPreviousTimerLengthSeconds(0, context)
         PrefUtil.setTimerState(TimerState.Stopped, context)
-        timerState = TimerState.NotStarted
+        timerState = TimerState.Stopped
         binding.progressCountdown.progress = 0
         secondsRemaining = 0
         timerLengthSeconds = 0
