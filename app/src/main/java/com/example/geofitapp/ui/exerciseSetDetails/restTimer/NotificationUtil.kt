@@ -11,6 +11,7 @@ import android.graphics.Color
 import android.media.RingtoneManager
 import android.net.Uri
 import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
 import com.example.geofitapp.R
 import com.example.geofitapp.ui.exerciseSetDetails.ExerciseSetDetailsActivity
@@ -25,7 +26,7 @@ class NotificationUtil {
 
         fun showTimerExpired(context: Context){
             val nBuilder = getBasicNotificationBuilder(context, CHANNEL_ID_TIMER, true)
-            nBuilder.setContentTitle("Rest Timer Expired!")
+            nBuilder.setContentTitle("Rest Timer Expired")
                 .setContentText("Time to start another set!")
                 .setContentIntent(getPendingIntentWithStack(context, ExerciseSetDetailsActivity::class.java))
 
@@ -35,6 +36,7 @@ class NotificationUtil {
             nManager.notify(TIMER_ID, nBuilder.build())
         }
 
+        @RequiresApi(Build.VERSION_CODES.N)
         fun showTimerRunning(context: Context, wakeUpTime: Long){
             val stopIntent = Intent(context, TimerNotificationActionReceiver::class.java)
             stopIntent.action = TimerConstants.ACTION_STOP
@@ -44,10 +46,13 @@ class NotificationUtil {
             val df = SimpleDateFormat.getTimeInstance(SimpleDateFormat.SHORT)
 
             val nBuilder = getBasicNotificationBuilder(context, CHANNEL_ID_TIMER, true)
-            nBuilder.setContentTitle("Timer is Running.")
-                .setContentText("End: ${df.format(Date(wakeUpTime))}")
+            nBuilder.setContentTitle("Rest timer is on")
+                .setContentText("You will be notified when timer has finished")
                 .setContentIntent(getPendingIntentWithStack(context, ExerciseSetDetailsActivity::class.java))
                 .setOngoing(true)
+                .setWhen(wakeUpTime)
+                .setUsesChronometer(true)
+                .setChronometerCountDown(true)
                 .addAction(R.drawable.ic_stop, "Stop", stopPendingIntent)
 
             val nManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
