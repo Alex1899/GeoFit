@@ -184,75 +184,93 @@ object SideMinMaxRepCounter : ExerciseRepCounter() {
         startTime = null
 
         val index = aoiListMap[mainAOIindex]!!.indexOf(minAngle)
-        analysisAngleListMap[elbowId]!!.addAll(
-            aoiListMap[elbowId]!!.slice(1..index + 1)
-        )
-        analysisAngleListMap[shoulderId]!!.addAll(
-            aoiListMap[shoulderId]!!.slice(1..index + 1)
-        )
-        analysisAngleListMap[hipId]!!.addAll(
-            aoiListMap[hipId]!!.slice(1..index + 1)
-        )
-
-        aoiListMap[elbowId] =
-            aoiListMap[elbowId]!!.slice(index + 1 until aoiListMap[elbowId]!!.size).toMutableList()
-        aoiListMap[shoulderId] =
-            aoiListMap[shoulderId]!!.slice(index + 1 until aoiListMap[shoulderId]!!.size)
-                .toMutableList()
-        aoiListMap[hipId] =
-            aoiListMap[hipId]!!.slice(index + 1 until aoiListMap[hipId]!!.size).toMutableList()
-
-
-        ExerciseProcessor.pace = finishTime
-        if (maxAngle != null && minAngle != null) { // both should never be null here
-            val filteredElbowAngleList =
-                Utils.medfilt(analysisAngleListMap[elbowId]!!.toMutableList(), 5)
-            val filteredElbowAngleList2 = Utils.medfilt(filteredElbowAngleList, 5)
-
-            val filteredShoulderAngles =
-                Utils.medfilt(analysisAngleListMap[shoulderId]!!.toMutableList(), 5)
-            val filteredShoulderAngles2 = Utils.medfilt(filteredShoulderAngles, 5)
-
-            val filteredHipAngles = Utils.medfilt(analysisAngleListMap[hipId]!!.toMutableList(), 5)
-            val filteredHipAngles2 = Utils.medfilt(filteredHipAngles, 5)
-
-            ExerciseProcessor.anglesOfInterest[elbowId] = Pair(
-                if (mainAOIindex == elbowId) Pair(maxAngle!!, minAngle!!) else Pair(
-                    Collections.max(filteredElbowAngleList2),
-                    Collections.min(filteredElbowAngleList2)
-                ),
-                filteredElbowAngleList2.distinct().toMutableList()
+        if (analysisAngleListMap.isNotEmpty()) {
+            analysisAngleListMap[elbowId]!!.addAll(
+                aoiListMap[elbowId]!!.slice(1..index + 1)
             )
-            ExerciseProcessor.anglesOfInterest[shoulderId] = Pair(
-                if (mainAOIindex == shoulderId) Pair(maxAngle!!, minAngle!!) else
-                    Pair(
-                        Collections.max(filteredShoulderAngles2),
-                        Collections.min(filteredShoulderAngles2)
+            analysisAngleListMap[shoulderId]!!.addAll(
+                aoiListMap[shoulderId]!!.slice(1..index + 1)
+            )
+            analysisAngleListMap[hipId]!!.addAll(
+                aoiListMap[hipId]!!.slice(1..index + 1)
+            )
+
+            aoiListMap[elbowId] =
+                aoiListMap[elbowId]!!.slice(index + 1 until aoiListMap[elbowId]!!.size)
+                    .toMutableList()
+            aoiListMap[shoulderId] =
+                aoiListMap[shoulderId]!!.slice(index + 1 until aoiListMap[shoulderId]!!.size)
+                    .toMutableList()
+            aoiListMap[hipId] =
+                aoiListMap[hipId]!!.slice(index + 1 until aoiListMap[hipId]!!.size).toMutableList()
+
+
+            ExerciseProcessor.pace = finishTime
+            if (maxAngle != null && minAngle != null) { // both should never be null here
+                val filteredElbowAngleList =
+                    Utils.medfilt(analysisAngleListMap[elbowId]!!.toMutableList(), 5)
+                val filteredElbowAngleList2 = Utils.medfilt(filteredElbowAngleList, 5)
+
+                val filteredShoulderAngles =
+                    Utils.medfilt(analysisAngleListMap[shoulderId]!!.toMutableList(), 5)
+                val filteredShoulderAngles2 = Utils.medfilt(filteredShoulderAngles, 5)
+
+                val filteredHipAngles =
+                    Utils.medfilt(analysisAngleListMap[hipId]!!.toMutableList(), 5)
+                val filteredHipAngles2 = Utils.medfilt(filteredHipAngles, 5)
+
+                ExerciseProcessor.anglesOfInterest[elbowId] = Pair(
+                    if (mainAOIindex == elbowId) Pair(maxAngle!!, minAngle!!) else Pair(
+                        Collections.max(filteredElbowAngleList2),
+                        Collections.min(filteredElbowAngleList2)
                     ),
-                filteredShoulderAngles2.distinct().toMutableList()
+                    filteredElbowAngleList2.distinct().toMutableList()
+                )
+                ExerciseProcessor.anglesOfInterest[shoulderId] = Pair(
+                    if (mainAOIindex == shoulderId) Pair(maxAngle!!, minAngle!!) else
+                        Pair(
+                            Collections.max(filteredShoulderAngles2),
+                            Collections.min(filteredShoulderAngles2)
+                        ),
+                    filteredShoulderAngles2.distinct().toMutableList()
 
-            )
-            ExerciseProcessor.anglesOfInterest[hipId] = Pair(
-                if (mainAOIindex == hipId) Pair(maxAngle!!, minAngle!!) else
-                    Pair(Collections.max(filteredHipAngles2), Collections.min(filteredHipAngles2)),
-                filteredHipAngles2.distinct().toMutableList()
-            )
+                )
+                ExerciseProcessor.anglesOfInterest[hipId] = Pair(
+                    if (mainAOIindex == hipId) Pair(maxAngle!!, minAngle!!) else
+                        Pair(
+                            Collections.max(filteredHipAngles2),
+                            Collections.min(filteredHipAngles2)
+                        ),
+                    filteredHipAngles2.distinct().toMutableList()
+                )
 
-            ExerciseProcessor.allAnglesOfInterest["elbow"]!!.second.first.addAll(
-                filteredElbowAngleList2
-            )
-            ExerciseProcessor.allAnglesOfInterest["shoulder"]!!.second.first.addAll(
-                filteredShoulderAngles2
-            )
-            ExerciseProcessor.allAnglesOfInterest["hip"]!!.second.first.addAll(filteredHipAngles2)
+//                ExerciseProcessor.allAnglesOfInterest["elbow"]!!.second.first.addAll(
+//                    filteredElbowAngleList2
+//                )
+//                ExerciseProcessor.allAnglesOfInterest["shoulder"]!!.second.first.addAll(
+//                    filteredShoulderAngles2
+//                )
+//                ExerciseProcessor.allAnglesOfInterest["hip"]!!.second.first.addAll(
+//                    filteredHipAngles2
+//                )
+                ExerciseProcessor.allAnglesOfInterest["elbow"]!!.second.first.addAll(
+                    filteredElbowAngleList2
+                )
+                ExerciseProcessor.allAnglesOfInterest["shoulder"]!!.second.first.addAll(
+                    filteredShoulderAngles2
+                )
+                ExerciseProcessor.allAnglesOfInterest["hip"]!!.second.first.addAll(
+                    filteredHipAngles2
+                )
 
-            ExerciseProcessor.repFinished = true
+                ExerciseProcessor.repFinished = true
+
+            }
+
+            maxAngle = null
+            minAngle = null
 
         }
-
-        maxAngle = null
-        minAngle = null
-
     }
 
 

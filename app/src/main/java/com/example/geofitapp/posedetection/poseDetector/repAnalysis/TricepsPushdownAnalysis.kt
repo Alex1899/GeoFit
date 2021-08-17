@@ -52,7 +52,7 @@ object TricepsPushdownAnalysis : ExerciseAnalysis() {
             )
         }
 
-        if (startHipAngle < 150 || startHipAngle > 195) {
+        if (startHipAngle < 140 || startHipAngle > 195) {
             feedbackMap[startingPos]!!["Starting Angle at the Hip"] = Triple(
                 "Wrong",
                 "Bad Form: Incorrect starting position. Your torso showed significant movement.\nFix: " +
@@ -130,7 +130,7 @@ object TricepsPushdownAnalysis : ExerciseAnalysis() {
             )
         }
 
-        if (minHipAngle > 145) {
+        if (minHipAngle > 140) {
             feedbackMap[middlePos]!!["Minimum Angle at the Hip"] = Triple(
                 "Correct",
                 "Good Form: No leaning forward excessively",
@@ -147,7 +147,7 @@ object TricepsPushdownAnalysis : ExerciseAnalysis() {
             )
         }
 
-        if (195 > maxHipAngle && maxHipAngle > 145) {
+        if (195 > maxHipAngle && maxHipAngle > 140) {
             feedbackMap[middlePos]!!["Maximum Angle at the Hip"] = Triple(
                 "Correct",
                 "Good Form: No leaning backwards excessively",
@@ -213,7 +213,7 @@ object TricepsPushdownAnalysis : ExerciseAnalysis() {
             )
         }
 
-        if (finishHipAngle >= 150 && 195 > finishHipAngle) {
+        if (finishHipAngle >= 140 && 195 > finishHipAngle) {
             feedbackMap[finishingPos]!!["Finishing Angle at the Hip"] = Triple(
                 "Correct",
                 "Good Form: Not significant movement of the torso",

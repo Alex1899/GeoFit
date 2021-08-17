@@ -8,9 +8,10 @@ class ExercisePreviewViewModel : ViewModel() {
     private val _reps = MutableLiveData<Int>()
     private val _sets = MutableLiveData<Int>()
     private val _currentSet = MutableLiveData<Int>()
-
     private val _weight= MutableLiveData<Float>()
     private val _rest = MutableLiveData<Int>()
+
+    private val _exerciseData = MutableLiveData<ExerciseData>()
 
 
     val reps: LiveData<Int>
@@ -27,6 +28,9 @@ class ExercisePreviewViewModel : ViewModel() {
 
     val rest: LiveData<Int>
         get() = _rest
+
+    val exerciseData: LiveData<ExerciseData>
+        get() = _exerciseData
 
 
     init{
@@ -57,5 +61,17 @@ class ExercisePreviewViewModel : ViewModel() {
 
     fun updateRest(rest: String){
         _rest.value = rest.toInt()
+    }
+
+    fun resetDetails(){
+        _reps.value = 12
+        _sets.value = 3
+        _currentSet.value = 1
+        _weight.value = 0f
+        _rest.value = 60
+    }
+
+    fun saveExerciseData(exerciseData: ExerciseData){
+        _exerciseData.value = exerciseData
     }
 }

@@ -23,6 +23,8 @@ import com.example.geofitapp.ui.cameraPreview.CameraXLivePreviewActivity
 import com.example.geofitapp.ui.cameraPreview.detailsOverlay.DetailsOverlay
 import com.example.geofitapp.ui.exerciseSetDetails.ExerciseSetDetails
 import com.example.geofitapp.ui.exerciseSetDetails.ExerciseSetDetailsActivity
+import com.example.geofitapp.ui.exerciseSetDetails.restTimer.PrefUtil
+import com.example.geofitapp.ui.exerciseSetDetails.restTimer.RestTimer
 import com.google.android.gms.tasks.Task
 
 import com.google.android.odml.image.MlImage
@@ -157,6 +159,7 @@ class PoseDetectorProcessor(
         intent.putExtra("exerciseSetDetails", details)
 
         resetInfo(binding)
+        PrefUtil.setTimerState(RestTimer.TimerState.NotStarted, context)
         startActivity(context, intent, null)
         activity.finish()
     }

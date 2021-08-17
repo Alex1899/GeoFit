@@ -6,6 +6,8 @@ import com.example.geofitapp.posedetection.poseDetector.repAnalysis.*
 import com.google.mlkit.vision.common.PointF3D
 import com.google.mlkit.vision.pose.Pose
 import com.google.mlkit.vision.pose.PoseLandmark
+import java.util.Collections.max
+import java.util.Collections.min
 
 object AnalyzerUtils {
 
@@ -159,5 +161,22 @@ object AnalyzerUtils {
             exerciseAnalysis.getMiddlePositionFeedback(jointAnglesMap, startingFeedback)
         // finishing position
         return exerciseAnalysis.getFinishingPositionFeedback(jointAnglesMap, middleFeedback)
+    }
+
+    fun getMaxListOfList(mlist: MutableList<MutableList<Double>>): Double {
+        var max = 0.0
+        for (ls in mlist){
+            val maxInls = max(ls)
+            max = if( maxInls > max) maxInls else max
+        }
+        return max
+    }
+    fun getMinListOfList(mlist: MutableList<MutableList<Double>>): Double {
+        var min = 0.0
+        for (ls in mlist){
+            val minInls = min(ls)
+            min = if( minInls < min) minInls else min
+        }
+        return min
     }
 }

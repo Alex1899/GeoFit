@@ -178,6 +178,10 @@ object FrontExerciseRepCounter : ExerciseRepCounter() {
                 aoiListMap[PoseLandmark.LEFT_ELBOW]!!.add(leftFreshElbowAngle)
                 aoiListMap[PoseLandmark.RIGHT_ELBOW]!!.add(rightFreshElbowAngle)
 
+                // save start rep angles
+                leftLastRepStart = leftMinAngle
+                rightLastRepStart = rightMinAngle
+
                 leftMinAngle = null
                 rightMinAngle = null
                 poseEntered = true
@@ -196,41 +200,7 @@ object FrontExerciseRepCounter : ExerciseRepCounter() {
         return ((diff / 1000) % 60)
     }
 
-    private fun filterIncrease(leftMainAngle: Double, rightMainAngle: Double, leftMainAOIindex: Int, rightMainAOIindex: Int): ExerciseProcessor{
-        val leftIncrease = leftMainAngle - leftMinAngle!!
-        val rightIncrease = rightMainAngle - rightMinAngle!!
 
-        if (leftIncrease > increaseListLeft) {
-            increaseListLeft = leftIncrease
-        } else {
-            val index1 = aoiListMap[leftMainAOIindex]!!.lastIndex
-            aoiListMap[PoseLandmark.LEFT_ELBOW] =
-                aoiListMap[PoseLandmark.LEFT_ELBOW]!!.slice(index1 until aoiListMap[PoseLandmark.LEFT_ELBOW]!!.size)
-                    .toMutableList()
-            aoiListMap[PoseLandmark.LEFT_SHOULDER] =
-                aoiListMap[PoseLandmark.LEFT_SHOULDER]!!.slice(index1 until aoiListMap[PoseLandmark.LEFT_SHOULDER]!!.size)
-                    .toMutableList()
-            increaseListLeft = -1.0
-            leftMinAngle = leftMainAngle
-        }
-
-        if (rightIncrease > increaseListRight) {
-            increaseListRight = rightIncrease
-        } else {
-            val index2 = aoiListMap[rightMainAOIindex]!!.lastIndex
-            aoiListMap[PoseLandmark.RIGHT_ELBOW] =
-                aoiListMap[PoseLandmark.RIGHT_ELBOW]!!.slice(index2 until aoiListMap[PoseLandmark.RIGHT_ELBOW]!!.size)
-                    .toMutableList()
-            aoiListMap[PoseLandmark.RIGHT_SHOULDER] =
-                aoiListMap[PoseLandmark.RIGHT_SHOULDER]!!.slice(index2 until aoiListMap[PoseLandmark.RIGHT_SHOULDER]!!.size)
-                    .toMutableList()
-            increaseListRight = -1.0
-            rightMinAngle = rightMainAngle
-
-        }
-
-        return ExerciseProcessor
-    }
 
     private fun poseEntered(leftMainidx: Int, rightMainidx: Int) {
         poseEntered = false
@@ -239,11 +209,6 @@ object FrontExerciseRepCounter : ExerciseRepCounter() {
         paceAvgList.add(endTime)
         finishTime = paceAvgList.average().toFloat()
         startTime = null
-
-        if (overallTotalReps!! - 1 == totalReps) {
-            leftLastRepStart = leftMinAngle
-            rightLastRepStart = rightMinAngle
-        }
 
         val index1 = aoiListMap[leftMainidx]!!.indexOf(leftMinAngle)
         val index2 = aoiListMap[rightMainidx]!!.indexOf(rightMinAngle)

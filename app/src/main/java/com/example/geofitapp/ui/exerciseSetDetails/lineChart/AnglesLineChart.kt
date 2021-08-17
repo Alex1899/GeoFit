@@ -4,6 +4,7 @@ import android.content.Context
 import android.graphics.Color
 import android.graphics.Typeface
 import android.widget.FrameLayout
+import androidx.core.content.ContextCompat
 import androidx.core.content.ContextCompat.getColor
 import com.example.geofitapp.R
 import com.github.mikephil.charting.charts.LineChart
@@ -50,8 +51,8 @@ object AnglesLineChart {
 //        dataSet.circleRadius = 3f
             dataSet2.isHighlightEnabled = false
             dataSet2.highLightColor = Color.rgb(244, 117, 117)
-            dataSet2.color = ColorTemplate.MATERIAL_COLORS[1]
-            dataSet2.setCircleColor(ColorTemplate.MATERIAL_COLORS[1])
+            dataSet2.color = ColorTemplate.JOYFUL_COLORS[0]
+//            dataSet2.setCircleColor(ColorTemplate.MATERIAL_COLORS[1])
             dataSet2.setDrawValues(false)
         }
 
@@ -60,8 +61,8 @@ object AnglesLineChart {
 //        dataSet.circleRadius = 3f
         dataSet.isHighlightEnabled = false
         dataSet.highLightColor = Color.rgb(244, 117, 117)
-        dataSet.color = ColorTemplate.MATERIAL_COLORS[2]
-        dataSet.setCircleColor(ColorTemplate.MATERIAL_COLORS[2])
+        dataSet.color = ColorTemplate.JOYFUL_COLORS[1]
+//        dataSet.setCircleColor(ColorTemplate.MATERIAL_COLORS[2])
         dataSet.setDrawValues(false)
 
 

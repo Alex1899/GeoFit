@@ -39,8 +39,4 @@
         <item name="android:textSize">25sp</item>
     </style>
 
-    <style name="NoActionBar" parent="Theme.AppCompat.Light.DarkActionBar">
-        <item name="windowNoTitle">true</item>
-        <item name="windowActionBar">false</item>
-    </style>
 </resources>

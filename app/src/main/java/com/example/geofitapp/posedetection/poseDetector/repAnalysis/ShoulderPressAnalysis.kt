@@ -25,8 +25,8 @@ object ShoulderPressAnalysis : ExerciseAnalysis() {
 
         val feedbackMap = mutableMapOf(startingPos to mutableMapOf<String, Triple<String, String, String>>())
 
-        if (leftStartElbowAngle in 50.0..91.0 &&
-            rightStartElbowAngle in 50.0..91.0
+        if (leftStartElbowAngle in 45.0..91.0 &&
+            rightStartElbowAngle in 45.0..91.0
         ) {
             feedbackMap[startingPos]!!["Starting Elbow Angles"] = Triple(
                 "Correct",
@@ -35,7 +35,7 @@ object ShoulderPressAnalysis : ExerciseAnalysis() {
             )
         } else {
             // left forearm
-            if (50 > leftStartElbowAngle || leftStartElbowAngle > 91) {
+            if (45 > leftStartElbowAngle || leftStartElbowAngle > 91) {
                 feedbackMap[startingPos]!!["Starting Elbow Angles"] = Triple(
                     "Wrong",
                     "Bad Form: Incorrect starting position. Your left forearm is at the incorrect angle to your left upper arm.\n\n" +
@@ -46,7 +46,7 @@ object ShoulderPressAnalysis : ExerciseAnalysis() {
             }
 
             // right forearm
-            if (50 > rightStartElbowAngle || rightStartElbowAngle > 91) {
+            if (45 > rightStartElbowAngle || rightStartElbowAngle > 91) {
                 feedbackMap[startingPos]!!["Starting Elbow Angles"] = Triple(
                     "Wrong",
                     "Bad Form: Incorrect starting position. Your right forearm is at the incorrect angle to your right upper arm.\n\n" +
@@ -117,14 +117,14 @@ object ShoulderPressAnalysis : ExerciseAnalysis() {
         if (leftMinElbowAngle in 50.0..91.0 && rightMinElbowAngle in 50.0..91.0) {
             if (abs(leftMinElbowAngle - rightMinElbowAngle) > 18) {
                 if (leftMinElbowAngle > rightMinElbowAngle) {
-                    feedbackMap[middlePos]!!["Minimum Forearm to Upper Arm Angles"] = Triple(
+                    feedbackMap[middlePos]!!["Min Forearm to Upper Arm Angles"] = Triple(
                         "Wrong",
                         "Bad Form: Your right forearm is moved towards your right shoulder significantly.\n\nFix: Focus on having " +
                                 "your forearms at equal distances from your shoulders in order to avoid muscular imbalances",
                         "Keep 90 degree angle at your elbows"
                     )
                 } else {
-                    feedbackMap[middlePos]!!["Minimum Forearm to Upper Arm Angles"] = Triple(
+                    feedbackMap[middlePos]!!["Min Forearm to Upper Arm Angles"] = Triple(
                         "Wrong",
                         "Bad Form: Your left forearm is moved towards your left shoulder significantly.\n\nFix: Focus on having " +
                                 "your forearms at equal distances from your shoulders in order to avoid muscular imbalances",
@@ -132,7 +132,7 @@ object ShoulderPressAnalysis : ExerciseAnalysis() {
                     )
                 }
             } else {
-                feedbackMap[middlePos]!!["Minimum Forearm to Upper Arm Angles"] = Triple(
+                feedbackMap[middlePos]!!["Min Forearm to Upper Arm Angles"] = Triple(
                     "Correct",
                     "Good Form: Your forearms are almost perpendicular to your upper arms",
                     ""
@@ -141,7 +141,7 @@ object ShoulderPressAnalysis : ExerciseAnalysis() {
         } else {
             //left
             if (leftMinElbowAngle < 50 && rightMinElbowAngle < 50) {
-                feedbackMap[middlePos]!!["Minimum Forearm to Upper Arm Angles"] = Triple(
+                feedbackMap[middlePos]!!["Min Forearm to Upper Arm Angles"] = Triple(
                     "Wrong",
                     "Bad Form: Your forearms showed significant movement " +
                             "towards your shoulders.\n\nFix: Try to not move your forearms significantly less than 90 " +
@@ -149,7 +149,7 @@ object ShoulderPressAnalysis : ExerciseAnalysis() {
                     "Keep 90 degree angle at your elbows"
                 )
             } else if (leftMinElbowAngle < 50) {
-                feedbackMap[middlePos]!!["Minimum Forearm to Upper Arm Angles"] = Triple(
+                feedbackMap[middlePos]!!["Min Forearm to Upper Arm Angles"] = Triple(
                     "Wrong",
                     "Bad Form: Your left forearm showed significant movement " +
                             "towards left shoulder.\n\nFix: Try to not move your forearms significantly less than 90 " +
@@ -157,7 +157,7 @@ object ShoulderPressAnalysis : ExerciseAnalysis() {
                     "Keep 90 degree angle at your elbows"
                 )
             } else if (rightMinElbowAngle < 50) {
-                feedbackMap[middlePos]!!["Minimum Forearm to Upper Arm Angles"] = Triple(
+                feedbackMap[middlePos]!!["Min Forearm to Upper Arm Angles"] = Triple(
                     "Wrong",
                     "Bad Form: Your right forearm showed significant movement " +
                             "towards right shoulder.\n\nFix: Try to not move your forearms significantly less than 90 " +
@@ -165,21 +165,21 @@ object ShoulderPressAnalysis : ExerciseAnalysis() {
                     "Keep 90 degree angle at your elbows"
                 )
             } else if (leftMinElbowAngle > 91 && rightMinElbowAngle > 91) {
-                feedbackMap[middlePos]!!["Minimum Forearm to Upper Arm Angles"] = Triple(
+                feedbackMap[middlePos]!!["Min Forearm to Upper Arm Angles"] = Triple(
                     "Wrong",
                     "Bad Form: Your forearms are at the incorrect level to your upper arms.\n\nFix: Try to not move your forearms significantly less than 90 " +
                             "degrees at your elbow joints",
                     "Keep 90 degree angle at your elbows"
                 )
             } else if (leftMinElbowAngle > 91) {
-                feedbackMap[middlePos]!!["Minimum Forearm to Upper Arm Angles"] = Triple(
+                feedbackMap[middlePos]!!["Min Forearm to Upper Arm Angles"] = Triple(
                     "Wrong",
                     "Bad Form: Your left forearm is at the incorrect level to your left upper arm.\n\nFix: Try to not move your forearms significantly less than 90 " +
                             "degrees at your elbow joints",
                     "Keep 90 degree angle at your elbows"
                 )
             } else if (rightMinElbowAngle > 91) {
-                feedbackMap[middlePos]!!["Minimum Forearm to Upper Arm Angles"] = Triple(
+                feedbackMap[middlePos]!!["Min Forearm to Upper Arm Angles"] = Triple(
                     "Wrong",
                     "Bad Form: Your right forearm is at the incorrect level to your right upper arm.\n\nFix: Try to not move your forearms significantly less than 90 " +
                             "degrees at your elbow joints",
@@ -192,14 +192,14 @@ object ShoulderPressAnalysis : ExerciseAnalysis() {
         if (leftMinShoulderAngle in 40.0..111.0 && rightMinShoulderAngle in 40.0..111.0) {
             if (abs(leftMinShoulderAngle - rightMinShoulderAngle) > 15) {
                 if (leftMinShoulderAngle > rightMinShoulderAngle) {
-                    feedbackMap[middlePos]!!["Minimum Elbow Angles at the Bottom"] = Triple(
+                    feedbackMap[middlePos]!!["Min Elbow Angles at the Bottom"] = Triple(
                         "Wrong",
                         "Bad Form: Your right elbow is moved down significantly compared to your left.\n\nFix: Focus on having " +
                                 "your elbows at equal angles to your torso in order to avoid muscular imbalances",
                         "Keep elbows at 90 degrees to your torso"
                     )
                 } else {
-                    feedbackMap[middlePos]!!["Minimum Elbow Angles at the Bottom"] = Triple(
+                    feedbackMap[middlePos]!!["Min Elbow Angles at the Bottom"] = Triple(
                         "Wrong",
                         "Bad Form: Your left elbow is moved down significantly compared to your right.\n\nFix: Focus on having " +
                                 "your elbows at equal angles to your torso in order to avoid muscular imbalances",
@@ -208,7 +208,7 @@ object ShoulderPressAnalysis : ExerciseAnalysis() {
                     )
                 }
             } else {
-                feedbackMap[middlePos]!!["Minimum Elbow Angles at the Bottom"] = Triple(
+                feedbackMap[middlePos]!!["Min Elbow Angles at the Bottom"] = Triple(
                     "Correct",
                     "Good Form: Your upper arms are almost perpendicular to the torso",
                     "Keep elbows at 90 degrees to your torso"
@@ -217,7 +217,7 @@ object ShoulderPressAnalysis : ExerciseAnalysis() {
             }
         } else {
             if (leftMinShoulderAngle < 40 && rightMinShoulderAngle < 40) {
-                feedbackMap[middlePos]!!["Minimum Elbow Angles at the Bottom"] = Triple(
+                feedbackMap[middlePos]!!["Min Elbow Angles at the Bottom"] = Triple(
                     "Wrong",
                     "Bad Form: Your elbows were at incorrect angles to your torso.\n\nFix: Focus on having " +
                             "your elbows almost perpendicular to your torso",
@@ -225,7 +225,7 @@ object ShoulderPressAnalysis : ExerciseAnalysis() {
 
                 )
             } else if (leftMinShoulderAngle < 40) {
-                feedbackMap[middlePos]!!["Minimum Elbow Angles at the Bottom"] = Triple(
+                feedbackMap[middlePos]!!["Min Elbow Angles at the Bottom"] = Triple(
                     "Wrong",
                     "Bad Form: Your left elbow is at incorrect angle to your torso.\n\nFix: Focus on having " +
                             "your elbows almost perpendicular to your torso",
@@ -233,7 +233,7 @@ object ShoulderPressAnalysis : ExerciseAnalysis() {
 
                 )
             } else if (rightMinShoulderAngle < 40) {
-                feedbackMap[middlePos]!!["Minimum Elbow Angles at the Bottom"] = Triple(
+                feedbackMap[middlePos]!!["Min Elbow Angles at the Bottom"] = Triple(
                     "Wrong",
                     "Bad Form: Your right elbow is at incorrect angle to your torso.\n\nFix: Focus on having " +
                             "your elbows almost perpendicular to your torso",
@@ -241,7 +241,7 @@ object ShoulderPressAnalysis : ExerciseAnalysis() {
 
                 )
             } else if (leftMinShoulderAngle > 111 && rightMinShoulderAngle > 111) {
-                feedbackMap[middlePos]!!["Minimum Elbow Angles at the Bottom"] = Triple(
+                feedbackMap[middlePos]!!["Min Elbow Angles at the Bottom"] = Triple(
                     "Wrong",
                     "Bad Form: Your elbows are too high.\n\nFix: Try to have your upper arms " +
                             "almost perpendicular to your torso",
@@ -249,7 +249,7 @@ object ShoulderPressAnalysis : ExerciseAnalysis() {
 
                 )
             } else if (leftMinShoulderAngle > 111) {
-                feedbackMap[middlePos]!!["Minimum Elbow Angles at the Bottom"] = Triple(
+                feedbackMap[middlePos]!!["Min Elbow Angles at the Bottom"] = Triple(
                     "Wrong",
                     "Bad Form: Your left elbow is too high.\n\nFix: Try to have your left upper arm " +
                             "almost perpendicular to your torso",
@@ -257,7 +257,7 @@ object ShoulderPressAnalysis : ExerciseAnalysis() {
 
                 )
             } else if (rightMinShoulderAngle > 111) {
-                feedbackMap[middlePos]!!["Minimum Elbow Angles at the Bottom"] = Triple(
+                feedbackMap[middlePos]!!["Min Elbow Angles at the Bottom"] = Triple(
                     "Wrong",
                     "Bad Form: Your right elbow is too high.\n\nFix: Try to have your right upper arm " +
                             "almost perpendicular to your torso",
@@ -350,8 +350,8 @@ object ShoulderPressAnalysis : ExerciseAnalysis() {
         if (!feedbackMap.containsKey(finishingPos)) {
             feedbackMap[finishingPos] = mutableMapOf()
         }
-        if (leftFinishElbowAngle in 50.0..91.0 &&
-            rightFinishElbowAngle in 50.0..91.0
+        if (leftFinishElbowAngle in 45.0..91.0 &&
+            rightFinishElbowAngle in 45.0..91.0
         ) {
             feedbackMap[finishingPos]!!["Finishing Elbow Angles"] = Triple(
                 "Correct",
@@ -360,7 +360,7 @@ object ShoulderPressAnalysis : ExerciseAnalysis() {
             )
         } else {
             // left forearm
-            if (50 > leftFinishElbowAngle || leftFinishElbowAngle > 91) {
+            if (45 > leftFinishElbowAngle || leftFinishElbowAngle > 91) {
                 feedbackMap[finishingPos]!!["Finishing Elbow Angles"] = Triple(
                     "Wrong",
                     "Bad Form: Incorrect starting position. Your left forearm is at the incorrect angle to your left upper arm.\n\n" +
@@ -370,7 +370,7 @@ object ShoulderPressAnalysis : ExerciseAnalysis() {
             }
 
             // right forearm
-            if (50 > rightFinishElbowAngle || rightFinishElbowAngle > 91) {
+            if (45 > rightFinishElbowAngle || rightFinishElbowAngle > 91) {
                 feedbackMap[finishingPos]!!["Finishing Elbow Angles"] = Triple(
                     "Wrong",
                     "Bad Form: Incorrect starting position. Your right forearm is at the incorrect angle to your right upper arm.\n\n" +

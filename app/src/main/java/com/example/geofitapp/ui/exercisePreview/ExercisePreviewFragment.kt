@@ -42,7 +42,9 @@ class ExercisePreviewFragment : Fragment() {
             this, viewModelFactory).get(ExercisePreviewViewModel::class.java)
 
         val arguments = ExercisePreviewFragmentArgs.fromBundle(requireArguments())
+        viewModel.saveExerciseData(arguments.exerciseData)
         binding.exerciseData = arguments.exerciseData
+
         videoPath =
             "android.resource://" + requireActivity().packageName + "/" + arguments.exerciseData.video
         imagePath = arguments.exerciseData.videoThumbnail
@@ -161,4 +163,10 @@ class ExercisePreviewFragment : Fragment() {
             }
         }
     }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        viewModel.resetDetails()
+    }
+
 }

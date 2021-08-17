@@ -51,7 +51,7 @@ class PoseGraphic internal constructor(
 
     init {
         whitePaint.strokeWidth = STROKE_WIDTH
-        whitePaint.color = Color.WHITE
+        whitePaint.color = Color.LTGRAY
         whitePaint.textSize = IN_FRAME_LIKELIHOOD_TEXT_SIZE
         leftPaint = Paint()
         leftPaint.strokeWidth = STROKE_WIDTH

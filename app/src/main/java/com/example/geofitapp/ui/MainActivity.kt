@@ -11,10 +11,14 @@ import android.view.Window
 import android.view.WindowManager
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.os.bundleOf
 import androidx.navigation.NavController
+import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupActionBarWithNavController
 import com.example.geofitapp.R
+import com.example.geofitapp.ui.exercisePreview.ExerciseData
+import com.example.geofitapp.ui.exercisePreview.ExercisePreviewFragment
 
 
 class MainActivity : AppCompatActivity(R.layout.activity_main) {
@@ -23,9 +27,9 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val navHostFragment = supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
+        val navHostFragment =
+            supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
         navController = navHostFragment.navController
-
         setupActionBarWithNavController(navController)
 
         val colorDrawable = ColorDrawable(Color.parseColor("#161616"))
@@ -49,6 +53,22 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
             window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
             window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS)
             window.statusBarColor = this.resources.getColor(R.color.primaryColor)
+        }
+
+        val bundle = intent.getBundleExtra("fragmentData")
+        val i = bundle?.getInt("number", 1) ?: 1
+        val ed = bundle?.get("exerciseData") as ExerciseData?
+
+        if (i == 2) {
+            //set the desired fragment as current fragment to fragment pager
+            val fragment = ExercisePreviewFragment()
+            fragment.arguments = bundleOf("exerciseData" to ed)
+            supportFragmentManager
+                .beginTransaction()
+                .add(R.id.fragment_container, fragment)
+                .commit()
+        } else {
+            navController.navigate(R.id.homePageFragment)
         }
 
     }

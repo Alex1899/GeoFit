@@ -38,6 +38,17 @@
             </intent-filter>
         </activity>
 
+        <receiver android:name=".ui.exerciseSetDetails.restTimer.TimerExpiredReceiver"
+            android:enabled="true"
+            android:exported="false"/>
+        <receiver android:name=".ui.exerciseSetDetails.restTimer.TimerNotificationActionReceiver"
+            android:enabled="true"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="stop" />
+            </intent-filter>
+        </receiver>
+
         <meta-data
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />

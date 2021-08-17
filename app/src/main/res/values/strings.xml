@@ -172,6 +172,8 @@
     <string name="weight_txt">Kg</string>
     <string name="rest_txt">Sec</string>
 
+    <string name="rest_time_txt">Rest</string>
+
     <string name="set_details_text">%1$d/%2$d</string>
 
 
