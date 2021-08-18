@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:app="http://schemas.android.com/apk/res-auto"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
 
     </data>
 
-    <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:keepScreenOn="true">
@@ -36,8 +36,7 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-             />
+            app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
             android:id="@+id/timerText"
@@ -52,6 +51,7 @@
             android:textAlignment="center"
             android:textColor="@color/white"
             android:textSize="25sp"
+            android:visibility="invisible"
             app:layout_constraintBottom_toTopOf="@id/timer"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
@@ -67,10 +67,22 @@
             android:shadowRadius="10"
             android:textColor="@color/white"
             android:textSize="50sp"
+            android:visibility="invisible"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toBottomOf="@id/timerText" />
+
+        <ImageView
+            android:id="@+id/record_icon"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:contentDescription="Record"
+            android:src="@drawable/ic_dot_inside_a_circle"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/timer" />
 
 
         <LinearLayout
@@ -82,8 +94,8 @@
             android:orientation="horizontal"
             android:paddingTop="4dp"
             android:visibility="gone"
-            tools:visibility="visible"
-            app:layout_constraintBottom_toBottomOf="parent">
+            app:layout_constraintBottom_toBottomOf="parent"
+            tools:visibility="visible">
 
             <LinearLayout
                 android:layout_width="wrap_content"
@@ -269,10 +281,17 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="20dp"
                     android:contentDescription="TODO"
-                    android:src="@drawable/ic_flash" />
+                    android:src="@drawable/ic_no_flash" />
+
+                <ImageView
+                    android:id="@+id/timer_icon"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
+                    android:contentDescription="TODO"
+                    android:src="@drawable/ic_timer_selected" />
+
             </LinearLayout>
-
-
         </FrameLayout>
 
 

@@ -57,6 +57,8 @@ class CameraXLivePreviewActivity : AppCompatActivity(),
     private var camera: Camera? = null
     private var exercise: MutableList<String> = mutableListOf()
     private var countTimer: CountDownTimer? = null
+    private var cameraTimerOn = true
+    private var exerciseStarted = false
     private lateinit var binding: ActivityCameraXlivePreviewBinding
     private lateinit var textToSpeech: TextToSpeech
     private var reps = ""
@@ -97,6 +99,42 @@ class CameraXLivePreviewActivity : AppCompatActivity(),
 
         binding.switchCamera.setOnClickListener {
             switchCamera()
+        }
+
+        binding.timerIcon.setOnClickListener {
+            cameraTimerOn = !cameraTimerOn
+            if (cameraTimerOn) {
+                binding.timerIcon.setImageResource(R.drawable.ic_timer_selected)
+            } else {
+                binding.timerIcon.setImageResource(R.drawable.ic_timer_unselected)
+            }
+
+        }
+
+        binding.recordIcon.setOnClickListener {
+            if (countTimer == null && !exerciseStarted) {
+                exerciseStarted = true
+                binding.recordIcon.setImageResource(R.drawable.ic_stop_button)
+
+                if (cameraTimerOn) {
+                    binding.timerText.visibility = View.VISIBLE
+                    binding.timer.visibility = View.VISIBLE
+                    startTimer()
+                }else{
+                    bindAnalysisUseCase()
+                    it.visibility = View.GONE
+                }
+            } else {
+                if (cameraTimerOn) {
+                    countTimer?.cancel()
+                    countTimer = null
+                    binding.timerText.visibility = View.INVISIBLE
+                    binding.timer.visibility = View.INVISIBLE
+                }
+                exerciseStarted = false
+                binding.recordIcon.setImageResource(R.drawable.ic_dot_inside_a_circle)
+
+            }
         }
 
         exercise.add(exerciseName)
@@ -155,7 +193,9 @@ class CameraXLivePreviewActivity : AppCompatActivity(),
                 lensFacing = newLensFacing
                 cameraSelector = newCameraSelector
                 bindAllCameraUseCases()
-                bindAnalysisUseCase()
+                if (exerciseStarted) {
+                    bindAnalysisUseCase()
+                }
                 return
             }
         } catch (e: CameraInfoUnavailableException) {
@@ -172,7 +212,7 @@ class CameraXLivePreviewActivity : AppCompatActivity(),
     private fun startTimer() {
         // start timer
         val timerView = binding.timer
-        countTimer = object : CountDownTimer(6 * 1000, 1000) {
+        countTimer = object : CountDownTimer(11 * 1000, 1000) {
             override fun onTick(millisUntilFinished: Long) {
                 val calendar = Calendar.getInstance()
                 calendar.time = Date(millisUntilFinished)
@@ -180,17 +220,14 @@ class CameraXLivePreviewActivity : AppCompatActivity(),
                 if (secs == "0") {
                     bindAnalysisUseCase()
                 } else {
-                    timerView.text = if (secs == "0") {
-                        ""
-                    } else {
-                        secs
-                    }
+                    timerView.text = secs
                 }
             }
 
             override fun onFinish() {
                 timerView.visibility = View.GONE
                 binding.timerText.visibility = View.GONE
+                binding.recordIcon.visibility = View.GONE
             }
         }
 
@@ -205,11 +242,8 @@ class CameraXLivePreviewActivity : AppCompatActivity(),
         if (graphicOverlay == null) {
             Log.d(TAG, "graphicOverlay is null")
         }
-
-//        val facingSwitch = findViewById<ToggleButton>(R.id.facing_switch)
-//        facingSwitch.setOnCheckedChangeListener(this)
-
     }
+
 
     override fun onSaveInstanceState(bundle: Bundle) {
         super.onSaveInstanceState(bundle)
@@ -258,6 +292,7 @@ class CameraXLivePreviewActivity : AppCompatActivity(),
         }
         textToSpeech.stop()
         countTimer?.cancel()
+        exerciseStarted = false
     }
 
     public override fun onDestroy() {
@@ -288,9 +323,9 @@ class CameraXLivePreviewActivity : AppCompatActivity(),
         if (previewUseCase != null) {
             cameraProvider!!.unbind(previewUseCase)
         }
-        if (countTimer == null) {
-            startTimer()
-        }
+//        if (countTimer == null) {
+//            startTimer()
+//        }
 
         val builder = Preview.Builder()
         val targetResolution = PreferenceUtils.getCameraXTargetResolution(this, lensFacing)
@@ -319,9 +354,9 @@ class CameraXLivePreviewActivity : AppCompatActivity(),
             }
             camera!!.cameraInfo.torchState.observe(this, { torchState ->
                 if (torchState == TorchState.OFF) {
-                    binding.flashIcon.setImageResource(R.drawable.ic_flash)
-                } else {
                     binding.flashIcon.setImageResource(R.drawable.ic_no_flash)
+                } else {
+                    binding.flashIcon.setImageResource(R.drawable.ic_flash)
                 }
             })
         }
