@@ -71,7 +71,9 @@ class ExercisePreviewViewModel : ViewModel() {
         _rest.value = 60
     }
 
-    fun saveExerciseData(exerciseData: ExerciseData){
-        _exerciseData.value = exerciseData
+    fun saveExerciseData(exerciseData: ExerciseData?){
+        if(exerciseData != null){
+            _exerciseData.value = exerciseData
+        }
     }
 }

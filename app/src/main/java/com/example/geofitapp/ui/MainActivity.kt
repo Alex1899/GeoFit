@@ -19,6 +19,7 @@ import androidx.navigation.ui.setupActionBarWithNavController
 import com.example.geofitapp.R
 import com.example.geofitapp.ui.exercisePreview.ExerciseData
 import com.example.geofitapp.ui.exercisePreview.ExercisePreviewFragment
+import com.example.geofitapp.ui.home.HomePageFragmentDirections
 
 
 class MainActivity : AppCompatActivity(R.layout.activity_main) {
@@ -62,15 +63,11 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
         if (i == 2) {
             //set the desired fragment as current fragment to fragment pager
             val fragment = ExercisePreviewFragment()
-            fragment.arguments = bundleOf("exerciseData" to ed)
-            supportFragmentManager
-                .beginTransaction()
-                .add(R.id.fragment_container, fragment)
-                .commit()
+            navController.navigate(HomePageFragmentDirections.actionHomePageFragmentToExercisePreviewFragment(ed))
+
         } else {
             navController.navigate(R.id.homePageFragment)
         }
-
     }
 
 

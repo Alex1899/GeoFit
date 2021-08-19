@@ -1,23 +1,28 @@
 package com.example.geofitapp.ui.exercisePreview
 
+import android.content.Context
 import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.MediaController
 import android.widget.Toast
+import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.widget.addTextChangedListener
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
 import com.example.geofitapp.R
 import com.example.geofitapp.databinding.FragmentExercisePreviewBinding
 import com.example.geofitapp.ui.cameraPreview.CameraXLivePreviewActivity
+import com.example.geofitapp.ui.home.HomePageFragment
 
 
 class ExercisePreviewFragment : Fragment() {
@@ -26,6 +31,7 @@ class ExercisePreviewFragment : Fragment() {
     private var imagePath: Int? = null
     private lateinit var viewModel: ExercisePreviewViewModel
     private lateinit var viewModelFactory: ViewModelFactory
+
 
 
     override fun onCreateView(
@@ -39,15 +45,16 @@ class ExercisePreviewFragment : Fragment() {
 
         viewModelFactory = ViewModelFactory()
         viewModel = ViewModelProvider(
-            this, viewModelFactory).get(ExercisePreviewViewModel::class.java)
+            this, viewModelFactory
+        ).get(ExercisePreviewViewModel::class.java)
 
         val arguments = ExercisePreviewFragmentArgs.fromBundle(requireArguments())
         viewModel.saveExerciseData(arguments.exerciseData)
         binding.exerciseData = arguments.exerciseData
 
         videoPath =
-            "android.resource://" + requireActivity().packageName + "/" + arguments.exerciseData.video
-        imagePath = arguments.exerciseData.videoThumbnail
+            "android.resource://" + requireActivity().packageName + "/" + arguments.exerciseData?.video
+        imagePath = arguments.exerciseData?.videoThumbnail
 
         binding.repsEditText.setText(viewModel.reps.value.toString())
         binding.setsEditText.setText(viewModel.sets.value.toString())
@@ -60,7 +67,23 @@ class ExercisePreviewFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        activity?.onBackPressedDispatcher?.addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
 
+                val fragment = requireActivity().supportFragmentManager.findFragmentById(R.id.fragment_container)
+                Log.i("PrevXXX", "fragment $fragment")
+
+                //Do something here
+                if (fragment !== null && fragment.javaClass.simpleName.equals(this@ExercisePreviewFragment.javaClass.simpleName)) {
+                    Log.i("PrevXXX", "fragment classname = ${fragment.javaClass.simpleName} required = ${this@ExercisePreviewFragment.javaClass.simpleName}")
+                    findNavController().navigate(ExercisePreviewFragmentDirections.actionExercisePreviewFragmentToHomePageFragment2())
+                    Log.i("PrevXXX", "NAVIGATED!!!")
+                } else {
+                    isEnabled = false
+                    activity?.onBackPressed()
+                }
+            }
+        })
         val thumbnailView = binding.videoViewThumbnail
         Glide.with(requireActivity()).load(imagePath!!).into(thumbnailView);
 

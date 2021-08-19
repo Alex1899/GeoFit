@@ -25,15 +25,14 @@ import kotlin.math.roundToInt
 class PoseGraphic internal constructor(
     overlay: GraphicOverlay,
     private val pose: Pose,
-    private val exercise: String,
     private val side: String,
     private val repCounterResult: String,
     private val jointAnglesMap: MutableMap<Int, Double>,
-    private val feedback: String,
     private val binding: ActivityCameraXlivePreviewBinding,
     private val pace: Float,
     private val visualizeZ: Boolean,
-    private val rescaleZForVisualization: Boolean
+    private val rescaleZForVisualization: Boolean,
+    private val totalErrors: Int
 
 ) : GraphicOverlay.Graphic(overlay) {
     private var zMin = java.lang.Float.MAX_VALUE
@@ -51,7 +50,7 @@ class PoseGraphic internal constructor(
 
     init {
         whitePaint.strokeWidth = STROKE_WIDTH
-        whitePaint.color = Color.LTGRAY
+        whitePaint.color = Color.WHITE
         whitePaint.textSize = IN_FRAME_LIKELIHOOD_TEXT_SIZE
         leftPaint = Paint()
         leftPaint.strokeWidth = STROKE_WIDTH
@@ -80,11 +79,8 @@ class PoseGraphic internal constructor(
         binding.repsOverlayText.text = repCounterResult
         binding.paceOverlayText.text = String.format("%.1f", pace) + "s"
         binding.sideOverlayText.text = side
+        binding.errorsOverlayText.text = totalErrors.toString()
 
-        if (feedback === "Wrong") {
-            val prev = binding.errorsOverlayText.text.toString()
-            binding.errorsOverlayText.text = (prev.toInt() + 1).toString()
-        }
 
         // get landmarks
         val landmarksList = mutableListOf<PoseLandmark>()

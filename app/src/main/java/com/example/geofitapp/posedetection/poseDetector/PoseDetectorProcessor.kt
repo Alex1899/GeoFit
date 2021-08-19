@@ -56,6 +56,10 @@ class PoseDetectorProcessor(
     private var repAnalyzer: ExerciseAnalysis? = null
     private var cacheSide: String? = null
     private var feedbackMemo = mutableListOf<String>()
+    private var intraSetFeedbackInt = 5
+    private var intraSetIntWindow = 0
+    private var totalErrors = 0
+    private var intraSetErrCount = 0
 
 
     companion object {
@@ -123,6 +127,8 @@ class PoseDetectorProcessor(
     @SuppressLint("SetTextI18n")
     override fun resetInfo(binding: ActivityCameraXlivePreviewBinding) {
         repCounter?.resetTotalReps()
+        totalErrors = 0
+        intraSetIntWindow = 0
         binding.detailsOverlayView.visibility = View.GONE
         binding.repsOverlayText.text = "0"
         binding.errorsOverlayText.text = "0"
@@ -212,10 +218,16 @@ class PoseDetectorProcessor(
                 feedbackMemo.addAll(pair.second)
             }
 
-            // talk feedback after 40% of reps
-            if (ExerciseProcessor.lastRepResult == (totalReps * 0.4).toInt() ||
-                ExerciseProcessor.lastRepResult == (totalReps * 0.8).toInt()
+            if (feedBack == "Wrong") {
+                totalErrors += 1
+                intraSetErrCount += 1
+            }
+            // give feedback after 60% of reps of first 5 are wrong
+            if (intraSetErrCount == (5 * 0.6).toInt() ||
+                ExerciseProcessor.lastRepResult == intraSetFeedbackInt
             ) {
+                intraSetFeedbackInt = ExerciseProcessor.lastRepResult + 5
+                intraSetErrCount = 0
                 textToSpeech.speak(
                     getSpeechFeedback(feedbackMemo.distinct().toMutableList()),
                     TextToSpeech.QUEUE_FLUSH,
@@ -231,15 +243,14 @@ class PoseDetectorProcessor(
             PoseGraphic(
                 graphicOverlay,
                 results.pose,
-                exercise[0],
                 ExerciseProcessor.side,
                 ExerciseProcessor.lastRepResult.toString(),
                 ExerciseProcessor.jointAnglesMap,
-                feedBack,
                 binding,
                 ExerciseProcessor.pace,
                 visualizeZ,
-                rescaleZForVisualization
+                rescaleZForVisualization,
+                totalErrors
             )
         )
     }

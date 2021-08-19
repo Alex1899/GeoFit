@@ -19,6 +19,10 @@
         tools:layout="@layout/fragment_exercise_preview">
         <argument
             android:name="exerciseData"
-            app:argType="com.example.geofitapp.ui.exercisePreview.ExerciseData" />
+            app:argType="com.example.geofitapp.ui.exercisePreview.ExerciseData"
+            app:nullable="true" />
+        <action
+            android:id="@+id/action_exercisePreviewFragment_to_homePageFragment2"
+            app:destination="@id/homePageFragment" />
     </fragment>
 </navigation>

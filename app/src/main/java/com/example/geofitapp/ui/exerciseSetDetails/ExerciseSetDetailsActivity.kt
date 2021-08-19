@@ -1,10 +1,13 @@
 package com.example.geofitapp.ui.exerciseSetDetails
 
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.text.Spannable
 import android.text.SpannableString
 import android.text.style.ForegroundColorSpan
+import android.util.Log
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
@@ -101,7 +104,7 @@ class ExerciseSetDetailsActivity : AppCompatActivity() {
         binding.mistakesNumber.text = spannable
 
         binding.restartExercise.setOnClickListener {
-            if(restTimer.timerState == RestTimer.TimerState.Running){
+            if (restTimer.timerState == RestTimer.TimerState.Running) {
                 restTimer.cancelTimer()
                 restTimer.resetDetails()
             }
@@ -177,6 +180,7 @@ class ExerciseSetDetailsActivity : AppCompatActivity() {
         NotificationUtil.hideTimerNotification(this)
     }
 
+    @RequiresApi(Build.VERSION_CODES.N)
     override fun onPause() {
         super.onPause()
         fromNotification = false
@@ -258,13 +262,15 @@ class ExerciseSetDetailsActivity : AppCompatActivity() {
         previewViewModel.updateCurrentSet(set.toString())
         ExerciseProcessor.resetDetails()
 
-        if(fromNotification){
+        if (isTaskRoot) {
+            Log.i("taskRootX", "task is root")
             val intent = Intent(this, MainActivity::class.java)
-            val bundle = bundleOf("number" to 2, "exerciseData" to previewViewModel.exerciseData.value)
+            val bundle =
+                bundleOf("number" to 2, "exerciseData" to previewViewModel.exerciseData.value)
             intent.putExtra("fragmentData", bundle)
+            intent.flags = (Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
             startActivity(intent)
-        }
-        else{
+        } else {
             super.onBackPressed()
         }
     }
