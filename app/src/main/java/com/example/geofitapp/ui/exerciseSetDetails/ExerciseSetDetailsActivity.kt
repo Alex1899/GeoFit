@@ -71,6 +71,8 @@ class ExerciseSetDetailsActivity : AppCompatActivity() {
         }
         binding.exerciseSetDetails = exerciseSetDetails
 
+        Log.i("BugHunt", "received in setDetails: ${exerciseSetDetails?.angleList}")
+
         val tripleVals = getIncorrectRepsList(exerciseSetDetails!!)
         val totalScore = tripleVals.second
         val mistakesPair = AnalyzerUtils.getOverallFeedbackFromMistakeCount(totalScore)
@@ -260,7 +262,8 @@ class ExerciseSetDetailsActivity : AppCompatActivity() {
             exerciseSetDetails!!.currentSet + 1
         }
         previewViewModel.updateCurrentSet(set.toString())
-        ExerciseProcessor.resetDetails()
+//        ExerciseProcessor.resetDetails()
+        Log.i("BugHunt", "after clearing ${ExerciseProcessor.allAnglesOfInterest}")
 
         if (isTaskRoot) {
             Log.i("taskRootX", "task is root")

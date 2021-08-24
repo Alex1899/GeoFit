@@ -107,6 +107,7 @@ class PoseDetectorProcessor(
                         }
 
                         if (repCounter == null) {
+                            Log.i("BugHunt", "processor initialized repCounter")
                             repCounter =
                                 ExerciseUtils.exerciseRepCounterAnalyzerMap[exercise[0]]!!.first
                             repCounter!!.overallTotalReps = totalReps
@@ -127,6 +128,9 @@ class PoseDetectorProcessor(
     @SuppressLint("SetTextI18n")
     override fun resetInfo(binding: ActivityCameraXlivePreviewBinding) {
         repCounter?.resetTotalReps()
+        repCounter = null
+        ExerciseProcessor.resetDetails()
+        Log.i("BugHunt", "processor reset repCounter")
         totalErrors = 0
         intraSetIntWindow = 0
         binding.detailsOverlayView.visibility = View.GONE
@@ -144,10 +148,10 @@ class PoseDetectorProcessor(
         // sets, reps, time taken, and rest timer
         val allAngles =
             mutableListOf<Triple<Pair<String, String?>, Pair<MutableList<Double>, MutableList<Double>?>, List<Triple<Float?, Float?, Boolean>>>>()
-        for (triple in ExerciseProcessor.allAnglesOfInterest.values.toList()) {
+        val ls = ExerciseProcessor.allAnglesOfInterest.values.toList()
+        for (triple in ls) {
             allAngles.add(triple)
         }
-
 
         val reps = "${binding.repsOverlayText.text}${binding.testRep.text}"
         val set = binding.testSet.text.toString().split("/")[1].toInt()
@@ -164,9 +168,13 @@ class PoseDetectorProcessor(
         )
         intent.putExtra("exerciseSetDetails", details)
 
-        resetInfo(binding)
+        Log.i("BugHunt", "ExerciseProcessor before sending: ${ExerciseProcessor.allAnglesOfInterest}")
+        Log.i("BugHunt", "allAngles before sending: $allAngles")
+
         PrefUtil.setTimerState(RestTimer.TimerState.NotStarted, context)
         startActivity(context, intent, null)
+        resetInfo(binding)
+
         activity.finish()
     }
 
@@ -181,6 +189,7 @@ class PoseDetectorProcessor(
             cameraProvider.unbindAll()
             startSetDetailsActivity(binding)
             exerciseFinished = false
+            Log.i("BugHunt", "CAMERA CLOSED, PoseProcessor returned")
             return
         }
         if (results.pose.allPoseLandmarks.isEmpty()) {

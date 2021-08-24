@@ -59,7 +59,7 @@ object ExerciseUtils {
                     Pair(
                         mutableListOf(), null
                     ),
-                    listOf(Triple(150f, null, true), Triple(null, 109f, true))
+                    listOf(Triple(155f, null, true), Triple(null, 109f, true))
                 ),
                 "shoulder" to Triple(
                     Pair("Elbow-torso angles", null),

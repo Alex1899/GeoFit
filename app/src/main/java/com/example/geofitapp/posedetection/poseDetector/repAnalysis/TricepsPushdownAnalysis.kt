@@ -22,7 +22,7 @@ object TricepsPushdownAnalysis : ExerciseAnalysis() {
 
         val feedbackMap = mutableMapOf(startingPos to mutableMapOf<String, Triple<String,String, String>>())
 
-        if (109 > startElbowAngle && startElbowAngle >= 62) {
+        if (109 > startElbowAngle && startElbowAngle >= 45) {
             feedbackMap[startingPos]!!["Starting Elbow Angle"] = Triple(
                 "Correct",
                 "Good Form: Correct starting position",
@@ -92,7 +92,7 @@ object TricepsPushdownAnalysis : ExerciseAnalysis() {
             feedbackMap[middlePos] = mutableMapOf()
         }
         // elbow
-        if (maxElbowAngle >= 150) {
+        if (maxElbowAngle >= 155) {
             feedbackMap[middlePos]!!["Minimum Elbow Angle"] = Triple(
                 "Correct",
                 "Good Form: Your arms were fully extended at the bottom part of the move",
@@ -180,7 +180,7 @@ object TricepsPushdownAnalysis : ExerciseAnalysis() {
             feedbackMap[finishingPos] = mutableMapOf()
         }
 
-        if (finishElbowAngle >= 62 && 109 > finishElbowAngle) {
+        if (finishElbowAngle >= 45 && 109 > finishElbowAngle) {
             feedbackMap[finishingPos]!!["Finishing Elbow Angle"] = Triple(
                 "Correct",
                 "Good Form: Your arm was fully extended during the finishing part of the movement",

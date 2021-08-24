@@ -12,6 +12,7 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.core.view.marginEnd
+import androidx.core.view.marginTop
 import androidx.recyclerview.widget.RecyclerView
 import com.example.geofitapp.R
 import com.example.geofitapp.databinding.ItemFeedbackViewBinding
@@ -115,10 +116,12 @@ class FeedbackAdapter(
             errorTV.setTextSize(TypedValue.COMPLEX_UNIT_SP, 10f)
 
             val feedbackTV = TextView(context)
-            feedbackTV.layoutParams = LinearLayout.LayoutParams(
+            val feedbackParams = LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT,
                 LinearLayout.LayoutParams.WRAP_CONTENT
-            )
+            ).apply { topMargin = 30 }
+
+            feedbackTV.layoutParams = feedbackParams
             feedbackTV.text = reps.second
             feedbackTV.setTextColor(Color.WHITE)
             feedbackTV.setTextSize(TypedValue.COMPLEX_UNIT_SP, 13f)
