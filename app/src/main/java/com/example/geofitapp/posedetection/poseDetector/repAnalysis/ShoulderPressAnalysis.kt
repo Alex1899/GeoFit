@@ -268,7 +268,7 @@ object ShoulderPressAnalysis : ExerciseAnalysis() {
         }
 
         // top part
-        if (leftMaxElbowAngle in 131.0..172.0 && rightMaxElbowAngle in 131.0..172.0 &&
+        if (leftMaxElbowAngle in 131.0..180.0 && rightMaxElbowAngle in 131.0..180.0 &&
             leftMaxShoulderAngle in 136.0..180.0 && rightMaxShoulderAngle in 136.0..180.0
         ) {
             if (abs(leftMaxShoulderAngle - rightMaxShoulderAngle) > 15) {

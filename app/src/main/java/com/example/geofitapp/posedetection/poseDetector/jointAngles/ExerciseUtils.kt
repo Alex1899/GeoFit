@@ -83,7 +83,7 @@ object ExerciseUtils {
                     Pair(
                         mutableListOf(), mutableListOf()
                     ),
-                    listOf(Triple(173f, null, false), Triple(null, 130f, true))
+                    listOf(Triple(180f, null, false), Triple(null, 130f, true))
                 ),
 
                 "shoulder" to Triple(

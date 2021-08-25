@@ -3,6 +3,7 @@ package com.example.geofitapp.ui.exerciseSetDetails
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
+import android.speech.tts.TextToSpeech
 import android.text.Spannable
 import android.text.SpannableString
 import android.text.style.ForegroundColorSpan
@@ -44,9 +45,25 @@ class ExerciseSetDetailsActivity : AppCompatActivity() {
     private lateinit var viewModel: ExerciseSetDetailsViewModel
     private var fromNotification = false
     private lateinit var restTimer: RestTimer
+    private lateinit var textToSpeech: TextToSpeech
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        textToSpeech = TextToSpeech(
+            this,
+        ) { i ->
+            if (i != TextToSpeech.ERROR) {
+                // To Choose language of speech
+                textToSpeech.language = Locale.UK
+                textToSpeech.speak(
+                    "Exercise has finished",
+                    TextToSpeech.QUEUE_FLUSH,
+                    null,
+                    "tts2"
+                )
+            }
+        }
 
 
         binding = DataBindingUtil.setContentView(this, R.layout.activity_exercise_set_details)
