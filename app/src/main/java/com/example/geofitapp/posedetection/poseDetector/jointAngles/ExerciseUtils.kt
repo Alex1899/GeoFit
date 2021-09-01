@@ -43,14 +43,14 @@ object ExerciseUtils {
                     Pair(
                         mutableListOf(), null
                     ),
-                    listOf(Triple(21f, null, false), Triple(null, 0f, false))
+                    listOf(Triple(26f, null, false), Triple(null, 0f, false))
                 ),
                 "hip" to Triple(
                     Pair("Hip angles", null),
                     Pair(
                         mutableListOf(), null
                     ),
-                    listOf(Triple(195f, null, false), Triple(null, 165f, false))
+                    listOf(Triple(195f, null, false), Triple(null, 168f, false))
                 )
             ),
             "Triceps Pushdown" to mutableMapOf(
@@ -83,7 +83,7 @@ object ExerciseUtils {
                     Pair(
                         mutableListOf(), mutableListOf()
                     ),
-                    listOf(Triple(180f, null, false), Triple(null, 130f, true))
+                    listOf(Triple(130f, null, true), Triple(null, 44f, false))
                 ),
 
                 "shoulder" to Triple(
@@ -94,7 +94,7 @@ object ExerciseUtils {
                     Pair(
                         mutableListOf(), mutableListOf()
                     ),
-                    listOf(Triple(180f, null, false), Triple(null, 135f, true))
+                    listOf(Triple(135f, null, true), Triple(null, 39f, false))
                 ),
             ),
 
@@ -119,7 +119,7 @@ object ExerciseUtils {
                     Pair(
                         mutableListOf(), null
                     ),
-                    listOf(Triple(195f, null, false), Triple(null, 154f, false))
+                    listOf(Triple(195f, null, false), Triple(null, 174f, false))
                 )
             )
         )
@@ -182,12 +182,7 @@ object ExerciseUtils {
                 firstPoint.x.toDouble() - midPoint.x.toDouble()
             )
         )
-//        var vect1 = listOf(firstPoint.x.toDouble() - midPoint.x.toDouble(), firstPoint.y.toDouble() - midPoint.y.toDouble(), firstPoint.z.toDouble() - midPoint.z.toDouble())
-//        var vect2 = listOf(lastPoint.x.toDouble() - midPoint.x.toDouble(), lastPoint.y.toDouble() - midPoint.y.toDouble(), lastPoint.z.toDouble() - midPoint.z.toDouble())
-//        vect1 = Utils.normVector(vect1)
-//        vect2 = Utils.normVector(vect2)
-//
-//        var result = Math.toDegrees(angleBetweenVectors(vect1, vect2, 2))
+
         result = abs(result) // Angle should never be negative
         if (result > 180) {
             result = 360.0 - result // Always get the acute representation of the angle
@@ -195,59 +190,8 @@ object ExerciseUtils {
         return result
     }
 
-    fun magnitude(arr: List<Double>, N: Int): Double {
 
-        // Stores the final magnitude
-        var magnitude = 0.0
-
-        // Traverse the array
-        for (i in 0 until N) magnitude += arr[i] * arr[i]
-
-        // Return square root of magnitude
-        return sqrt(magnitude)
-    }
-
-    // Function to find the dot
-    // product of two vectors
-    fun dotProduct(
-        arr: List<Double>,
-        brr: List<Double>, N: Int
-    ): Double {
-
-        // Stores dot product
-        var product = 0.0
-
-        // Traverse the array
-        for (i in 0 until N) product += arr[i] * brr[i]
-
-        // Return the product
-        return product
-    }
-
-    fun angleBetweenVectors(
-        arr: List<Double>,
-        brr: List<Double>,
-        N: Int
-    ): Double {
-
-        // Stores dot product of two vectors
-        val dotProductOfVectors = dotProduct(arr, brr, N)
-
-        // Stores magnitude of vector A
-        val magnitudeOfA = magnitude(arr, N)
-
-        // Stores magnitude of vector B
-        val magnitudeOfB = magnitude(brr, N)
-
-        // Stores angle between given vectors
-
-        return kotlin.math.acos(
-            dotProductOfVectors /
-                    (magnitudeOfA * magnitudeOfB)
-        )
-    }
-
-    fun detectSide(pose: Pose): String {
+    private fun detectSide(pose: Pose): String {
         val rightSide = listOf(
             PoseLandmark.RIGHT_EAR,
             PoseLandmark.RIGHT_EYE,
@@ -311,7 +255,7 @@ object ExerciseUtils {
             rightSum > leftSum -> {
                 "left"
             }
-           else -> {
+            else -> {
                 "right"
             }
         }

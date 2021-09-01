@@ -109,7 +109,7 @@ object FrontExerciseRepCounter : ExerciseRepCounter() {
 
             // if rep count reached return
             if (overallTotalReps != null && totalReps == overallTotalReps!! && poseEntered) {
-                // for last rep, if change is less than 5 continue
+                // for last rep, if change is more than 20 continue
                 if (kotlin.math.abs(leftMainAngle - leftLastRepStart!!) < 20 && kotlin.math.abs(
                         rightMainAngle - rightLastRepStart!!
                     ) < 20

@@ -114,7 +114,7 @@ object ShoulderPressAnalysis : ExerciseAnalysis() {
             feedbackMap[middlePos] = mutableMapOf()
         }
         // min elbow angles to check if forearm is close to shoulder
-        if (leftMinElbowAngle in 50.0..91.0 && rightMinElbowAngle in 50.0..91.0) {
+        if (leftMinElbowAngle in 45.0..91.0 && rightMinElbowAngle in 45.0..91.0) {
             if (abs(leftMinElbowAngle - rightMinElbowAngle) > 18) {
                 if (leftMinElbowAngle > rightMinElbowAngle) {
                     feedbackMap[middlePos]!!["Min Forearm to Upper Arm Angles"] = Triple(
@@ -140,7 +140,7 @@ object ShoulderPressAnalysis : ExerciseAnalysis() {
             }
         } else {
             //left
-            if (leftMinElbowAngle < 50 && rightMinElbowAngle < 50) {
+            if (leftMinElbowAngle < 45 && rightMinElbowAngle < 45) {
                 feedbackMap[middlePos]!!["Min Forearm to Upper Arm Angles"] = Triple(
                     "Wrong",
                     "Bad Form: Your forearms showed significant movement " +
@@ -148,7 +148,7 @@ object ShoulderPressAnalysis : ExerciseAnalysis() {
                             "degrees at your elbow joints",
                     "Keep 90 degree angle at your elbows"
                 )
-            } else if (leftMinElbowAngle < 50) {
+            } else if (leftMinElbowAngle < 45) {
                 feedbackMap[middlePos]!!["Min Forearm to Upper Arm Angles"] = Triple(
                     "Wrong",
                     "Bad Form: Your left forearm showed significant movement " +
@@ -156,7 +156,7 @@ object ShoulderPressAnalysis : ExerciseAnalysis() {
                             "degrees at your elbow joints",
                     "Keep 90 degree angle at your elbows"
                 )
-            } else if (rightMinElbowAngle < 50) {
+            } else if (rightMinElbowAngle < 45) {
                 feedbackMap[middlePos]!!["Min Forearm to Upper Arm Angles"] = Triple(
                     "Wrong",
                     "Bad Form: Your right forearm showed significant movement " +

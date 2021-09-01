@@ -152,36 +152,18 @@ object FrontRaiseAnalysis : ExerciseAnalysis() {
         }
 
         if (minHipAngle >= 154) {
-            feedbackMap[middlePos]!!["Minimum Angle at the Hip"] = Triple(
+            feedbackMap[middlePos]!!["Back Movement"] = Triple(
                 "Correct",
-                "Good Form: No leaning forward excessively",
+                "Good Form: Your back is still and straight during the exercise",
                 ""
 
             )
         } else {
-            feedbackMap[middlePos]!!["Minimum Angle at the Hip"] = Triple(
+            feedbackMap[middlePos]!!["Back Movement"] = Triple(
                 "Wrong",
-                "Bad Form: Leaning forward significantly.\n\nFix: Try to keep your back still and straight" +
+                "Bad Form: Your back is not straight.\n\nFix: Try to keep your back still" +
                         " throughout the movement",
                 "Do not swing your body"
-            )
-        }
-
-        if (195 > maxHipAngle && maxHipAngle >= 154) {
-            feedbackMap[middlePos]!!["Maximum Angle at the Hip"] = Triple(
-                "Correct",
-                "Good Form: No leaning backwards excessively",
-                ""
-            )
-
-        } else {
-            feedbackMap[middlePos]!!["Maximum Angle at the Hip"] = Triple(
-                "Wrong",
-                "Bad Form: Leaning backwards significantly.This could be because the weight is too heavy." +
-                        "This puts a lot of pressure on the lower back.\nFix: Consider lowering the weight." +
-                        " Keep your back straight and focus the effort on the biceps only",
-                "Do not swing your body"
-
             )
         }
 

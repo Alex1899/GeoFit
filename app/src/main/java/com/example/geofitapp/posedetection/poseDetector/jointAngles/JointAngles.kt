@@ -39,6 +39,7 @@ class JointAngles(
             lm[PoseLandmark.LEFT_HIP]
         }
         subtractAll(hip, normalizedLandmarks)
+
         val poseSize = if (torso !== null) {
             torso
         } else {
@@ -52,6 +53,8 @@ class JointAngles(
             1 / poseSize
         )
         multiplyAll(normalizedLandmarks, 100f)
+
+
         return normalizedLandmarks
     }
 
@@ -88,6 +91,7 @@ class JointAngles(
         val hipsCenter = average(
             landmarks[PoseLandmark.LEFT_HIP], landmarks[PoseLandmark.RIGHT_HIP]
         )
+
         val shouldersCenter = average(
             landmarks[PoseLandmark.LEFT_SHOULDER],
             landmarks[PoseLandmark.RIGHT_SHOULDER]

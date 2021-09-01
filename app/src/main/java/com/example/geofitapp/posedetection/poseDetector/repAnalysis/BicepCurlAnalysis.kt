@@ -25,7 +25,7 @@ object BicepCurlAnalysis : ExerciseAnalysis() {
         if (startElbowAngle >= 138) {
             feedbackMap[startingPos]!!["Starting Elbow Angle"] = Triple(
                 "Correct",
-                "",
+                "Good Form: Your arm is fully extended at the starting position",
                 ""
             )
         } else {
@@ -38,7 +38,7 @@ object BicepCurlAnalysis : ExerciseAnalysis() {
                 )
         }
 
-        if (startShoulderAngle < 21) {
+        if (startShoulderAngle < 26) {
             feedbackMap[startingPos]!!["Starting Elbow Forward Shift"] = Triple(
                 "Correct",
                 "Good Form: Elbows are positioned close to the torso",
@@ -111,7 +111,7 @@ object BicepCurlAnalysis : ExerciseAnalysis() {
 
         }
 
-        if (maxShoulderAngle < 21) {
+        if (maxShoulderAngle < 26) {
             feedbackMap[middlePos]!!["Maximum Elbow Forward Shift"] =
                 Triple(
                     "Correct",
@@ -129,40 +129,23 @@ object BicepCurlAnalysis : ExerciseAnalysis() {
             )
         }
 
-        if (minHipAngle >= 165) {
-            feedbackMap[middlePos]!!["Minimum Angle at the Hip"] = Triple(
+        if (minHipAngle > 168) {
+            feedbackMap[middlePos]!!["Back Movement"] = Triple(
                 "Correct",
-                "Good Form: No leaning forward excessively",
+                "Good Form: Your back is still and straight during the exercise",
                 ""
 
             )
         } else {
-            feedbackMap[middlePos]!!["Minimum Angle at the Hip"] = Triple(
+            feedbackMap[middlePos]!!["Back Movement"] = Triple(
                 "Wrong",
-                "Bad Form: Leaning forward significantly.\nFix: Try to keep your back still and straight" +
+                "Bad Form: Your back is not straight.\nFix: Try to keep your back still" +
                         " throughout the movement",
                 "Keep your back still"
 
             )
         }
 
-        if (195 > maxHipAngle && maxHipAngle >= 165) {
-            feedbackMap[middlePos]!!["Maximum Angle at the Hip"] = Triple(
-                "Correct",
-                "Good Form: No leaning backwards excessively",
-                ""
-            )
-
-        } else {
-            feedbackMap[middlePos]!!["Maximum Angle at the Hip"] = Triple(
-                "Wrong",
-                "Bad Form: Leaning backwards significantly.This could be because the weight is too heavy." +
-                        "This puts a lot of pressure on the lower back.\nFix: Consider lowering the weight." +
-                        " Keep your back straight and focus the effort on the biceps only",
-                "Keep your back still"
-
-            )
-        }
 
         return feedbackMap
     }
@@ -196,7 +179,7 @@ object BicepCurlAnalysis : ExerciseAnalysis() {
             )
         }
 
-        if (finishShoulderAngle < 21) {
+        if (finishShoulderAngle < 26    ) {
             feedbackMap[finishingPos]!!["Finishing Elbow Forward Shift"] = Triple(
                 "Correct",
                 "Good Form: Elbow not moved significantly",

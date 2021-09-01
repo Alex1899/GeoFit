@@ -166,6 +166,9 @@ class PoseDetectorProcessor(
             allAngles,
             ExerciseProcessor.feedBack
         )
+        Log.i("testXy", "allangles = $allAngles")
+        Log.i("testXy", "feedback = ${ExerciseProcessor.feedBack}")
+
         intent.putExtra("exerciseSetDetails", details)
 
         Log.i("BugHunt", "ExerciseProcessor before sending: ${ExerciseProcessor.allAnglesOfInterest}")
@@ -173,7 +176,7 @@ class PoseDetectorProcessor(
 
         PrefUtil.setTimerState(RestTimer.TimerState.NotStarted, context)
         startActivity(context, intent, null)
-        resetInfo(binding)
+//        resetInfo(binding)
 
         activity.finish()
     }

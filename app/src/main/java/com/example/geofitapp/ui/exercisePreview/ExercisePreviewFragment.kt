@@ -21,6 +21,7 @@ import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
 import com.example.geofitapp.R
 import com.example.geofitapp.databinding.FragmentExercisePreviewBinding
+import com.example.geofitapp.posedetection.poseDetector.jointAngles.ExerciseUtils
 import com.example.geofitapp.ui.cameraPreview.CameraXLivePreviewActivity
 import com.example.geofitapp.ui.home.HomePageFragment
 
@@ -168,6 +169,7 @@ class ExercisePreviewFragment : Fragment() {
 
         binding.startExercise.setOnClickListener {
             if (viewModel.reps.value!! > 0 && viewModel.sets.value!! > 0) {
+                ExerciseUtils.exerciseRepCounterAnalyzerMap[binding.exerciseData!!.exerciseName]?.first?.resetTotalReps()
                 val intent = Intent(activity, CameraXLivePreviewActivity::class.java)
                 val bundle = Bundle()
                 bundle.putString("exerciseName", binding.exerciseData!!.exerciseName)

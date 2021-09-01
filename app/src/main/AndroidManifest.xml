@@ -6,7 +6,6 @@
     <!-- androidx.camera.camera2, androidx.camera.core, -->
     <!-- androidx.camera.view, androidx.camera.lifecycle" /> -->
     <uses-feature android:name="android.hardware.camera" />
-
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
@@ -57,5 +56,4 @@
             android:name=".ui.cameraPreview.CameraXLivePreviewActivity"
             android:noHistory="true" />
     </application>
-
 </manifest>

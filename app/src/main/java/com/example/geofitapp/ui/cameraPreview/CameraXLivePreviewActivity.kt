@@ -120,7 +120,7 @@ class CameraXLivePreviewActivity : AppCompatActivity(),
                     binding.timerText.visibility = View.VISIBLE
                     binding.timer.visibility = View.VISIBLE
                     startTimer()
-                }else{
+                } else {
                     bindAnalysisUseCase()
                     it.visibility = View.GONE
                 }
@@ -228,6 +228,12 @@ class CameraXLivePreviewActivity : AppCompatActivity(),
                 timerView.visibility = View.GONE
                 binding.timerText.visibility = View.GONE
                 binding.recordIcon.visibility = View.GONE
+                textToSpeech.speak(
+                    "Exercise started",
+                    TextToSpeech.QUEUE_FLUSH,
+                    null,
+                    "tts3"
+                )
             }
         }
 
@@ -289,6 +295,7 @@ class CameraXLivePreviewActivity : AppCompatActivity(),
         super.onPause()
         if (imageProcessor != null) {
             imageProcessor!!.stop()
+            imageProcessor!!.resetInfo(binding)
         }
         textToSpeech.stop()
         countTimer?.cancel()

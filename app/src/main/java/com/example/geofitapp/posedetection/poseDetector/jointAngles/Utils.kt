@@ -1,5 +1,7 @@
+
 package com.example.geofitapp.posedetection.poseDetector.jointAngles
 
+import android.util.Log
 import com.google.common.primitives.Floats
 import com.google.mlkit.vision.common.PointF3D
 import kotlin.math.hypot
@@ -39,18 +41,6 @@ object Utils {
         return hypot(point.x.toDouble(), point.y.toDouble()).toFloat()
     }
 
-    fun normVector(vector: List<Double>): List<Double> {
-        val length = sqrt(vector[0].pow(2) + vector[1].pow(2) + vector[2].pow(2))
-        return listOf(vector[0] / length, vector[1] / length, vector[2] / length)
-    }
-
-    fun maxAbs(point: PointF3D): Float {
-        return Floats.max(Math.abs(point.x), Math.abs(point.y), Math.abs(point.z))
-    }
-
-    fun sumAbs(point: PointF3D): Float {
-        return Math.abs(point.x) + Math.abs(point.y) + Math.abs(point.z)
-    }
 
     fun addAll(pointsList: MutableList<PointF3D>, p: PointF3D) {
         val iterator = pointsList.listIterator()
@@ -62,14 +52,19 @@ object Utils {
     fun subtractAll(p: PointF3D, pointsList: MutableList<PointF3D>) {
         val iterator = pointsList.listIterator()
         while (iterator.hasNext()) {
-            iterator.set(subtract(p, iterator.next()))
+            val next = iterator.next()
+            val s = subtract(p, next)
+            iterator.set(s)
         }
     }
 
     fun multiplyAll(pointsList: MutableList<PointF3D>, multiple: Float) {
         val iterator = pointsList.listIterator()
         while (iterator.hasNext()) {
-            iterator.set(multiply(iterator.next(), multiple))
+            val next = iterator.next()
+            val m = multiply(next, multiple)
+            iterator.set(m)
+
         }
     }
 

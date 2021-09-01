@@ -228,7 +228,7 @@ class ExerciseSetDetailsActivity : AppCompatActivity() {
     }
 
     private fun getIncorrectRepsList(exerciseSetDetails: ExerciseSetDetails): Pair<MutableMap<String, MutableMap<String, Pair<MutableList<Int>, String>>>, Int> {
-        var totalMistakes = 0
+        val totalMistakes = mutableSetOf<Int>()
         val repsMap =
             mutableMapOf<String, MutableMap<String, Pair<MutableList<Int>, String>>>()
         for ((rep, map) in exerciseSetDetails.feedback) {
@@ -239,20 +239,18 @@ class ExerciseSetDetailsActivity : AppCompatActivity() {
                         if (!repsMap.containsKey(key)) {
                             repsMap[key] =
                                 mutableMapOf(aoiKey to Pair(mutableListOf(rep), feedbackText))
-                            totalMistakes += 1
+                            totalMistakes.add(rep)
                         } else {
                             if (!repsMap[key]!!.containsKey(aoiKey)) {
                                 repsMap[key]!![aoiKey] = Pair(mutableListOf(rep), feedbackText)
-                                totalMistakes += 1
+                                totalMistakes.add(rep)
 
                             } else {
                                 repsMap[key]!![aoiKey]!!.first.add(rep)
                                 repsMap[key]!![aoiKey] =
                                     repsMap[key]!![aoiKey]!!.copy(second = feedbackText)
-                                totalMistakes += 1
-
+                                totalMistakes.add(rep)
                             }
-
                         }
                     } else {
                         if (!repsMap.containsKey(key)) {
@@ -268,7 +266,10 @@ class ExerciseSetDetailsActivity : AppCompatActivity() {
 
             }
         }
-        return Pair(repsMap, 10 - totalMistakes)
+        val correctCount = exerciseSetDetails.reps.split("/")[0].toInt() - totalMistakes.size
+
+        val score =  (10 * correctCount)/exerciseSetDetails.reps.split("/")[0].toInt()
+        return Pair(repsMap, score)
     }
 
 

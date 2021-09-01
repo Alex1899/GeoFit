@@ -225,6 +225,7 @@
                                     android:id="@+id/weight_editText"
                                     style="@style/StyledEditText"
                                     android:hint="0"
+                                    android:inputType="numberDecimal"
                                     tools:text="12" />
 
                                 <TextView
